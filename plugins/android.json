@@ -1,0 +1,58 @@
+{
+  "prepare_queue": {
+    "installed": [],
+    "uninstalled": []
+  },
+  "config_munge": {
+    "files": {}
+  },
+  "installed_plugins": {
+    "cordova-plugin-device": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "cordova-plugin-email": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "cordova-plugin-file": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "cordova-plugin-file-opener2": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "cordova-plugin-file-transfer": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "cordova-plugin-geolocation": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "cordova-plugin-google-analytics": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "cordova-plugin-inappbrowser": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "cordova-plugin-native-spinner": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "cordova-plugin-safariviewcontroller": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "cordova-plugin-splashscreen": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "cordova-plugin-statusbar": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "cordova-plugin-whitelist": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "cordova-plugin-x-toast": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    }
+  },
+  "dependent_plugins": {
+    "cordova-plugin-app-event": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    }
+  }
+}

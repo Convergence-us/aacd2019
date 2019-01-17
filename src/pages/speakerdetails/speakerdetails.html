@@ -1,0 +1,48 @@
+<ion-header>
+
+  <ion-navbar color="primary">
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Speaker Details</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content padding="" style="padding-left:7px;padding-right:7px;">
+
+	<ion-grid>
+		<ion-row>
+			<ion-col col-4><img [src]="visualImageURL" onerror="this.src='assets/img/personIcon.png'"
+				style="float:left; width:70%" src="assets/img/personIcon.png" alt="Image error">
+					</ion-col>
+	
+			<ion-col col-8 class="myLabelBold" style="padding-left:0">
+					<h1>{{visualDisplayName}}</h1>
+					<h3>{{visualAffiliation}}</h3>
+					</ion-col>
+		</ion-row>
+	</ion-grid>
+
+	<p class="myLabelBold myHeader">
+		Biography
+	</p>
+
+	<div [innerHTML]="spkrDetails" style="padding-left: 5px; padding-right: 5px;">
+		{{visualBiography}}
+	</div>
+
+	<p class="myLabelBold myHeader myMarginTopBottom">
+		Sessions
+	</p>
+
+	<ion-list id="speakersessions-list3" class=" ">
+		<ion-item class="item-icon-left item-icon-right" (click)="EventDetails(session.EventID)" *ngFor="let session of SessionListing" id="speakersessions-list-item19">
+			<ion-icon item-right name="arrow-dropright"></ion-icon>
+			<h2>{{session.DisplayEventName}}</h2>
+			<p>{{session.DisplayEventTimeDateLocation}}</p>
+		</ion-item>
+	</ion-list>
+
+</ion-content>

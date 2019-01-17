@@ -1,0 +1,91 @@
+{
+  "_args": [
+    [
+      {
+        "raw": "cordova-plugin-estimote",
+        "scope": null,
+        "escapedName": "cordova-plugin-estimote",
+        "name": "cordova-plugin-estimote",
+        "rawSpec": "",
+        "spec": "latest",
+        "type": "tag"
+      },
+      "C:\\SVNProjects\\cvPlanner4"
+    ]
+  ],
+  "_from": "cordova-plugin-estimote@latest",
+  "_id": "cordova-plugin-estimote@0.8.0",
+  "_inCache": true,
+  "_location": "/cordova-plugin-estimote",
+  "_nodeVersion": "0.12.6",
+  "_npmUser": {
+    "name": "evothings",
+    "email": "npm@evothings.com"
+  },
+  "_npmVersion": "2.12.1",
+  "_phantomChildren": {},
+  "_requested": {
+    "raw": "cordova-plugin-estimote",
+    "scope": null,
+    "escapedName": "cordova-plugin-estimote",
+    "name": "cordova-plugin-estimote",
+    "rawSpec": "",
+    "spec": "latest",
+    "type": "tag"
+  },
+  "_requiredBy": [
+    "#USER",
+    "/"
+  ],
+  "_resolved": "https://registry.npmjs.org/cordova-plugin-estimote/-/cordova-plugin-estimote-0.8.0.tgz",
+  "_shasum": "3af17c13022d89f4825e38186b37468c5fde4c7c",
+  "_shrinkwrap": null,
+  "_spec": "cordova-plugin-estimote",
+  "_where": "C:\\SVNProjects\\cvPlanner4",
+  "author": {
+    "name": "Evothings"
+  },
+  "bugs": {
+    "url": "https://github.com/evothings/phonegap-estimotebeacons/issues"
+  },
+  "cordova": {
+    "id": "cordova-plugin-estimote",
+    "platforms": [
+      "android",
+      "ios"
+    ]
+  },
+  "dependencies": {},
+  "description": "Cordova/PhoneGap plugin for Estimote beacons.",
+  "devDependencies": {},
+  "directories": {},
+  "dist": {
+    "shasum": "3af17c13022d89f4825e38186b37468c5fde4c7c",
+    "tarball": "https://registry.npmjs.org/cordova-plugin-estimote/-/cordova-plugin-estimote-0.8.0.tgz"
+  },
+  "gitHead": "4aae030e28b802e48ea4c9a726b7d39a48fdae9f",
+  "homepage": "https://github.com/evothings/phonegap-estimotebeacons#readme",
+  "keywords": [
+    "Estimote",
+    "Beacons",
+    "ecosystem:cordova",
+    "cordova-android",
+    "cordova-ios"
+  ],
+  "license": "MIT",
+  "maintainers": [
+    {
+      "name": "evothings",
+      "email": "npm@evothings.com"
+    }
+  ],
+  "name": "cordova-plugin-estimote",
+  "optionalDependencies": {},
+  "readme": "ERROR: No README data found!",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/evothings/phonegap-estimotebeacons.git"
+  },
+  "scripts": {},
+  "version": "0.8.0"
+}

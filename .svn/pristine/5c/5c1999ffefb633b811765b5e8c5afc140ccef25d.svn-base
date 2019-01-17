@@ -1,0 +1,14 @@
+page-cetracking {
+
+
+/* CE Tracker Legend */
+.LegendHeader   {
+    background-color:#283593 !important;
+    color:#ffffff !important;
+    font-weight: bold!important;
+    padding-left:10px!important;
+}
+
+
+
+}

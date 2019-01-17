@@ -1,0 +1,102 @@
+<!--
+  Generated template for the Map page.
+
+  See http://ionicframework.com/docs/v2/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+  <ion-navbar color="primary">
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Map</ion-title>
+  </ion-navbar>
+</ion-header>
+
+
+
+<ion-content>
+
+
+
+      <div>
+          <ion-segment [(ngModel)]="maps">
+  
+            <ion-segment-button value="overview">
+              Overview
+            </ion-segment-button>
+            <ion-segment-button value="groundlevel">
+               Ground Level
+            </ion-segment-button>
+            <ion-segment-button value="mezzanine">
+              Mezzanine
+          </ion-segment-button>
+          <ion-segment-button value="upperlevel">
+            Upper Level
+        </ion-segment-button>
+          </ion-segment>
+  
+        </div>
+       
+
+
+          <div [ngSwitch]="maps">
+
+
+          <ion-card *ngSwitchCase="'overview'">
+            <img src="assets/img/overview.png">
+            <ion-card-content>
+          <h2>San Diego Convention Center</h2>
+        </ion-card-content>
+        </ion-card>
+            
+        
+          <ion-card *ngSwitchCase="'groundlevel'">
+                <img src="assets/img/groundlevel.png">
+                <ion-card-content>
+              <h2>Ground Level</h2>
+            </ion-card-content>
+            </ion-card>
+        
+        
+            <ion-card *ngSwitchCase="'mezzanine'">
+              <img src="assets/img/mezzaninelevel.png">
+              <ion-card-content>
+            <h2>Mezzanine Level</h2>
+          </ion-card-content>
+          </ion-card>
+      
+        
+          <ion-card *ngSwitchCase="'upperlevel'">
+              
+            <img src="assets/img/upperlevel.png">
+            <ion-card-content>
+          <h2>Upper Level</h2>
+        </ion-card-content>
+        </ion-card>
+  
+      </div>
+
+      </ion-content>
+
+        
+
+
+
+
+
+
+     
+<!--
+
+        <ion-card>
+            <ion-card-content>
+                <div #map id="map"></div>
+            </ion-card-content>
+        </ion-card>
+
+    
+
+    -->
+     
+   

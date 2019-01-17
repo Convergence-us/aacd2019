@@ -1,0 +1,93 @@
+page-home {
+
+
+  .style1 {
+    font-family: verdana;
+    font-size: 20px;
+}
+
+.style2 {
+    color: red;
+    text-align: center;
+}
+
+
+.opacity  {
+background:transparent !important;
+color:#fff;
+}
+
+.myFontSize26  {
+  font-size:22px!important;
+  font-weight:300;
+  color:#fff;
+}
+
+
+
+
+.steel {
+  background:rgba(63, 4, 40, 0.5)!important;
+color:#fff;
+ font-size: 1.5em;
+  }
+  
+
+.bgPurple {
+  background: url('../assets/img/bgPurple.jpg') no-repeat center;
+  background-size: cover;
+}
+
+.bgBlue {
+  background: url('../assets/img/bgBlue.jpg') no-repeat center;
+  background-size: cover;
+}
+
+.bgGreen {
+  background: url('../assets/img/bgGreen.jpg') no-repeat center;
+  background-size: cover;
+}
+
+.bgRed {
+  background: url('../assets/img/bgRed.jpg') no-repeat center;
+  background-size: cover;
+}
+
+.bgYellow {
+  background: url('../assets/img/bgYellow.jpg') no-repeat center;
+  background-size: cover;
+}
+
+.bgCityscape {
+
+  background: linear-gradient(to top right, #032e3d 0%, #77498a 100%);
+  //background: url('../assets/img/chicago.jpg') no-repeat center;
+  background-size: cover;
+  Font-size:20px;
+}
+
+
+
+
+.picCityscape {
+  background: url('../assets/img/aacd-2018-logo.png') no-repeat center;
+  background-size: cover;
+}
+
+}
+
+// This code is required for Angular Google Maps to function
+
+ui-gmap-google-map{
+
+    height:100%;
+    width:100%;
+    display:block;
+
+    .angular-google-map {
+        height: 100%;
+        .angular-google-map-container{
+            height: 100%;
+        }
+    }
+}
