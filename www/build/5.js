@@ -1,14 +1,14 @@
 webpackJsonp([5],{
 
-/***/ 960:
+/***/ 952:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ProfilePasswordChangePageModule", function() { return ProfilePasswordChangePageModule; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ProfileImagePageModule", function() { return ProfileImagePageModule; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__profilepasswordchange__ = __webpack_require__(980);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__profileimage__ = __webpack_require__(971);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -18,38 +18,41 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 
 
 
-let ProfilePasswordChangePageModule = class ProfilePasswordChangePageModule {
+let ProfileImagePageModule = class ProfileImagePageModule {
 };
-ProfilePasswordChangePageModule = __decorate([
+ProfileImagePageModule = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["NgModule"])({
         declarations: [
-            __WEBPACK_IMPORTED_MODULE_2__profilepasswordchange__["a" /* ProfilePasswordChangePage */],
+            __WEBPACK_IMPORTED_MODULE_2__profileimage__["a" /* ProfileImagePage */],
         ],
         imports: [
-            __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["p" /* IonicPageModule */].forChild(__WEBPACK_IMPORTED_MODULE_2__profilepasswordchange__["a" /* ProfilePasswordChangePage */]),
+            __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["p" /* IonicPageModule */].forChild(__WEBPACK_IMPORTED_MODULE_2__profileimage__["a" /* ProfileImagePage */]),
         ],
         exports: [
-            __WEBPACK_IMPORTED_MODULE_2__profilepasswordchange__["a" /* ProfilePasswordChangePage */]
+            __WEBPACK_IMPORTED_MODULE_2__profileimage__["a" /* ProfileImagePage */]
         ]
     })
-], ProfilePasswordChangePageModule);
+], ProfileImagePageModule);
 
-//# sourceMappingURL=profilepasswordchange.module.js.map
+//# sourceMappingURL=profileimage.module.js.map
 
 /***/ }),
 
-/***/ 980:
+/***/ 971:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ProfilePasswordChangePage; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ProfileImagePage; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ionic_storage__ = __webpack_require__(25);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_rxjs_add_operator_map__ = __webpack_require__(22);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_rxjs_add_operator_map___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_rxjs_add_operator_map__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__providers_database_database__ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__providers_localstorage_localstorage__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__angular_common_http__ = __webpack_require__(83);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_rxjs_add_operator_map__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_rxjs_add_operator_map___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_rxjs_add_operator_map__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__providers_database_database__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__providers_localstorage_localstorage__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__ionic_native_camera__ = __webpack_require__(539);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__angular_platform_browser__ = __webpack_require__(38);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -66,123 +69,187 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
-let ProfilePasswordChangePage = class ProfilePasswordChangePage {
-    constructor(navParams, storage, databaseprovider, cd, alertCtrl, view, localstorage) {
+
+
+
+let ProfileImagePage = class ProfileImagePage {
+    constructor(navParams, navCtrl, alertCtrl, storage, databaseprovider, cd, view, loadingCtrl, http, camera, _DomSanitizer, localstorage) {
         this.navParams = navParams;
+        this.navCtrl = navCtrl;
+        this.alertCtrl = alertCtrl;
         this.storage = storage;
         this.databaseprovider = databaseprovider;
         this.cd = cd;
-        this.alertCtrl = alertCtrl;
         this.view = view;
+        this.loadingCtrl = loadingCtrl;
+        this.http = http;
+        this.camera = camera;
+        this._DomSanitizer = _DomSanitizer;
         this.localstorage = localstorage;
-        this.passwordType = 'password';
-        this.passwordIcon = 'eye-off';
     }
-    ngOnInit() {
+    addCameraImage() {
+        const options = {
+            quality: 100,
+            targetWidth: 900,
+            targetHeight: 600,
+            destinationType: this.camera.DestinationType.DATA_URL,
+            encodingType: this.camera.EncodingType.JPEG,
+            correctOrientation: true,
+            mediaType: this.camera.MediaType.PICTURE,
+            sourceType: 1
+        };
+        this.camera.getPicture(options).then((imageData) => {
+            // imageData is either a base64 encoded string or a file URI
+            // If it's base64:
+            console.log('Camera image');
+            //let base64Image = 'data:image/jpeg;base64,' + imageData;
+            //this.ProfileImageAttachment = base64Image;
+            this.ProfileImageAttachment = 'data:image/jpeg;base64,' + imageData;
+            this.cd.markForCheck();
+        }, (err) => {
+            // Handle error
+            console.log('Camera error');
+        });
     }
-    hideShowPassword() {
-        this.passwordType = this.passwordType === 'text' ? 'password' : 'text';
-        this.passwordIcon = this.passwordIcon === 'eye-off' ? 'eye' : 'eye-off';
+    addGalleryImage() {
+        const options = {
+            quality: 80,
+            destinationType: this.camera.DestinationType.DATA_URL,
+            encodingType: this.camera.EncodingType.JPEG,
+            mediaType: this.camera.MediaType.PICTURE,
+            correctOrientation: true,
+            allowEdit: true,
+            sourceType: this.camera.PictureSourceType.PHOTOLIBRARY
+        };
+        this.camera.getPicture(options).then((imageData) => {
+            // imageData is either a base64 encoded string or a file URI
+            // If it's base64:
+            console.log('Camera image');
+            this.ProfileImageAttachment = 'data:image/jpeg;base64,' + imageData;
+            this.cd.markForCheck();
+        }, (err) => {
+            // Handle error
+            console.log('Camera error');
+        });
     }
-    closeModal(UserAction) {
-        var AttendeeID = this.localstorage.getLocalValue('AttendeeID');
-        if (UserAction == "Save") {
-            var saveCheck = true;
-            console.log('saveCheck: ' + saveCheck);
-            console.log('passwordOld: ' + this.passwordOld);
-            console.log('passwordNew1: ' + this.passwordNew1);
-            console.log('passwordNew2: ' + this.passwordNew2);
-            if (this.passwordOld === undefined) {
-                let savealert1 = this.alertCtrl.create({
-                    title: 'Password Change',
-                    subTitle: 'Your old password cannot be blank.',
-                    buttons: ['Ok']
-                });
-                savealert1.present();
-                saveCheck = false;
-            }
-            if ((saveCheck == true) && (this.passwordNew1 === undefined || this.passwordNew2 === undefined)) {
-                let savealert2 = this.alertCtrl.create({
-                    title: 'Password Change',
-                    subTitle: 'Your new password cannot be blank.',
-                    buttons: ['Ok']
-                });
-                savealert2.present();
-                saveCheck = false;
-            }
-            if ((saveCheck == true) && (this.passwordNew1 != this.passwordNew2)) {
-                let savealert3 = this.alertCtrl.create({
-                    title: 'Password Change',
-                    subTitle: 'The new passwords do not match.',
-                    buttons: ['Ok']
-                });
-                savealert3.present();
-                saveCheck = false;
-            }
-            if (saveCheck == true) {
-                console.log('saveCheck: ' + saveCheck);
-                console.log('passwordOld: ' + this.passwordOld);
-                console.log('passwordNew1: ' + this.passwordNew1);
-                console.log('passwordNew2: ' + this.passwordNew2);
-                var flags = 'pw|' + this.passwordOld + '|' + this.passwordNew1;
-                this.databaseprovider.getDatabaseStats(flags, AttendeeID).then(data => {
-                    console.log("getDatabaseStats: " + JSON.stringify(data));
-                    if (data['length'] > 0) {
-                        //console.log("Return status: " + JSON.stringify(data));
-                        var ReturnStatus = data[0].Status;
-                        switch (ReturnStatus) {
-                            case "Saved":
-                                let savealert4 = this.alertCtrl.create({
-                                    title: 'Password Change',
-                                    subTitle: 'Your password has been updated.',
-                                    buttons: ['Ok']
-                                });
-                                savealert4.present();
-                                this.view.dismiss(UserAction);
-                                break;
-                            case "Failed":
-                                let savealert5 = this.alertCtrl.create({
-                                    title: 'Password Change',
-                                    subTitle: 'There was a problem with your entries. Either the old password is incorrect, the new one does not meet minimum requirements, or there was a problem connecting to the server. Please re-check and try again.',
-                                    buttons: ['Ok']
-                                });
-                                savealert5.present();
-                                break;
-                            case "OldFail":
-                                let savealert6 = this.alertCtrl.create({
-                                    title: 'Password Change',
-                                    subTitle: 'Your old password is not correct. Please re-check and try again.',
-                                    buttons: ['Ok']
-                                });
-                                savealert6.present();
-                                break;
-                        }
-                    }
-                }).catch(function () {
-                    console.log("Password Change Promise Rejected");
-                });
-            }
+    ionViewDidEnter() {
+        var DevicePlatform = this.localstorage.getLocalValue('DevicePlatform');
+        // Disable access to camera and gallery buttons when running in a browser
+        // until the ability to pull an image via the browser can be implemented
+        if (DevicePlatform == 'Browser') {
+            console.log('Browser button settings');
+            this.deviceButtons = false;
+            this.browserButtons = true;
         }
+        else {
+            console.log('Device button settings');
+            this.deviceButtons = true;
+            this.browserButtons = false;
+        }
+        this.cd.markForCheck();
+    }
+    /*
+    closeModal(UserAction) {
+        
+        var AttendeeID = this.localstorage.getLocalValue('AttendeeID');
+
+        if (UserAction == "Save") {
+
+            // Load initial data set here
+            let loading = this.loadingCtrl.create({
+                spinner: 'crescent',
+                content: 'Saving your profile image...'
+            });
+
+            loading.present();
+
+            var NewFilename = AttendeeID;
+            console.log('New filename: ' + NewFilename);
+                        
+            let url = 'https://naeyc.convergence-us.com/AdminGateway/image_uploader.php';
+            let postData = new FormData();
+            postData.append('file', this.ProfileImageAttachment);
+            postData.append('location', 'Attendees');
+            postData.append('filename', NewFilename);
+            postData.append('AttendeeID', AttendeeID);
+            
+            let data:Observable<any> = this.http.post(url, postData);
+            
+            data.subscribe((result) => {
+                
+                console.log("Image uploaded: " + JSON.stringify(result));
+                loading.dismiss();
+                this.view.dismiss(UserAction);
+
+            });
+                            
+        }
+        
         if (UserAction == "Cancel") {
             this.view.dismiss(UserAction);
         }
+        
+    }
+    */
+    closePage(UserAction) {
+        var AttendeeID = this.localstorage.getLocalValue('AttendeeID');
+        if (UserAction == "Save") {
+            // Load initial data set here
+            let loading = this.loadingCtrl.create({
+                spinner: 'crescent',
+                content: 'Saving your profile image...'
+            });
+            loading.present();
+            var NewFilename = AttendeeID;
+            console.log('New filename: ' + NewFilename);
+            let url = 'https://aacdmobile.convergence-us.com/AdminGateway/2019/image_uploader.php';
+            let postData = new FormData();
+            postData.append('file', this.ProfileImageAttachment);
+            postData.append('location', 'Attendees');
+            postData.append('filename', NewFilename);
+            postData.append('AttendeeID', AttendeeID);
+            let data = this.http.post(url, postData);
+            data.subscribe((result) => {
+                console.log("Image uploaded: " + JSON.stringify(result));
+                loading.dismiss();
+                this.navCtrl.pop();
+            }, err => {
+                loading.dismiss();
+                let alert = this.alertCtrl.create({
+                    title: 'Image Upload Error',
+                    subTitle: 'Problem receiving feedback from server - check log.',
+                    buttons: ['OK']
+                });
+                alert.present();
+                console.log(err.status);
+                console.log("Image uploader error: ", JSON.stringify(err));
+            });
+        }
+        if (UserAction == "Cancel") {
+            this.navCtrl.pop();
+        }
     }
 };
-ProfilePasswordChangePage = __decorate([
+ProfileImagePage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
-        selector: 'page-profilepasswordchange',template:/*ion-inline-start:"/Users/petervroom/aacd19/src/pages/profilepasswordchange/profilepasswordchange.html"*/'<ion-header>\n\n	<ion-navbar color="primary">\n		<ion-title>Password Change</ion-title>\n	</ion-navbar>\n\n</ion-header>\n\n<ion-content>\n\n	<ion-item>\n		<ion-label floating>Old Password</ion-label>\n		<ion-input class="InputBoxW" [type]="passwordType" placeholder="" (input)=\'passwordOld = $event.target.value\' name="passwordOld" [value]="passwordOld" id="passwordOld"></ion-input>\n		<ion-icon item-end [name]="passwordIcon" class="passwordIcon" (click)=\'hideShowPassword()\'></ion-icon>\n	</ion-item>\n\n	<ion-item>\n		<ion-label floating>New Password</ion-label>\n		<ion-input class="InputBoxW" [type]="passwordType" placeholder="" (input)=\'passwordNew1 = $event.target.value\' name="passwordNew1" [value]="passwordNew1" id="passwordNew1"></ion-input>\n		<ion-icon item-end [name]="passwordIcon" class="passwordIcon" (click)=\'hideShowPassword()\'></ion-icon>\n	</ion-item>\n\n	<ion-item>\n		<ion-label floating>Re-type New Password</ion-label>\n		<ion-input class="InputBoxW" [type]="passwordType" placeholder="" (input)=\'passwordNew2 = $event.target.value\' name="passwordNew2" [value]="passwordNew2" id="passwordNew2"></ion-input>\n		<ion-icon item-end [name]="passwordIcon" class="passwordIcon" (click)=\'hideShowPassword()\'></ion-icon>\n	</ion-item>\n\n	<ion-grid>\n\n		<ion-row>\n			<ion-col col-6 >\n				<button ion-button block color="danger" (click)="closeModal(\'Save\')">\n					Save\n				</button>\n			</ion-col>\n			<ion-col col-6 >\n				<button ion-button block color="danger" (click)="closeModal(\'Cancel\')">\n					Cancel\n				</button>\n			</ion-col>\n		</ion-row>\n	</ion-grid>\n	\n</ion-content>\n'/*ion-inline-end:"/Users/petervroom/aacd19/src/pages/profilepasswordchange/profilepasswordchange.html"*/,
+        selector: 'page-profileimage',template:/*ion-inline-start:"/Users/petervroom/aacd19/src/pages/profileimage/profileimage.html"*/'<ion-header>\n\n	<ion-navbar color="primary">\n		<ion-title>Add a Profile Image</ion-title>\n	</ion-navbar>\n\n</ion-header>\n\n\n<ion-content>\n<!-- Posting picture attachment -->\n<img class="center" [src]="_DomSanitizer.bypassSecurityTrustUrl(ProfileImageAttachment)" onerror="this.src=\'assets/img/missing-image.png\'">\n\n<!-- Button controls -->\n<ion-grid *ngIf=deviceButtons>\n	<ion-row>\n		<ion-col col-3 >\n			<button ion-button color="danger" (click)="closePage(\'Cancel\')">\n				Cancel\n			</button>\n		</ion-col>\n		<ion-col col-3 >\n			<button color="danger" ion-button  (click)="addGalleryImage()">\n				Gallery\n			</button>\n		</ion-col>\n		<ion-col col-3 >\n			<button color="danger" ion-button  (click)="addCameraImage()">\n				Camera\n			</button>\n		</ion-col>\n		<ion-col col-3 >\n			<button color="danger" ion-button  (click)="closePage(\'Save\')">\n				Save\n			</button>\n		</ion-col>\n	</ion-row>\n</ion-grid>\n\n		<ion-grid *ngIf=browserButtons>\n			<ion-row>\n				<ion-col col-3 >\n					<button ion-button color="danger" (click)="closePage(\'Cancel\')">\n						Cancel\n					</button>\n				</ion-col>\n				<ion-col col-6 >\n					<p style="text-align:center;">Please use the mobile app to upload an image</p>\n				</ion-col>\n				<ion-col col-3 >\n					<button ion-button color="danger" (click)="closePage(\'Save\')">\n						Save\n					</button>\n				</ion-col>\n			</ion-row>\n		</ion-grid>\n		\n</ion-content>\n'/*ion-inline-end:"/Users/petervroom/aacd19/src/pages/profileimage/profileimage.html"*/,
         changeDetection: __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectionStrategy"].OnPush
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["v" /* NavParams */],
-        __WEBPACK_IMPORTED_MODULE_2__ionic_storage__["b" /* Storage */],
-        __WEBPACK_IMPORTED_MODULE_4__providers_database_database__["a" /* Database */],
-        __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"],
+        __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["u" /* NavController */],
         __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["b" /* AlertController */],
+        __WEBPACK_IMPORTED_MODULE_2__ionic_storage__["b" /* Storage */],
+        __WEBPACK_IMPORTED_MODULE_5__providers_database_database__["a" /* Database */],
+        __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"],
         __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["A" /* ViewController */],
-        __WEBPACK_IMPORTED_MODULE_5__providers_localstorage_localstorage__["a" /* Localstorage */]])
-], ProfilePasswordChangePage);
+        __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["q" /* LoadingController */],
+        __WEBPACK_IMPORTED_MODULE_3__angular_common_http__["a" /* HttpClient */],
+        __WEBPACK_IMPORTED_MODULE_7__ionic_native_camera__["a" /* Camera */],
+        __WEBPACK_IMPORTED_MODULE_8__angular_platform_browser__["c" /* DomSanitizer */],
+        __WEBPACK_IMPORTED_MODULE_6__providers_localstorage_localstorage__["a" /* Localstorage */]])
+], ProfileImagePage);
 
-//# sourceMappingURL=profilepasswordchange.js.map
+//# sourceMappingURL=profileimage.js.map
 
 /***/ })
 

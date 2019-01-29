@@ -7,14 +7,6 @@
     "is_top_level": true,
     "variables": {}
   },
-  "cordova-plugin-console": {
-    "source": {
-      "type": "registry",
-      "id": "cordova-plugin-console@1.0.5"
-    },
-    "is_top_level": true,
-    "variables": {}
-  },
   "cordova-plugin-statusbar": {
     "source": {
       "type": "registry",
@@ -50,7 +42,7 @@
   "cordova-plugin-camera": {
     "source": {
       "type": "registry",
-      "id": "cordova-plugin-camera"
+      "id": "cordova-plugin-camera@latest"
     },
     "is_top_level": true,
     "variables": {}
@@ -58,9 +50,9 @@
   "cordova-plugin-compat": {
     "source": {
       "type": "registry",
-      "id": "cordova-plugin-compat"
+      "id": "cordova-plugin-compat@latest"
     },
-    "is_top_level": false,
+    "is_top_level": true,
     "variables": {}
   },
   "cordova-plugin-add-swift-support": {
@@ -74,7 +66,7 @@
   "cordova-plugin-email": {
     "source": {
       "type": "registry",
-      "id": "cordova-plugin-email"
+      "id": "cordova-plugin-email@latest"
     },
     "is_top_level": true,
     "variables": {}
@@ -82,7 +74,7 @@
   "cordova-plugin-geolocation": {
     "source": {
       "type": "registry",
-      "id": "cordova-plugin-geolocation"
+      "id": "cordova-plugin-geolocation@latest"
     },
     "is_top_level": true,
     "variables": {}
@@ -98,15 +90,7 @@
   "phonegap-plugin-barcodescanner": {
     "source": {
       "type": "registry",
-      "id": "phonegap-plugin-barcodescanner"
-    },
-    "is_top_level": true,
-    "variables": {}
-  },
-  "mx.ferreyra.callnumber": {
-    "source": {
-      "type": "registry",
-      "id": "call-number"
+      "id": "phonegap-plugin-barcodescanner@latest"
     },
     "is_top_level": true,
     "variables": {}
@@ -130,9 +114,9 @@
   "cordova-plugin-app-event": {
     "source": {
       "type": "registry",
-      "id": "cordova-plugin-app-event"
+      "id": "cordova-plugin-app-event@latest"
     },
-    "is_top_level": false,
+    "is_top_level": true,
     "variables": {}
   },
   "phonegap-nfc": {
@@ -146,15 +130,7 @@
   "de.appplant.cordova.plugin.printer": {
     "source": {
       "type": "registry",
-      "id": "de.appplant.cordova.plugin.printer@~0.7.1"
-    },
-    "is_top_level": true,
-    "variables": {}
-  },
-  "cordova-sqlite-storage": {
-    "source": {
-      "type": "registry",
-      "id": "cordova-sqlite-storage@~2.0.3"
+      "id": "de.appplant.cordova.plugin.printer@latest"
     },
     "is_top_level": true,
     "variables": {}
@@ -170,7 +146,7 @@
   "cordova-plugin-calendar": {
     "source": {
       "type": "registry",
-      "id": "cordova-plugin-calendar"
+      "id": "cordova-plugin-calendar@latest"
     },
     "is_top_level": true,
     "variables": {}
@@ -178,7 +154,7 @@
   "cordova-plugin-file": {
     "source": {
       "type": "registry",
-      "id": "cordova-plugin-file"
+      "id": "cordova-plugin-file@latest"
     },
     "is_top_level": true,
     "variables": {}
@@ -187,14 +163,6 @@
     "source": {
       "type": "registry",
       "id": "cordova-plugin-contacts@3.0.1"
-    },
-    "is_top_level": true,
-    "variables": {}
-  },
-  "cordova-plugin-google-analytics": {
-    "source": {
-      "type": "registry",
-      "id": "cordova-plugin-google-analytics"
     },
     "is_top_level": true,
     "variables": {}
@@ -210,7 +178,7 @@
   "cordova-plugin-safariviewcontroller": {
     "source": {
       "type": "registry",
-      "id": "cordova-plugin-safariviewcontroller"
+      "id": "cordova-plugin-safariviewcontroller@latest"
     },
     "is_top_level": true,
     "variables": {}
@@ -218,7 +186,7 @@
   "cordova-plugin-file-opener2": {
     "source": {
       "type": "registry",
-      "id": "cordova-plugin-file-opener2"
+      "id": "cordova-plugin-file-opener2@latest"
     },
     "is_top_level": true,
     "variables": {}
@@ -226,7 +194,7 @@
   "cordova-plugin-file-transfer": {
     "source": {
       "type": "registry",
-      "id": "cordova-plugin-file-transfer"
+      "id": "cordova-plugin-file-transfer@latest"
     },
     "is_top_level": true,
     "variables": {}
@@ -242,7 +210,7 @@
   "cordova-plugin-app-update": {
     "source": {
       "type": "registry",
-      "id": "cordova-plugin-app-update"
+      "id": "cordova-plugin-app-update@latest"
     },
     "is_top_level": true,
     "variables": {}
@@ -258,7 +226,7 @@
   "cordova-plugin-x-toast": {
     "source": {
       "type": "registry",
-      "id": "cordova-plugin-x-toast"
+      "id": "cordova-plugin-x-toast@latest"
     },
     "is_top_level": true,
     "variables": {}
@@ -274,15 +242,7 @@
   "cordova-sms-plugin": {
     "source": {
       "type": "registry",
-      "id": "cordova-sms-plugin"
-    },
-    "is_top_level": true,
-    "variables": {}
-  },
-  "cordova-plugin-estimote": {
-    "source": {
-      "type": "registry",
-      "id": "cordova-plugin-estimote"
+      "id": "cordova-sms-plugin@latest"
     },
     "is_top_level": true,
     "variables": {}
@@ -290,49 +250,29 @@
   "cordova-plugin-ionic": {
     "source": {
       "type": "registry",
-      "id": "cordova-plugin-ionic@^4.1.3"
+      "id": "cordova-plugin-ionic@^4.2.0"
     },
     "is_top_level": true,
     "variables": {
-      "APP_ID": "7f61300b",
+      "APP_ID": "680e18f3",
       "CHANNEL_NAME": "Production",
       "UPDATE_METHOD": "auto"
     }
   },
-  "cordova-plugin-googlemaps": {
-    "source": {
-      "type": "registry",
-      "id": "https://github.com/mapsplugin/cordova-plugin-googlemaps"
-    },
-    "is_top_level": true,
-    "variables": {
-      "API_KEY_FOR_ANDROID": "AIzaSyBBOZQqb05tjRHef4M8UHC9xJZmkBv_apk",
-      "API_KEY_FOR_IOS": "AIzaSyAqnNA1fIKm4GyLMvTrYb7P3qgKrt8QVu8"
-    }
-  },
-  "phonegap-plugin-push": {
-    "source": {
-      "type": "registry",
-      "id": "phonegap-plugin-push@^1.10.7"
-    },
-    "is_top_level": true,
-    "variables": {
-      "SENDER_ID": ""
-    }
-  },
-  "cordova-plugin-fcm": {
-    "source": {
-      "type": "registry",
-      "id": "cordova-plugin-fcm@^2.1.2"
-    },
-    "is_top_level": true,
-    "variables": {}
-  },
   "onesignal-cordova-plugin": {
     "source": {
       "type": "registry",
-      "id": "onesignal-cordova-plugin"
+      "id": "onesignal-cordova-plugin@latest"
     },
     "is_top_level": true,
     "variables": {}
-  }}
+  },
+  "com.googlemaps.ios": {
+    "source": {
+      "type": "registry",
+      "id": "https://github.com/mapsplugin/cordova-plugin-googlemaps-sdk.git#2.6.0"
+    },
+    "is_top_level": false,
+    "variables": {}
+  }
+}

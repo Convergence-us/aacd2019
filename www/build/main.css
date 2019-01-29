@@ -27677,7 +27677,7 @@ page-listinglevel1 button[ion-fab] ion-label {
   top: -8px;
   right: 40px;
   color: white;
-  background-color: #764880;
+  background-color: #2196f3;
   line-height: 24px;
   padding: 4px 8px;
   border-radius: 4px;
@@ -27689,7 +27689,7 @@ page-listinglevel1 .myButtonGreyBlue {
   border-radius: 0 !important;
   border-right-style: solid;
   border-width: 1px !important;
-  border-color: #710080;
+  border-color: #2196f3;
   -webkit-box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
   box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
 }
@@ -27700,18 +27700,18 @@ page-listinglevel1 .myButtonGreyBlue:Hover {
   transition-duration: 0.4s !important;
   -webkit-box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
   box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
-  background-color: #710080 !important;
+  background-color: #2196f3 !important;
   font-weight: bold !important;
   color: #fff !important;
   border-radius: 0 !important;
 }
 
 page-listinglevel1 .buttonActive {
-  Background: #710080;
+  Background: #2196f3;
 }
 
 page-listinglevel1 .myButtonActive {
-  background-color: #710080 !important;
+  background-color: #2196f3 !important;
   color: #fff !important;
   border-radius: 0 !important;
   -webkit-box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);

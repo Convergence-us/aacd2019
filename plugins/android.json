@@ -7,6 +7,21 @@
     "files": {}
   },
   "installed_plugins": {
+    "cordova-plugin-actionsheet": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "cordova-plugin-app-update": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "cordova-plugin-calendar": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "cordova-plugin-camera": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "cordova-plugin-contacts": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
     "cordova-plugin-device": {
       "PACKAGE_NAME": "com.convergenceus.aacdmobile"
     },
@@ -25,10 +40,16 @@
     "cordova-plugin-geolocation": {
       "PACKAGE_NAME": "com.convergenceus.aacdmobile"
     },
-    "cordova-plugin-google-analytics": {
+    "cordova-plugin-inappbrowser": {
       "PACKAGE_NAME": "com.convergenceus.aacdmobile"
     },
-    "cordova-plugin-inappbrowser": {
+    "cordova-plugin-ionic": {
+      "APP_ID": "1d6f5cfd",
+      "CHANNEL_NAME": "Production",
+      "WARN_DEBUG": "true",
+      "UPDATE_API": "https://api.ionicjs.com",
+      "UPDATE_METHOD": "auto",
+      "MAX_STORE": "2",
       "PACKAGE_NAME": "com.convergenceus.aacdmobile"
     },
     "cordova-plugin-native-spinner": {
@@ -48,10 +69,31 @@
     },
     "cordova-plugin-x-toast": {
       "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "cordova-sms-plugin": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "cordova-plugin-compat": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "phonegap-plugin-barcodescanner": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "cordova-plugin-app-event": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "de.appplant.cordova.plugin.printer": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "onesignal-cordova-plugin": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
     }
   },
   "dependent_plugins": {
-    "cordova-plugin-app-event": {
+    "cordova-plugin-appversion": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "cordova-sqlite-ext": {
       "PACKAGE_NAME": "com.convergenceus.aacdmobile"
     }
   }

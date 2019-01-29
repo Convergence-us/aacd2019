@@ -7,6 +7,30 @@
     "files": {}
   },
   "installed_plugins": {
+    "cordova-plugin-actionsheet": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "cordova-plugin-app-event": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "cordova-plugin-app-update": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "cordova-plugin-calendar": {
+      "CALENDAR_USAGE_DESCRIPTION": " ",
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "cordova-plugin-camera": {
+      "CAMERA_USAGE_DESCRIPTION": " ",
+      "PHOTOLIBRARY_USAGE_DESCRIPTION": " ",
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "cordova-plugin-compat": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "cordova-plugin-contacts": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
     "cordova-plugin-device": {
       "PACKAGE_NAME": "com.convergenceus.aacdmobile"
     },
@@ -25,10 +49,68 @@
     "cordova-plugin-geolocation": {
       "GEOLOCATION_USAGE_DESCRIPTION": " ",
       "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "cordova-plugin-inappbrowser": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "cordova-plugin-ionic": {
+      "APP_ID": "680e18f3",
+      "CHANNEL_NAME": "Production",
+      "WARN_DEBUG": "true",
+      "UPDATE_API": "https://api.ionicjs.com",
+      "UPDATE_METHOD": "auto",
+      "MAX_STORE": "2",
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "cordova-plugin-native-spinner": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "cordova-plugin-safariviewcontroller": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "cordova-plugin-splashscreen": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "cordova-plugin-statusbar": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "cordova-plugin-whitelist": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "cordova-plugin-x-toast": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "cordova-sms-plugin": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "de.appplant.cordova.plugin.local-notification": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "de.appplant.cordova.plugin.printer": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "ionic-plugin-keyboard": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "onesignal-cordova-plugin": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "phonegap-nfc": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "phonegap-plugin-barcodescanner": {
+      "CAMERA_USAGE_DESCRIPTION": " ",
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
     }
   },
   "dependent_plugins": {
-    "cordova-plugin-app-event": {
+    "com.googlemaps.ios": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "cordova-plugin-appversion": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "cordova-sqlite-ext": {
       "PACKAGE_NAME": "com.convergenceus.aacdmobile"
     }
   }

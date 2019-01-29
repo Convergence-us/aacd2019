@@ -1,0 +1,8 @@
+{
+  "name": "AACD",
+  "integrations": {
+    "cordova": {}
+  },
+  "type": "ionic-angular",
+  "id": "1d6f5cfd"
+}

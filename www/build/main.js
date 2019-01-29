@@ -1,6 +1,979 @@
-webpackJsonp([23],{
+webpackJsonp([22],{
 
 /***/ 100:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Synchronization; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_http__ = __webpack_require__(96);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__providers_localstorage_localstorage__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__ionic_native_sqlite__ = __webpack_require__(95);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_rxjs_add_operator_catch__ = __webpack_require__(149);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_rxjs_add_operator_catch___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_rxjs_add_operator_catch__);
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+// Components, functions, plugins
+
+
+
+
+
+
+// Global URL and conference year reference used for all AJAX-to-MySQL calls
+var SyncURLReference = "https://aacdmobile.convergence-us.com/cvPlanner.php?";
+let Synchronization = class Synchronization {
+    constructor(platform, httpCall, alertCtrl, events, sqlite, localstorage) {
+        this.platform = platform;
+        this.httpCall = httpCall;
+        this.alertCtrl = alertCtrl;
+        this.events = events;
+        this.sqlite = sqlite;
+        this.localstorage = localstorage;
+    }
+    // -----------------------------------
+    // Push Notification
+    // 
+    // Sends token, logged in user, device type to database
+    // -----------------------------------
+    SendPushRecord(ptokenID, pattendeeID, pUserName, pDeviceType, pSyncType) {
+        console.log("PushSync Begin Token ID = " + ptokenID + ", Attendee ID = " + pattendeeID + ", User Name = " + pUserName + ", Device Type = " + pDeviceType + ", Sync Type = " + pSyncType);
+        let qp = new __WEBPACK_IMPORTED_MODULE_2__angular_http__["d" /* URLSearchParams */]();
+        qp.set('action', 'push');
+        qp.set('TokenID', ptokenID);
+        qp.set('AttendeeID', pattendeeID);
+        qp.set('UserName', pUserName);
+        qp.set('DeviceType', pDeviceType);
+        qp.set('SyncType', pSyncType);
+        qp.set('acy', '2018');
+        let options = new __WEBPACK_IMPORTED_MODULE_2__angular_http__["c" /* RequestOptions */]({ params: qp });
+        return new Promise(resolve => {
+            this.httpCall.get(SyncURLReference, options).subscribe(response => {
+                console.log("PushSync Success Data returned: " + JSON.stringify(response));
+                resolve(response.json());
+            }, err => {
+                console.log("PushSync Error Data returned: " + JSON.stringify(err) + " Status: " + err);
+                if (err.status == "412") {
+                    console.log("App and API versions don't match.");
+                    var emptyJSONArray = {};
+                    resolve(emptyJSONArray);
+                }
+                else {
+                    console.log(err.status);
+                    console.log("API Error: ", err);
+                }
+            });
+        });
+    }
+    // -----------------------------------
+    // Database call for M2S
+    // -----------------------------------
+    DBCallQuery(SQLSelectQuery, SQLInsertQuery, SQLUpdateQuery, SQLQueryDelete) {
+        //console.log('DBCall: ' + SQLSelectQuery);
+        return new Promise(resolve => {
+            this.sqlite.create({ name: 'cvPlanner.db', location: 'default' }).then((db) => {
+                this.db = db;
+                if (SQLQueryDelete != 'NO') {
+                    this.db.executeSql(SQLQueryDelete, {}).then((dataS) => {
+                        console.log('DBCall Return: ' + JSON.stringify(dataS));
+                        resolve(SQLInsertQuery);
+                    })
+                        .catch(e => console.log('Sync DBCall: Error selecting (' + SQLSelectQuery + ') base record: ' + JSON.stringify(e)));
+                }
+                else {
+                    this.db.executeSql(SQLSelectQuery, {}).then((dataS) => {
+                        console.log('DBCall Return: ' + JSON.stringify(dataS));
+                        if (dataS.rows.length > 0) {
+                            //console.log('DBCall: ' + SQLUpdateQuery);
+                            resolve(SQLUpdateQuery);
+                        }
+                        else {
+                            //console.log('DBCall: ' + SQLInsertQuery);
+                            resolve(SQLInsertQuery);
+                        }
+                    })
+                        .catch(e => console.log('Sync DBCall: Error selecting (' + SQLSelectQuery + ') base record: ' + JSON.stringify(e)));
+                }
+            });
+        });
+    }
+    DBCallQuery2(SQLQuery) {
+        //console.log('DBCall2: ' + SQLQuery);
+        return new Promise(resolve => {
+            this.sqlite.create({ name: 'cvPlanner.db', location: 'default' }).then((db) => {
+                this.db = db;
+                this.db.executeSql(SQLQuery, {}).then((dataS) => {
+                    resolve(SQLQuery);
+                })
+                    .catch(e => console.log('Sync DBCall2: Error selecting (' + SQLQuery + ') base record: ' + JSON.stringify(e)));
+            });
+        });
+    }
+    // -----------------------------------
+    // Database call for S2M
+    // -----------------------------------
+    DBGetData(QueryType, SQLQuery) {
+        console.log('DBGetData: ' + SQLQuery);
+        return new Promise(resolve => {
+            this.sqlite.create({ name: 'cvPlanner.db', location: 'default' }).then((db) => {
+                this.db = db;
+                let DatabaseResponse = [];
+                this.db.executeSql(SQLQuery, {}).then((dataS) => {
+                    console.log('DBGetData: Response: ' + JSON.stringify(dataS));
+                    if (dataS.rows.length > 0) {
+                        if (QueryType == "itinerary") {
+                            for (let i = 0; i < dataS.rows.length; i++) {
+                                DatabaseResponse.push({
+                                    mtgID: dataS.rows.item(i).mtgID,
+                                    Date_Start: dataS.rows.item(i).Date_Start,
+                                    Date_End: dataS.rows.item(i).Date_End,
+                                    Time_Start: dataS.rows.item(i).Time_Start,
+                                    Time_End: dataS.rows.item(i).Time_End,
+                                    Subject: dataS.rows.item(i).Subject,
+                                    Location: dataS.rows.item(i).Location,
+                                    Description: dataS.rows.item(i).Description,
+                                    atID: dataS.rows.item(i).atID,
+                                    AttendeeID: dataS.rows.item(i).AttendeeID,
+                                    EventID: dataS.rows.item(i).EventID,
+                                    LastUpdated: dataS.rows.item(i).LastUpdated,
+                                    UpdateType: dataS.rows.item(i).UpdateType
+                                });
+                            }
+                        }
+                        if (QueryType == "evaluations") {
+                            for (let i = 0; i < dataS.rows.length; i++) {
+                                DatabaseResponse.push({
+                                    AttendeeID: dataS.rows.item(i).AttendeeID,
+                                    session_id: dataS.rows.item(i).session_id,
+                                    evaluationType: dataS.rows.item(i).evaluationType,
+                                    Q11: dataS.rows.item(i).Q11,
+                                    Q12: dataS.rows.item(i).Q12,
+                                    Q21: dataS.rows.item(i).Q21,
+                                    Q22: dataS.rows.item(i).Q22,
+                                    Q23: dataS.rows.item(i).Q23,
+                                    Q24: dataS.rows.item(i).Q24,
+                                    Q25: dataS.rows.item(i).Q25,
+                                    Q26: dataS.rows.item(i).Q26,
+                                    Q31: dataS.rows.item(i).Q31,
+                                    Q32: dataS.rows.item(i).Q32,
+                                    Q33: dataS.rows.item(i).Q33,
+                                    Q41: dataS.rows.item(i).Q41,
+                                    LastUpdated: dataS.rows.item(i).LastUpdated,
+                                    UpdateType: dataS.rows.item(i).UpdateType
+                                });
+                            }
+                        }
+                        if (QueryType == "evaluation_conference") {
+                            for (let i = 0; i < dataS.rows.length; i++) {
+                                DatabaseResponse.push({
+                                    AttendeeID: dataS.rows.item(i).AttendeeID,
+                                    session_id: dataS.rows.item(i).session_id,
+                                    evaluationType: dataS.rows.item(i).evaluationType,
+                                    Q1: dataS.rows.item(i).Q1,
+                                    Q2: dataS.rows.item(i).Q2,
+                                    Q3: dataS.rows.item(i).Q3,
+                                    Q4: dataS.rows.item(i).Q4,
+                                    Q5: dataS.rows.item(i).Q5,
+                                    Q5C: dataS.rows.item(i).Q5C,
+                                    Q6: dataS.rows.item(i).Q6,
+                                    Q7: dataS.rows.item(i).Q7,
+                                    Q7C: dataS.rows.item(i).Q7C,
+                                    Q8: dataS.rows.item(i).Q8,
+                                    Q9: dataS.rows.item(i).Q9,
+                                    Q10: dataS.rows.item(i).Q10,
+                                    Q10C: dataS.rows.item(i).Q10C,
+                                    Q11: dataS.rows.item(i).Q11,
+                                    Q11C: dataS.rows.item(i).Q11C,
+                                    LastUpdated: dataS.rows.item(i).LastUpdated,
+                                    UpdateType: dataS.rows.item(i).UpdateType
+                                });
+                            }
+                        }
+                        if (QueryType == "attendee_notes") {
+                            for (let i = 0; i < dataS.rows.length; i++) {
+                                DatabaseResponse.push({
+                                    AttendeeID: dataS.rows.item(i).AttendeeID,
+                                    EventID: dataS.rows.item(i).EventID,
+                                    Note: dataS.rows.item(i).Note,
+                                    LastUpdated: dataS.rows.item(i).LastUpdated,
+                                    UpdateType: dataS.rows.item(i).UpdateType
+                                });
+                            }
+                        }
+                        if (QueryType == "activities_feed") {
+                            for (let i = 0; i < dataS.rows.length; i++) {
+                                DatabaseResponse.push({
+                                    AttendeeID: dataS.rows.item(i).AttendeeID,
+                                    afDateTime: dataS.rows.item(i).afDateTime,
+                                    afChatCounter: dataS.rows.item(i).afChatCounter,
+                                    afLikesCounter: dataS.rows.item(i).afLikesCounter,
+                                    afMessage: dataS.rows.item(i).afMessage,
+                                    afImageAttachment: dataS.rows.item(i).afImageAttachment,
+                                    DateAdded: dataS.rows.item(i).DateAdded,
+                                    UpdateType: dataS.rows.item(i).UpdateType
+                                });
+                            }
+                        }
+                        if (QueryType == "activities_feed_comments") {
+                            for (let i = 0; i < dataS.rows.length; i++) {
+                                DatabaseResponse.push({
+                                    afID: dataS.rows.item(i).afID,
+                                    AttendeeID: dataS.rows.item(i).AttendeeID,
+                                    afcComment: dataS.rows.item(i).afcComment,
+                                    afcDateAdded: dataS.rows.item(i).afcDateAdded,
+                                    afcUpdateType: dataS.rows.item(i).afcUpdateType
+                                });
+                            }
+                        }
+                        if (QueryType == "attendee_bookmarks") {
+                            for (let i = 0; i < dataS.rows.length; i++) {
+                                DatabaseResponse.push({
+                                    AttendeeID: dataS.rows.item(i).AttendeeID,
+                                    BookmarkType: dataS.rows.item(i).BookmarkType,
+                                    BookmarkID: dataS.rows.item(i).BookmarkID,
+                                    DateAdded: dataS.rows.item(i).DateAdded,
+                                    UpdateType: dataS.rows.item(i).UpdateType
+                                });
+                            }
+                        }
+                        resolve(DatabaseResponse);
+                    }
+                    else {
+                        resolve(DatabaseResponse);
+                    }
+                })
+                    .catch(e => console.log('Sync DBGetData: Error selecting (' + SQLQuery + ') base record: ' + JSON.stringify(e)));
+            });
+        });
+    }
+    // -----------------------------------
+    // Database Sync
+    // 
+    // Updated records: MySQL to SQLite
+    // 
+    // -----------------------------------
+    DBSyncUpdateM2S(LastSync, ThisSync) {
+        var flags = "UpdateM2S|" + LastSync + "|" + ThisSync;
+        var AttendeeID = this.localstorage.getLocalValue('AttendeeID');
+        // Perform query against server-based MySQL database
+        var url = SyncURLReference + "action=sync&flags=" + flags + "&AttendeeID=" + AttendeeID;
+        console.log('Sync UpdateM2S: ' + url);
+        return new Promise(resolve => {
+            this.httpCall.get(url).subscribe(data3 => {
+                let data = [];
+                console.log('Sync NewM2S: ' + JSON.stringify(data3.json()));
+                data = data3.json();
+                console.log('Sync UpdateM2S: Records: ' + data['length']);
+                if (data['length'] > 0) {
+                    // Parse records and insert into SQLite DB
+                    var SQLQuerySelect = "";
+                    var SQLQueryInsert = "";
+                    var SQLQueryUpdate = "";
+                    var SQLQueryDelete = "";
+                    var DBCallOutput = "";
+                    var DBCallOutput2 = "";
+                    for (var i = 0; i < data['length']; i++) {
+                        SQLQuerySelect = "";
+                        SQLQueryInsert = "";
+                        SQLQueryUpdate = "";
+                        SQLQueryDelete = "";
+                        //console.log('Sync UpdateM2S: Creating query for: ' + data[i].TableName);
+                        // Determine query to use based on table name
+                        switch (data[i].TableName) {
+                            case "courses":
+                                SQLQuerySelect = "SELECT * FROM courses WHERE session_id = '" + data[i].session_id + "'";
+                                SQLQueryInsert = "INSERT INTO courses(";
+                                SQLQueryInsert = SQLQueryInsert + "session_id, session_title, description, ";
+                                SQLQueryInsert = SQLQueryInsert + "session_start_time, session_end_time, primary_speaker, ";
+                                SQLQueryInsert = SQLQueryInsert + "other_speakers, course_id, subject, ";
+                                SQLQueryInsert = SQLQueryInsert + "cs_credits, ce_credits_type, room_number, ";
+                                SQLQueryInsert = SQLQueryInsert + "verification_code, nadl_verification, type, ";
+                                SQLQueryInsert = SQLQueryInsert + "level, speaker_host_emcee, room_capacity, ";
+                                SQLQueryInsert = SQLQueryInsert + "course_topics, ActiveYN, corporate_supporter, ";
+                                SQLQueryInsert = SQLQueryInsert + "session_recording, HandoutFilename, CEcreditsL, ";
+                                SQLQueryInsert = SQLQueryInsert + "CEcreditsP, SearchField) ";
+                                SQLQueryInsert = SQLQueryInsert + "VALUES('" + data[i].session_id + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].session_title + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].description + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].session_start_time + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].session_end_time + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].primary_speaker + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].other_speakers + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].course_id + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].subject + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].cs_credits + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].ce_credits_type + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].room_number + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].verification_code + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].nadl_verification + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].type + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].level + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].speaker_host_emcee + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].room_capacity + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].course_topics + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].ActiveYN + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].corporate_supporter + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].session_recording + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].HandoutFilename + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].CEcreditsL + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].CEcreditsP + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].SearchField + "')";
+                                SQLQueryUpdate = "UPDATE courses ";
+                                SQLQueryUpdate = SQLQueryUpdate + "SET session_title = '" + data[i].session_title + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "description = '" + data[i].description + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "session_start_time = '" + data[i].session_start_time + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "session_end_time = '" + data[i].session_end_time + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "primary_speaker = '" + data[i].primary_speaker + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "other_speakers = '" + data[i].other_speakers + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "course_id = '" + data[i].course_id + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "subject = '" + data[i].subject + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "cs_credits = '" + data[i].cs_credits + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "ce_credits_type = '" + data[i].ce_credits_type + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "room_number = '" + data[i].room_number + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "verification_code = '" + data[i].verification_code + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "type = '" + data[i].type + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "level = '" + data[i].level + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "speaker_host_emcee = '" + data[i].speaker_host_emcee + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "room_capacity = '" + data[i].room_capacity + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "course_topics = '" + data[i].course_topics + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "ActiveYN = '" + data[i].ActiveYN + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "corporate_supporter = '" + data[i].corporate_supporter + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "session_recording = '" + data[i].session_recording + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "HandoutFilename = '" + data[i].HandoutFilename + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "CEcreditsL = '" + data[i].CEcreditsL + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "CEcreditsP = '" + data[i].CEcreditsP + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "SearchField = '" + data[i].SearchField + "' ";
+                                SQLQueryUpdate = SQLQueryUpdate + "WHERE session_id = '" + data[i].session_id + "' ";
+                                SQLQueryDelete = "NO";
+                                break;
+                            case "itinerary":
+                                SQLQuerySelect = "SELECT * FROM itinerary ";
+                                SQLQuerySelect = SQLQuerySelect + "WHERE AttendeeID = '" + data[i].AttendeeID + "' ";
+                                SQLQuerySelect = SQLQuerySelect + "AND mtgID = '" + data[i].mtgID + "' ";
+                                SQLQuerySelect = SQLQuerySelect + "AND EventID = '" + data[i].EventID + "' ";
+                                SQLQueryInsert = "INSERT INTO itinerary(";
+                                SQLQueryInsert = SQLQueryInsert + "mtgID, Date_Start, ";
+                                SQLQueryInsert = SQLQueryInsert + "Date_End, Time_Start, Time_End, ";
+                                SQLQueryInsert = SQLQueryInsert + "Subject, Location, Description, ";
+                                SQLQueryInsert = SQLQueryInsert + "atID, AttendeeID, EventID, ";
+                                SQLQueryInsert = SQLQueryInsert + "LastUpdated, UpdateType) ";
+                                SQLQueryInsert = SQLQueryInsert + "VALUES('" + data[i].mtgID + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Date_Start + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Date_End + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Time_Start + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Time_End + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Subject + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Location + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Description + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].atID + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].AttendeeID + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].EventID + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].LastUpdated + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].UpdateType + "')";
+                                SQLQueryUpdate = "UPDATE itinerary ";
+                                SQLQueryUpdate = SQLQueryUpdate + "SET Date_Start = '" + data[i].Date_Start + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "Date_End = '" + data[i].Date_End + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "Time_Start = '" + data[i].Time_Start + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "Time_End = '" + data[i].Time_End + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "Subject = '" + data[i].Subject + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "Location = '" + data[i].Location + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "Description = '" + data[i].Description + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "LastUpdated = '" + data[i].LastUpdated + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "UpdateType = '" + data[i].UpdateType + "' ";
+                                SQLQueryUpdate = SQLQueryUpdate + "WHERE AttendeeID = '" + data[i].AttendeeID + "' ";
+                                SQLQueryUpdate = SQLQueryUpdate + "AND mtgID = '" + data[i].mtgID + "' ";
+                                SQLQueryUpdate = SQLQueryUpdate + "AND EventID = '" + data[i].EventID + "' ";
+                                SQLQueryDelete = "NO";
+                                break;
+                            case "attendee_ces":
+                                SQLQuerySelect = "SELECT * FROM attendee_ces ";
+                                SQLQuerySelect = SQLQuerySelect + "WHERE AttendeeID = '" + data[i].AttendeeID + "' ";
+                                SQLQuerySelect = SQLQuerySelect + "AND session_id = '" + data[i].session_id + "' ";
+                                SQLQueryInsert = "INSERT INTO attendee_ces(";
+                                SQLQueryInsert = SQLQueryInsert + "AttendeeID, session_id, course_id, ";
+                                SQLQueryInsert = SQLQueryInsert + "scannedYN, evalID, DateAdded, LastUpdated, ceNotes, ";
+                                SQLQueryInsert = SQLQueryInsert + "UpdateType) ";
+                                SQLQueryInsert = SQLQueryInsert + "VALUES('" + data[i].AttendeeID + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].session_id + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].course_id + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].scannedYN + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].evalID + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].DateAdded + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].LastUpdated + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].ceNotes + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].UpdateType + "')";
+                                SQLQueryUpdate = "UPDATE attendee_ces ";
+                                SQLQueryUpdate = SQLQueryUpdate + "SET AttendeeID = '" + data[i].AttendeeID + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "session_id = '" + data[i].session_id + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "course_id = '" + data[i].course_id + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "scannedYN = '" + data[i].scannedYN + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "evalID = '" + data[i].evalID + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "DateAdded = '" + data[i].DateAdded + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "LastUpdated = '" + data[i].LastUpdated + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "ceNotes = '" + data[i].ceNotes + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "UpdateType = '" + data[i].UpdateType + "' ";
+                                SQLQueryUpdate = SQLQueryUpdate + "WHERE AttendeeID = '" + data[i].AttendeeID + "' ";
+                                SQLQueryUpdate = SQLQueryUpdate + "AND session_id = '" + data[i].session_id + "' ";
+                                SQLQueryDelete = "DELETE FROM attendee_ces ";
+                                SQLQueryDelete = SQLQueryDelete + "WHERE AttendeeID = '" + data[i].AttendeeID + "' ";
+                                SQLQueryDelete = SQLQueryDelete + "AND session_id = '" + data[i].session_id + "' ";
+                                break;
+                            case "courses_speakers":
+                                SQLQuerySelect = "SELECT * FROM courses_speakers WHERE speakerID = '" + data[i].speakerID + "'";
+                                SQLQueryInsert = "INSERT INTO courses_speakers(";
+                                SQLQueryInsert = SQLQueryInsert + "speakerID, FullName, FirstName, LastName, ";
+                                SQLQueryInsert = SQLQueryInsert + "Credentials, Bio, Title, Company, Courses, imageFilename, email, ";
+                                SQLQueryInsert = SQLQueryInsert + "Website, SearchField, ActiveYN) ";
+                                SQLQueryInsert = SQLQueryInsert + "VALUES(" + data[i].speakerID + ", ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].FullName + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].FirstName + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].LastName + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Credentials + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Bio + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Title + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Company + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Courses + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].imageFilename + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].email + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Website + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].SearchField + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].ActiveYN + "')";
+                                SQLQueryUpdate = "UPDATE courses_speakers ";
+                                SQLQueryUpdate = SQLQueryUpdate + "SET FullName = '" + data[i].FullName + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "FirstName = '" + data[i].FirstName + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "LastName = '" + data[i].LastName + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "Credentials = '" + data[i].Credentials + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "Bio = '" + data[i].Bio + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "Title = '" + data[i].Title + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "Company = '" + data[i].Company + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "Courses = '" + data[i].Courses + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "imageFilename = '" + data[i].imageFilename + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "email = '" + data[i].email + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "Website = '" + data[i].SearchField + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "SearchField = '" + data[i].SearchField + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "ActiveYN = '" + data[i].SearchField + "' ";
+                                SQLQueryUpdate = SQLQueryUpdate + "WHERE speakerID = '" + data[i].speakerID + "' ";
+                                SQLQueryDelete = "DELETE FROM courses_speakers ";
+                                SQLQueryDelete = SQLQueryDelete + "WHERE speakerID = '" + data[i].speakerID + "' ";
+                                break;
+                            case "exhibitors":
+                                SQLQuerySelect = "SELECT * FROM exhibitors WHERE ExhibitorID = " + data[i].ExhibitorID;
+                                SQLQueryInsert = "INSERT INTO exhibitors(";
+                                SQLQueryInsert = SQLQueryInsert + "ExhibitorID, ClientExhibitorID, CompanyName, ";
+                                SQLQueryInsert = SQLQueryInsert + "AddressLine1, AddressLine2, City, ";
+                                SQLQueryInsert = SQLQueryInsert + "State, ZipPostalCode, Country, ";
+                                SQLQueryInsert = SQLQueryInsert + "Website, PrimaryOnsiteContactName, PrimaryOnsiteContactEmail, ";
+                                SQLQueryInsert = SQLQueryInsert + "PrimaryOnsiteContactPhone, BoothNumber, ProductsServices, ";
+                                SQLQueryInsert = SQLQueryInsert + "CompanyDescription, SearchField, SocialMediaFacebook, ";
+                                SQLQueryInsert = SQLQueryInsert + "SocialMediaTwitter, SocialMediaGooglePlus, SocialMediaYouTube, ";
+                                SQLQueryInsert = SQLQueryInsert + "SocialMediaLinkedIn) ";
+                                SQLQueryInsert = SQLQueryInsert + "VALUES(" + data[i].ExhibitorID + ", ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].ClientExhibitorID + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].CompanyName + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].AddressLine1 + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].AddressLine2 + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].City + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].State + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].ZipPostalCode + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Country + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Website + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].PrimaryOnsiteContactName + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].PrimaryOnsiteContactEmail + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].PrimaryOnsiteContactPhone + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].BoothNumber + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].ProductsServices + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].CompanyDescription + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].SearchField + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].SocialMediaFacebook + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].SocialMediaTwitter + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].SocialMediaGooglePlus + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].SocialMediaYouTube + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].SocialMediaLinkedIn + "')";
+                                SQLQueryUpdate = "UPDATE exhibitors ";
+                                SQLQueryUpdate = SQLQueryUpdate + "SET CompanyName = '" + data[i].CompanyName + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "AddressLine1 = '" + data[i].AddressLine1 + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "AddressLine2 = '" + data[i].AddressLine2 + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "City = '" + data[i].City + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "State = '" + data[i].State + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "ZipPostalCode = '" + data[i].ZipPostalCode + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "Country = '" + data[i].Country + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "Website = '" + data[i].Website + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "PrimaryOnsiteContactName = '" + data[i].PrimaryOnsiteContactName + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "PrimaryOnsiteContactEmail = '" + data[i].PrimaryOnsiteContactEmail + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "PrimaryOnsiteContactPhone = '" + data[i].PrimaryOnsiteContactPhone + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "BoothNumber = '" + data[i].BoothNumber + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "ProductsServices = '" + data[i].ProductsServices + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "CompanyDescription = '" + data[i].CompanyDescription + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "SearchField = '" + data[i].SearchField + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "SocialMediaFacebook = '" + data[i].SocialMediaFacebook + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "SocialMediaTwitter = '" + data[i].SocialMediaTwitter + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "SocialMediaGooglePlus = '" + data[i].SocialMediaGooglePlus + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "SocialMediaYouTube = '" + data[i].SocialMediaYouTube + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "SocialMediaLinkedIn = '" + data[i].SocialMediaLinkedIn + "' ";
+                                SQLQueryUpdate = SQLQueryUpdate + "WHERE ExhibitorID = " + data[i].ExhibitorID + " ";
+                                SQLQueryDelete = "NO";
+                                break;
+                            case "attendee_courses":
+                                SQLQuerySelect = "SELECT * FROM attendee_courses ";
+                                SQLQuerySelect = SQLQuerySelect + "WHERE ct_id = '" + data[i].ct_id + "' ";
+                                SQLQuerySelect = SQLQuerySelect + "AND session_id = '" + data[i].session_id + "' ";
+                                SQLQueryInsert = "INSERT INTO attendee_courses(";
+                                SQLQueryInsert = SQLQueryInsert + "ct_id, bt_imis_id, st_imis_id, ";
+                                SQLQueryInsert = SQLQueryInsert + "quantity, subevent_id, session_id, waitlist, test) ";
+                                SQLQueryInsert = SQLQueryInsert + "VALUES('" + data[i].ct_id + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].bt_imis_id + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].st_imis_id + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].quantity + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].subevent_id + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].session_id + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].waitlist + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].test + "')";
+                                SQLQueryUpdate = "UPDATE attendee_courses ";
+                                SQLQueryUpdate = SQLQueryUpdate + "SET bt_imis_id = '" + data[i].bt_imis_id + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "st_imis_id = '" + data[i].st_imis_id + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "quantity = '" + data[i].quantity + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "subevent_id = '" + data[i].subevent_id + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "session_id = '" + data[i].session_id + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "waitlist = '" + data[i].waitlist + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "test = '" + data[i].test + "' ";
+                                SQLQueryUpdate = SQLQueryUpdate + "WHERE ct_id = '" + data[i].ct_id + "' ";
+                                SQLQueryUpdate = SQLQueryUpdate + "AND session_id = '" + data[i].session_id + "' ";
+                                SQLQueryDelete = "NO";
+                                break;
+                            case "attendee_notes":
+                                SQLQuerySelect = "SELECT * FROM attendee_notes ";
+                                SQLQuerySelect = SQLQuerySelect + "WHERE AttendeeID = '" + data[i].AttendeeID + "' ";
+                                SQLQuerySelect = SQLQuerySelect + "AND EventID = '" + data[i].session_id + "' ";
+                                SQLQueryInsert = "INSERT INTO attendee_notes(";
+                                SQLQueryInsert = SQLQueryInsert + "AttendeeID, EventID, Note, ";
+                                SQLQueryInsert = SQLQueryInsert + "LastUpdated, UpdateType) ";
+                                SQLQueryInsert = SQLQueryInsert + "VALUES('" + data[i].AttendeeID + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].EventID + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Note + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].LastUpdated + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].UpdateType + "')";
+                                SQLQueryUpdate = "UPDATE attendee_notes ";
+                                SQLQueryUpdate = SQLQueryUpdate + "SET Note = '" + data[i].Date_Start + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "LastUpdated = '" + data[i].Date_End + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "UpdateType = '" + data[i].Time_Start + "' ";
+                                SQLQueryUpdate = SQLQueryUpdate + "WHERE AttendeeID = '" + data[i].AttendeeID + "' ";
+                                SQLQueryUpdate = SQLQueryUpdate + "AND EventID = '" + data[i].EventID + "' ";
+                                SQLQueryDelete = "NO";
+                                break;
+                            case "evaluations":
+                                SQLQuerySelect = "SELECT * FROM evaluations WHERE AttendeeID = '" + data[i].AttendeeID + "' AND evaluationType = '" + data[i].evaluationType + "' AND session_id = '" + data[i].session_id + "'";
+                                SQLQueryInsert = "INSERT INTO evaluations(";
+                                SQLQueryInsert = SQLQueryInsert + "AttendeeID, evalID, session_id, evaluationType, ";
+                                SQLQueryInsert = SQLQueryInsert + "Q11, Q12, Q21, Q22, Q23, Q24, Q25, Q26, ";
+                                SQLQueryInsert = SQLQueryInsert + "Q31, Q32, Q33, Q41) ";
+                                SQLQueryInsert = SQLQueryInsert + "VALUES(" + data[i].AttendeeID + ", ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].evalID + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].session_id + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].evaluationType + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Q11 + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Q12 + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Q21 + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Q22 + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Q23 + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Q24 + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Q25 + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Q26 + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Q31 + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Q32 + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Q33 + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Q41 + "')";
+                                SQLQueryUpdate = "UPDATE evaluations ";
+                                SQLQueryUpdate = SQLQueryUpdate + "SET Q11 = '" + data[i].Q11 + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "Q12 = '" + data[i].Q12 + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "Q21 = '" + data[i].Q21 + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "Q22 = '" + data[i].Q22 + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "Q23 = '" + data[i].Q23 + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "Q24 = '" + data[i].Q24 + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "Q25 = '" + data[i].Q25 + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "Q26 = '" + data[i].Q26 + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "Q31 = '" + data[i].Q31 + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "Q32 = '" + data[i].Q32 + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "Q33 = '" + data[i].Q33 + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "Q41 = '" + data[i].Q41 + "' ";
+                                SQLQueryUpdate = SQLQueryUpdate + "WHERE AttendeeID = '" + data[i].AttendeeID + "' ";
+                                SQLQueryUpdate = SQLQueryUpdate + "AND session_id = '" + data[i].session_id + "' ";
+                                SQLQueryUpdate = SQLQueryUpdate + "AND evaluationType = '" + data[i].evaluationType + "' ";
+                                SQLQueryDelete = "NO";
+                                break;
+                            case "activities_feed":
+                                SQLQuerySelect = "SELECT afID FROM activities_feed ";
+                                SQLQuerySelect = SQLQuerySelect + "WHERE afID = '" + data[i].afID + "' ";
+                                SQLQueryInsert = "INSERT INTO activities_feed(";
+                                SQLQueryInsert = SQLQueryInsert + "afID, AttendeeID, afDateTime, afChatCounter, ";
+                                SQLQueryInsert = SQLQueryInsert + "afLikesCounter, afMessage, afImageAttachment, DateAdded, UpdateType) ";
+                                SQLQueryInsert = SQLQueryInsert + "VALUES('" + data[i].afID + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].AttendeeID + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].afDateTime + "', ";
+                                SQLQueryInsert = SQLQueryInsert + " " + data[i].afChatCounter + ", ";
+                                SQLQueryInsert = SQLQueryInsert + " " + data[i].afLikesCounter + ", ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].afMessage.replace(/'/g, "''") + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].afImageAttachment + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].DateAdded + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].UpdateType + "')";
+                                SQLQueryUpdate = "UPDATE activities_feed ";
+                                SQLQueryUpdate = SQLQueryUpdate + "SET afChatCounter = " + data[i].afChatCounter + ", ";
+                                SQLQueryUpdate = SQLQueryUpdate + "afLikesCounter = " + data[i].afLikesCounter + ", ";
+                                SQLQueryUpdate = SQLQueryUpdate + "afMessage = '" + data[i].afMessage.replace(/'/g, "''") + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "afImageAttachment = '" + data[i].afImageAttachment + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "DateAdded = '" + data[i].DateAdded + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "UpdateType = '" + data[i].UpdateType + "' ";
+                                SQLQueryUpdate = SQLQueryUpdate + "WHERE afID = '" + data[i].afID + "' ";
+                                SQLQueryDelete = "NO";
+                                break;
+                            case "attendees":
+                                SQLQuerySelect = "SELECT AttendeeID FROM attendees ";
+                                SQLQuerySelect = SQLQuerySelect + "WHERE AttendeeID = '" + data[i].AttendeeID + "' ";
+                                SQLQueryInsert = "INSERT INTO attendees(";
+                                SQLQueryInsert = SQLQueryInsert + "AttendeeID, FirstName, LastName, title, ";
+                                SQLQueryInsert = SQLQueryInsert + "company, ActiveYN, City, State, Country, avatarFilename, ";
+                                SQLQueryInsert = SQLQueryInsert + "smTwitter, showTwitter, smFaceBook, showFacebook, ";
+                                SQLQueryInsert = SQLQueryInsert + "smLinkedIn, showLinkedIn, smInstagram, showInstagram, smPinterest, showPinterest) ";
+                                SQLQueryInsert = SQLQueryInsert + "VALUES('" + data[i].AttendeeID + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].FirstName + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].LastName + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Title + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Company + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].ActiveYN + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].City + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].State + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Country + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].avatarFilename + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].smTwitter + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].showTwitter + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].smFaceBook + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].showFacebook + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].smLinkedIn + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].showLinkedIn + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].smInstagram + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].showInstagram + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].smPinterest + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].showPinterest + "')";
+                                SQLQueryUpdate = "UPDATE attendees ";
+                                SQLQueryUpdate = SQLQueryUpdate + "SET FirstName = '" + data[i].FirstName + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "LastName = '" + data[i].LastName + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "title = '" + data[i].Title + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "company = '" + data[i].Company + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "ActiveYN = '" + data[i].ActiveYN + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "City = '" + data[i].City + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "State = '" + data[i].State + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "Country = '" + data[i].Country + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "avatarFilename = '" + data[i].avatarFilename + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "smTwitter = '" + data[i].smTwitter + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "showTwitter = '" + data[i].showTwitter + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "smFaceBook = '" + data[i].smFaceBook + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "showFacebook = '" + data[i].showFacebook + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "smLinkedIn = '" + data[i].smLinkedIn + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "showLinkedIn = '" + data[i].showLinkedIn + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "smInstagram = '" + data[i].smInstagram + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "showInstagram = '" + data[i].showInstagram + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "smPinterest = '" + data[i].smPinterest + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "showPinterest = '" + data[i].showPinterest + "' ";
+                                SQLQueryUpdate = SQLQueryUpdate + "WHERE AttendeeID = '" + data[i].AttendeeID + "' ";
+                                SQLQueryDelete = "NO";
+                                break;
+                            case "notifications":
+                                SQLQuerySelect = "SELECT * FROM attendee_push_notifications ";
+                                SQLQuerySelect = SQLQuerySelect + "WHERE pushTitle = '" + data[i].pushTitle + "' ";
+                                SQLQuerySelect = SQLQuerySelect + "AND pushMessage = '" + data[i].pushMessage + "' ";
+                                //SQLQuerySelect = SQLQuerySelect + "AND pushDateTimeReceived = '" + data[i].pushDateTimeReceived + "' ";
+                                SQLQueryInsert = "INSERT INTO attendee_push_notifications(";
+                                SQLQueryInsert = SQLQueryInsert + "pnID, pushTitle, pushMessage, pushDateTimeReceived) ";
+                                SQLQueryInsert = SQLQueryInsert + "VALUES('" + data[i].pnID + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].pushTitle + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].pushMessage + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].pushDateTimeReceived + "')";
+                                SQLQueryUpdate = "NO";
+                                SQLQueryDelete = "NO";
+                                console.log('DB, Notifications, SQLQuerySelect: ' + SQLQuerySelect + ', SQLQueryInsert: ' + SQLQueryInsert);
+                                break;
+                            case "attendee_bookmarks":
+                                SQLQuerySelect = "SELECT * FROM attendee_bookmarks ";
+                                SQLQuerySelect = SQLQuerySelect + "WHERE AttendeeID = '" + data[i].AttendeeID + "' ";
+                                SQLQuerySelect = SQLQuerySelect + "AND BookmarkType = '" + data[i].BookmarkType + "' ";
+                                SQLQuerySelect = SQLQuerySelect + "AND BookmarkID = '" + data[i].BookmarkID + "' ";
+                                SQLQueryInsert = "INSERT INTO attendee_bookmarks(";
+                                SQLQueryInsert = SQLQueryInsert + "abID, AttendeeID, BookmarkType, BookmarkID, ";
+                                SQLQueryInsert = SQLQueryInsert + "DateAdded, UpdateType) ";
+                                SQLQueryInsert = SQLQueryInsert + "VALUES(" + data[i].abID + ", ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].AttendeeID + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].BookmarkType + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].BookmarkID + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].DateAdded + "', ";
+                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].UpdateType + "')";
+                                SQLQueryUpdate = "UPDATE attendee_bookmarks ";
+                                SQLQueryUpdate = SQLQueryUpdate + "SET BookmarkType = '" + data[i].BookmarkType + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "BookmarkID = '" + data[i].BookmarkID + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "DateAdded = '" + data[i].DateAdded + "', ";
+                                SQLQueryUpdate = SQLQueryUpdate + "UpdateType = '" + data[i].UpdateType + "' ";
+                                SQLQueryUpdate = SQLQueryUpdate + "WHERE AttendeeID = '" + data[i].AttendeeID + "' ";
+                                SQLQueryUpdate = SQLQueryUpdate + "AND BookmarkType = '" + data[i].BookmarkType + "' ";
+                                SQLQueryUpdate = SQLQueryUpdate + "AND BookmarkID = '" + data[i].BookmarkID + "' ";
+                                SQLQueryDelete = "DELETE FROM attendee_bookmarks ";
+                                SQLQueryDelete = SQLQueryDelete + "WHERE AttendeeID = '" + data[i].AttendeeID + "' ";
+                                SQLQueryDelete = SQLQueryDelete + "AND BookmarkType = '" + data[i].BookmarkType + "' ";
+                                SQLQueryDelete = SQLQueryDelete + "AND BookmarkID = '" + data[i].BookmarkID + "' ";
+                                break;
+                            case "duplicateexhibitors":
+                                SQLQuerySelect = "SELECT COUNT(*) FROM exhibitors";
+                                SQLQueryInsert = "SELECT COUNT(*) FROM exhibitors";
+                                SQLQueryUpdate = "DELETE FROM exhibitors WHERE rowid NOT IN (SELECT max(rowid) FROM exhibitors GROUP BY ExhibitorID)";
+                                SQLQueryDelete = "NO";
+                                break;
+                            case "duplicatecourses":
+                                SQLQuerySelect = "SELECT COUNT(*) FROM courses";
+                                SQLQueryInsert = "SELECT COUNT(*) FROM courses";
+                                SQLQueryUpdate = "DELETE FROM courses WHERE rowid NOT IN (SELECT max(rowid) FROM courses GROUP BY session_id)";
+                                SQLQueryDelete = "NO";
+                                break;
+                            case "duplicatespeakers":
+                                SQLQuerySelect = "SELECT COUNT(*) FROM courses_speakers";
+                                SQLQueryInsert = "SELECT COUNT(*) FROM courses_speakers";
+                                SQLQueryUpdate = "DELETE FROM courses_speakers WHERE rowid NOT IN (SELECT max(rowid) FROM courses_speakers GROUP BY speakerID)";
+                                SQLQueryDelete = "NO";
+                                break;
+                            case "duplicateces":
+                                SQLQuerySelect = "SELECT COUNT(*) FROM attendee_ces";
+                                SQLQueryInsert = "SELECT COUNT(*) FROM attendee_ces";
+                                SQLQueryUpdate = "DELETE FROM attendee_ces WHERE rowid NOT IN (SELECT max(rowid) FROM attendee_ces GROUP BY AttendeeID, session_id)";
+                                SQLQueryDelete = "NO";
+                                break;
+                            case "duplicateattendeecourses":
+                                SQLQuerySelect = "SELECT COUNT(*) FROM attendee_courses";
+                                SQLQueryInsert = "SELECT COUNT(*) FROM attendee_courses";
+                                SQLQueryUpdate = "DELETE FROM attendee_courses WHERE rowid NOT IN (SELECT max(rowid) FROM attendee_courses GROUP BY ct_id, session_id)";
+                                SQLQueryDelete = "NO";
+                                break;
+                        }
+                        // Execute the custom SQL query to insert or update a record in the local database
+                        this.DBCallQuery(SQLQuerySelect, SQLQueryInsert, SQLQueryUpdate, SQLQueryDelete).then(DBCallOutput => {
+                            //console.log('DBCallOutput: ' + DBCallOutput);
+                            //console.log('DBCallQuery output: ' + DBCallOutput);
+                            this.DBCallQuery2(DBCallOutput);
+                        });
+                    }
+                }
+                // Done
+                if (data['length'] > 0) {
+                    // Send event notice to update left hand menu
+                    this.events.publish('user:Status', 'Sync Update');
+                    // Send event notice to update CE Tracker list
+                    //this.events.publish('sync:Status', 'Sync Update');
+                }
+                resolve("Done");
+            }, err => {
+                if (err.status == "412") {
+                    console.log("App and API versions don't match.");
+                    resolve("Error");
+                }
+                else {
+                    console.log(err.status);
+                    console.log("API Error: ", JSON.stringify(err));
+                }
+            });
+        });
+    }
+    // -----------------------------------
+    // Database Sync
+    // 
+    // Updated records: SQLite to MySQL
+    // 
+    // -----------------------------------
+    DBSyncUpdateS2M(LastSync, ThisSync) {
+        var flags = "UpdateS2M|" + LastSync + "|" + ThisSync;
+        var AttendeeID = this.localstorage.getLocalValue('AttendeeID');
+        var SQLQuery = "";
+        var QueryType = "";
+        // Get changed records in SQLite
+        // Sync Itinerary
+        SQLQuery = "SELECT * FROM itinerary ";
+        SQLQuery = SQLQuery + "WHERE AttendeeID = '" + AttendeeID + "' ";
+        SQLQuery = SQLQuery + "AND LastUpdated BETWEEN '" + LastSync + "' AND '" + ThisSync + "'";
+        QueryType = "itinerary";
+        console.log('Sync UpdateS2M: Starting sync');
+        return new Promise(resolve => {
+            console.log('Sync UpdateS2M: Itinerary query: ' + SQLQuery);
+            this.DBGetData(QueryType, SQLQuery).then(data => {
+                if (data['length'] > 0) {
+                    for (var i = 0; i < data['length']; i++) {
+                        flags = "UpdateS2M|" + LastSync + "|" + ThisSync;
+                        flags = flags + "|itinerary";
+                        flags = flags + "|" + data[i].mtgID;
+                        flags = flags + "|" + data[i].Date_Start;
+                        flags = flags + "|" + data[i].Date_End;
+                        flags = flags + "|" + data[i].Time_Start;
+                        flags = flags + "|" + data[i].Time_End;
+                        flags = flags + "|" + data[i].Subject;
+                        flags = flags + "|" + data[i].Location;
+                        flags = flags + "|" + data[i].Description;
+                        flags = flags + "|" + data[i].atID;
+                        flags = flags + "|" + data[i].AttendeeID;
+                        flags = flags + "|" + data[i].EventID;
+                        flags = flags + "|" + data[i].LastUpdated;
+                        flags = flags + "|" + data[i].UpdateType;
+                        var url = SyncURLReference + "action=sync&flags=" + flags + "&AttendeeID=" + AttendeeID;
+                        //return new Promise(resolve => {
+                        console.log('Sync UpdateS2M: Itinerary URL: ' + url);
+                        this.httpCall.get(url).subscribe(data3 => {
+                            console.log('Sync UpdateS2M: Response: ' + JSON.stringify(data3));
+                            //resolve("Done");
+                        }, err => {
+                            console.log('Sync UpdateS2M: Response: ' + JSON.stringify(err));
+                            //resolve("Error");
+                        });
+                        //});
+                    }
+                }
+            });
+            // Sync Evaluations (lectures/workshops)
+            SQLQuery = "SELECT session_id, evaluationType, Q11, Q12, Q21, Q22, Q23, Q24, Q25, Q26, Q31, Q32, Q33, Q41, LastUpdated, UpdateType FROM evaluations ";
+            SQLQuery = SQLQuery + "WHERE AttendeeID = '" + AttendeeID + "' ";
+            //SQLQuery = SQLQuery + "AND LastUpdated BETWEEN '" + LastSync + "' AND '" + ThisSync + "'";
+            QueryType = "evaluations";
+            console.log('Sync UpdateS2M: Evaluations (lectures/workshops) query: ' + SQLQuery);
+            this.DBGetData(QueryType, SQLQuery).then(data => {
+                if (data['length'] > 0) {
+                    for (var i = 0; i < data['length']; i++) {
+                        flags = "UpdateS2M|" + LastSync + "|" + ThisSync;
+                        flags = flags + "|evaluations";
+                        flags = flags + "|" + data[i].AttendeeID;
+                        flags = flags + "|" + data[i].session_id;
+                        flags = flags + "|" + data[i].evaluationType;
+                        flags = flags + "|" + data[i].Q11;
+                        flags = flags + "|" + data[i].Q12;
+                        flags = flags + "|" + data[i].Q21;
+                        flags = flags + "|" + data[i].Q22;
+                        flags = flags + "|" + data[i].Q23;
+                        flags = flags + "|" + data[i].Q24;
+                        flags = flags + "|" + data[i].Q25;
+                        flags = flags + "|" + data[i].Q26;
+                        flags = flags + "|" + data[i].Q31;
+                        flags = flags + "|" + data[i].Q32;
+                        flags = flags + "|" + data[i].Q33;
+                        flags = flags + "|" + data[i].Q41;
+                        flags = flags + "|" + data[i].LastUpdated;
+                        flags = flags + "|" + data[i].UpdateType;
+                        var url = SyncURLReference + "action=sync&flags=" + flags + "&AttendeeID=" + AttendeeID;
+                        //return new Promise(resolve => {
+                        console.log('Sync UpdateS2M: Evaluations (lectures/workshops) URL: ' + url);
+                        this.httpCall.get(url).subscribe(data3 => {
+                            console.log('Sync UpdateS2M: Response: ' + JSON.stringify(data3));
+                            //resolve("Done");
+                        }, err => {
+                            console.log('Sync UpdateS2M: Response: ' + JSON.stringify(err));
+                            //resolve("Error");
+                        });
+                        //});
+                    }
+                }
+            });
+            // Sync Evaluations (conference)
+            SQLQuery = "SELECT * FROM evaluation_conference ";
+            SQLQuery = SQLQuery + "WHERE AttendeeID = '" + AttendeeID + "' ";
+            //SQLQuery = SQLQuery + "AND LastUpdated BETWEEN '" + LastSync + "' AND '" + ThisSync + "'";
+            QueryType = "evaluation_conference";
+            console.log('Sync UpdateS2M: Evaluations (conference) query: ' + SQLQuery);
+            this.DBGetData(QueryType, SQLQuery).then(data => {
+                if (data['length'] > 0) {
+                    for (var i = 0; i < data['length']; i++) {
+                        flags = "UpdateS2M|" + LastSync + "|" + ThisSync;
+                        flags = flags + "|evaluation_conference";
+                        flags = flags + "|" + data[i].AttendeeID;
+                        flags = flags + "|" + data[i].session_id;
+                        flags = flags + "|" + data[i].evaluationType;
+                        flags = flags + "|" + data[i].Q1;
+                        flags = flags + "|" + data[i].Q2;
+                        flags = flags + "|" + data[i].Q3;
+                        flags = flags + "|" + data[i].Q4;
+                        flags = flags + "|" + data[i].Q5;
+                        flags = flags + "|" + data[i].Q5C;
+                        flags = flags + "|" + data[i].Q6;
+                        flags = flags + "|" + data[i].Q7;
+                        flags = flags + "|" + data[i].Q7C;
+                        flags = flags + "|" + data[i].Q8;
+                        flags = flags + "|" + data[i].Q9;
+                        flags = flags + "|" + data[i].Q10;
+                        flags = flags + "|" + data[i].Q10C;
+                        flags = flags + "|" + data[i].Q11;
+                        flags = flags + "|" + data[i].Q11C;
+                        flags = flags + "|" + data[i].LastUpdated;
+                        flags = flags + "|" + data[i].UpdateType;
+                        var url = SyncURLReference + "action=sync&flags=" + flags + "&AttendeeID=" + AttendeeID;
+                        //return new Promise(resolve => {
+                        console.log('Sync UpdateS2M: Evaluations (conference) URL: ' + url);
+                        this.httpCall.get(url).subscribe(data3 => {
+                            console.log('Sync UpdateS2M: Response: ' + JSON.stringify(data3));
+                            //resolve("Done");
+                        }, err => {
+                            console.log('Sync UpdateS2M: Response: ' + JSON.stringify(err));
+                            //resolve("Error");
+                        });
+                        //});
+                    }
+                }
+            });
+            // Sync Notes
+            SQLQuery = "SELECT * FROM attendee_notes ";
+            SQLQuery = SQLQuery + "WHERE AttendeeID = '" + AttendeeID + "' ";
+            SQLQuery = SQLQuery + "AND LastUpdated BETWEEN '" + LastSync + "' AND '" + ThisSync + "'";
+            QueryType = "attendee_notes";
+            console.log('Sync UpdateS2M: Notes query: ' + SQLQuery);
+            this.DBGetData(QueryType, SQLQuery).then(data => {
+                if (data['length'] > 0) {
+                    for (var i = 0; i < data['length']; i++) {
+                        flags = "UpdateS2M|" + LastSync + "|" + ThisSync;
+                        flags = flags + "|attendee_notes";
+                        flags = flags + "|" + data[i].AttendeeID;
+                        flags = flags + "|" + data[i].EventID;
+                        flags = flags + "|" + data[i].Note;
+                        flags = flags + "|" + data[i].LastUpdated;
+                        flags = flags + "|" + data[i].UpdateType;
+                        var url = SyncURLReference + "action=sync&flags=" + flags + "&AttendeeID=" + AttendeeID;
+                        //return new Promise(resolve => {
+                        console.log('Sync UpdateS2M: Notes URL: ' + url);
+                        this.httpCall.get(url).subscribe(data3 => {
+                            console.log('Sync UpdateS2M: Response: ' + JSON.stringify(data3));
+                            //resolve("Done");
+                        }, err => {
+                            console.log('Sync UpdateS2M: Response: ' + JSON.stringify(err));
+                            //resolve("Error");
+                        });
+                        //});
+                    }
+                }
+            });
+        });
+        // Done
+        //resolve("Done");
+    }
+};
+Synchronization = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Injectable"])(),
+    __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["x" /* Platform */],
+        __WEBPACK_IMPORTED_MODULE_2__angular_http__["a" /* Http */],
+        __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["b" /* AlertController */],
+        __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* Events */],
+        __WEBPACK_IMPORTED_MODULE_4__ionic_native_sqlite__["a" /* SQLite */],
+        __WEBPACK_IMPORTED_MODULE_3__providers_localstorage_localstorage__["a" /* Localstorage */]])
+], Synchronization);
+
+//# sourceMappingURL=synchronization.js.map
+
+/***/ }),
+
+/***/ 101:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -12,24 +985,24 @@ webpackJsonp([23],{
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__ionic_storage__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__providers_database_database__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__providers_localstorage_localstorage__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__providers_synchronization_synchronization__ = __webpack_require__(99);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_rxjs_Rx__ = __webpack_require__(619);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__providers_synchronization_synchronization__ = __webpack_require__(100);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_rxjs_Rx__ = __webpack_require__(620);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7_rxjs_Rx___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_7_rxjs_Rx__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__ionic_native_sqlite__ = __webpack_require__(94);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__ionic_native_sqlite__ = __webpack_require__(95);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__more_more__ = __webpack_require__(487);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__help_help__ = __webpack_require__(108);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__program_program__ = __webpack_require__(164);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__conferencecity_conferencecity__ = __webpack_require__(165);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__social_social__ = __webpack_require__(111);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__speakers_speakers__ = __webpack_require__(110);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__map_map__ = __webpack_require__(166);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__exhibitors_exhibitors__ = __webpack_require__(167);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__help_help__ = __webpack_require__(109);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__program_program__ = __webpack_require__(165);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__conferencecity_conferencecity__ = __webpack_require__(166);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__social_social__ = __webpack_require__(112);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__speakers_speakers__ = __webpack_require__(111);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__map_map__ = __webpack_require__(167);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__exhibitors_exhibitors__ = __webpack_require__(168);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__notes_notes__ = __webpack_require__(81);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__myagenda_myagenda__ = __webpack_require__(58);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__login_login__ = __webpack_require__(54);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__networking_networking__ = __webpack_require__(168);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__activity_activity__ = __webpack_require__(169);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_22__profile_profile__ = __webpack_require__(116);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__networking_networking__ = __webpack_require__(169);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__activity_activity__ = __webpack_require__(170);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_22__profile_profile__ = __webpack_require__(117);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -164,7 +1137,7 @@ let HomePage = class HomePage {
         var SQLquery8 = 'CREATE TABLE IF NOT EXISTS courses (session_id text, session_title text, description text, session_start_time text, session_end_time text, primary_speaker text, other_speakers text, course_id text, subject text, cs_credits text, ce_credits_type text, room_number text, verification_code text, nadl_verification text, type text, level text, speaker_host_emcee text, room_capacity text, course_topics text, ActiveYN text, corporate_supporter text, session_recording text, HandoutFilename text, CEcreditsL text, CEcreditsP text, SearchField text)';
         this.db.executeSql(SQLquery8, {}).then(() => console.log('Home: Executed SQL8'))
             .catch(e => console.log(JSON.stringify(e)));
-        var SQLquery9 = 'CREATE TABLE IF NOT EXISTS courses_speakers (speakerID integer, FullName text, FirstName text, LastName text, Credentials text, Bio text, Courses text, imageFilename text, email text, SearchField text)';
+        var SQLquery9 = 'CREATE TABLE IF NOT EXISTS courses_speakers (speakerID integer, FullName text, FirstName text, LastName text, Credentials text, Bio text, Title text, Courses text, imageFilename text, email text, SearchField text)';
         this.db.executeSql(SQLquery9, {}).then(() => console.log('Home: Executed SQL9'))
             .catch(e => console.log(JSON.stringify(e)));
         // Exhibitor tables
@@ -214,7 +1187,13 @@ let HomePage = class HomePage {
         var LoginName = this.localstorage.getLocalValue('LoginFullName');
         var LoginNameInitials = this.localstorage.getLocalValue('LoginNameInitials');
         if (LoginNameInitials == '' || LoginNameInitials == null || LoginNameInitials == 'undefined') {
-            var initials = LoginName.match(/\b\w/g) || [];
+            // Do nothing
+        }
+        else {
+            var Fullname = LoginName;
+            var n = Fullname.indexOf(',');
+            Fullname = Fullname.substring(0, n != -1 ? n : Fullname.length);
+            var initials = Fullname.match(/\b\w/g) || [];
             var initials2 = ((initials.shift() || '') + (initials.pop() || '')).toUpperCase();
             this.localstorage.setLocalValue("LoginNameInitials", initials2);
             LoginNameInitials = initials2;
@@ -241,6 +1220,10 @@ let HomePage = class HomePage {
             this.localstorage.setLocalValue("loginUsername", '');
             this.localstorage.setLocalValue("loginPassword", '');
             this.localstorage.setLocalValue("LoginNameInitials", '');
+            // Temporary hard coding when not logged in
+            this.localstorage.setLocalValue("AgendaDays", "4");
+            this.localstorage.setLocalValue("AgendaDates", "2019-04-24|2019-04-25|2019-04-26|2019-04-27|");
+            this.localstorage.setLocalValue("AgendaDayButtonLabels", "4/24|4/25|4/26|4/27|");
         }
         this.upcomingAgendaItems = [];
         this.cd.markForCheck();
@@ -265,6 +1248,8 @@ let HomePage = class HomePage {
             flags = "li|2019-04-24";
             this.databaseprovider.getAgendaData(flags, AttendeeID).then(data => {
                 //console.log("getAgendaData: " + JSON.stringify(data));
+                this.upcomingAgendaItems = [];
+                this.cd.markForCheck();
                 if (data['length'] > 0) {
                     if (data['length'] > 3) {
                         maxRecs = 3;
@@ -342,6 +1327,8 @@ let HomePage = class HomePage {
         }
         else {
             console.log('Home: Attendee not logged in, dashboard data not loaded');
+            this.upcomingAgendaItems = [];
+            this.cd.markForCheck();
             this.upcomingAgendaItems.push({
                 EventName: "You need to be logged in to see your agenda",
                 visEventTimeframe: "",
@@ -410,15 +1397,22 @@ let HomePage = class HomePage {
             
         }
         */
+        /*
         // Check on first run in order to Vacuum database (aka Shrink)
         var SpeakerReset = this.localstorage.getLocalValue('SpeakerReset');
+        
         if (SpeakerReset == '' || SpeakerReset == null) {
-            // If first run, check if platform is not web browser			
+
+            // If first run, check if platform is not web browser
             if (this.DevicePlatform != "Browser") {
+                
                 this.localstorage.setLocalValue('SpeakerReset', '1');
                 this.syncprovider.DBCallQuery2('DELETE FROM courses_speakers WHERE rowid NOT IN (SELECT max(rowid) FROM courses_speakers GROUP BY FirstName, LastName)');
+            
             }
+            
         }
+        */
     }
     startAutoSync() {
         console.log('Start AutoSync');
@@ -585,7 +1579,7 @@ let HomePage = class HomePage {
 };
 HomePage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
-        selector: 'page-home',template:/*ion-inline-start:"/Users/petervroom/aacd19/src/pages/home/home.html"*/'<ion-header>\n	<ion-navbar color="primary">\n		<button ion-button icon-only menuToggle>\n			<ion-icon name="menu"></ion-icon>\n		</button>\n\n		<ion-title>\n			AACD San Diego 2019\n		</ion-title>\n\n		<ion-buttons end>\n	\n			<button style="background:transparent!important">\n				<ion-avatar>\n					<ion-text-avatar class="avatar" color="danger" style="z-index: 10;" (click)="AvatarNavigation()">{{AttendeeInitials}}\n						<ion-icon end name="{{LogInOutIcon}}" color="light" style="z-index: 1000;">\n						</ion-icon>\n					</ion-text-avatar>\n				</ion-avatar>\n			</button>\n\n		</ion-buttons>\n		<!--\n		<ion-buttons end>\n			<button ion-button icon-only color="light" (click)="NavigateToLoginPage()">\n				{{LoggedInUser}} <ion-icon name="{{LogInOutIcon}}"></ion-icon>\n			</button>\n		</ion-buttons>\n		-->\n	</ion-navbar>\n</ion-header>\n\n\n\n<!-- <ion-content style="background:url(assets/img/bgBlue.jpg)no-repeat center;background-size:cover;"> -->\n<ion-content class="{{MenuBackground}}" >\n\n	<!-- Disabled 2018-03-11 Due to being redundant with Social Media menu option on home page\n	<ion-fab top right edge>\n		<button ion-fab mini><ion-icon name="add"></ion-icon></button>\n		<ion-fab-list>\n			<button ion-fab><ion-icon name="logo-facebook"></ion-icon></button>\n			<button ion-fab><ion-icon name="logo-twitter"></ion-icon></button>\n			<button ion-fab><ion-icon name="logo-vimeo"></ion-icon></button>\n			<button ion-fab><ion-icon name="logo-googleplus"></ion-icon></button>\n		</ion-fab-list>\n	</ion-fab>\n	-->\n	\n	<img src="assets/img/header1.png">\n\n	<div id="MenuVertical" *ngIf="DisplayMenuVertical">\n\n		<ion-list no-lines class="bgCityscape">\n			<button ion-item class="opacity" [navPush]="programPage">\n				<p class="myFontSize26">Program</p>\n				<ion-icon name="list" item-left></ion-icon>\n			</button>\n\n			<button ion-item class="opacity" [navPush]="speakersPage">\n				<p class="myFontSize26">Speakers</p>\n				<ion-icon name="mic" item-left></ion-icon>\n			</button>\n\n			<button ion-item class="opacity" (click)="NavigateToAuthenticatedPage(\'MyAgenda\')">\n				<p class="myFontSize26">My Agenda</p>\n				<ion-icon name="calendar" item-left></ion-icon>\n			</button>\n\n			<button ion-item class="opacity" [navPush]="exhibitorsPage">\n				<p class="myFontSize26">Exhibitors</p>\n				<ion-icon name="people" item-left></ion-icon>\n			</button>\n\n			<button ion-item class="opacity" (click)="NavigateToAuthenticatedPage(\'CETracking\')">\n				<p class="myFontSize26">CE Tracking</p>\n				<ion-icon name="school" item-left></ion-icon>\n			</button>\n\n			<button ion-item class="opacity" (click)="NavigateToAuthenticatedPage(\'Networking\')">\n				<p class="myFontSize26">Networking</p>\n				<ion-icon name="contacts" item-left></ion-icon>\n			</button>\n\n			<button ion-item class="opacity" [navPush]="mapPage">\n				<p class="myFontSize26">Map</p>\n				<ion-icon name="map" item-left></ion-icon>\n			</button>\n\n			<button ion-item class="opacity" [navPush]="conferenceCityPage">\n				<p class="myFontSize26">San Diego</p>\n				<ion-icon name="plane" item-left></ion-icon>\n			</button>\n\n			<button ion-item class="opacity" [navPush]="socialPage">\n				<p class="myFontSize26">Social Media</p>\n				<ion-icon name="text" item-left></ion-icon>\n			</button>\n\n			<button ion-item class="opacity" [navPush]="helpPage">\n				<p class="myFontSize26">Help</p>\n				<ion-icon name="help" item-left></ion-icon>\n			</button>\n\n			<button ion-item class="opacity" onclick="window.open(\'https://na01.safelinks.protection.outlook.com/?url=https%3A%2F%2Faacd.ejoinme.org%2FMyEvents%2FGiveBackaSmileSilentAuction2018%2Ftabid%2F886099%2FDefault.aspx&data=02%7C01%7Clisab%40aacd.com%7C3affa1cb6109443e9e2808d5a16dd04d%7C867291cda2d943f284571ed60b355ed5%7C0%7C0%7C636592415380677523&sdata=gvaFvM0Ce2X9QYhrsE1PcRiiQroR1MLaMRzdpVpNi9A%3D&reserved=0\', \'_system\', \'location=yes\'); return false;">\n				<p class="myFontSize26">GBAS Silent Auction</p>\n				<ion-icon name="happy" item-left></ion-icon>\n			</button>\n\n			<button ion-item class="opacity" (click)="NavigateToAuthenticatedPage(\'Notes\')">\n				<p class="myFontSize26">Notes</p>\n				<ion-icon name="create" item-left></ion-icon>\n			</button>\n\n			<button ion-item class="opacity" [navPush]="morePage">\n				<p class="myFontSize26">More</p>\n				<ion-icon name="more" item-left></ion-icon>\n			</button>\n		</ion-list>\n\n\n\n\n\n	</div>\n\n	<div id="MenuGrid" *ngIf="DisplayMenuGrid">\n\n		<div class="row" style="padding-top:20px; padding-bottom:0; margin-top:20px; margin-bottom:0">\n\n            <div class="col" style="padding-top:0; padding-bottom:0; margin-top:0; margin-bottom:0">\n                <img (click)="NavigateToAuthenticatedPage(\'MyAgenda\')" src="assets/img/calendar2.png" width="50%" height="auto" style="display: block; margin-left:auto; margin-right:auto; margin-top:0">\n                <p id="" style="color:#FFFFFF;text-align:center;font-weight:bold"  class=""><span style="">YourAgenda</span></p>\n            </div>\n\n            <div class="col" style="padding-top:0; padding-bottom:0; margin-top:0; margin-bottom:0">\n                <img [navPush]="programPage" src="assets/img/schedule.png" width="50%" height="auto" style="display: block; margin-left: auto; margin-right: auto; margin-top:0">\n                <p id="" style="color:#FFFFFF;text-align:center;font-weight:bold" class=""><span style="">Program</span></p>\n            </div>\n\n            <div class="col" style="padding-top:0; padding-bottom:0; margin-top:0; margin-bottom:0">\n                <img [navPush]="speakersPage" src="assets/img/educator1.png" width="50%" height="auto" style="display: block; margin-left: auto; margin-right: auto;">\n                <p id="home-markdown6" style="color:#FFFFFF;text-align:center;font-weight:bold" class=""><span style="">Educators</span></p>\n            </div>\n          </div>\n\n        <div class="row" style="padding-top:10px; padding-bottom:0; margin-top:10px; margin-bottom:0">\n\n            <div class="col" style="padding-top:0; padding-bottom:0; margin-top:0; margin-bottom:0;">\n                <img (click)="NavigateToAuthenticatedPage(\'CETracking\')" src="assets/img/ce.png" width="50%" height="auto" style="display: block; margin-top:0; margin-left: auto; margin-right: auto;">\n                <p id="" style="color:#ffffff;text-align:center;font-weight:bold" class=""><span style="">CE Tracker</span></p>\n            </div>\n\n            <div class="col" style="padding-top:0; padding-bottom:0; margin-top:0; margin-bottom:0">\n\n              <img [navPush]="programPage" src="assets/img/book.png" width="50%" height="auto" style="display: block; margin-top:0; margin-left: auto; margin-right: auto;">\n                <p id="" style="color:#ffffff;text-align:center;font-weight:bold" class=""><span style="">Course Locations</span></p>\n            </div>\n\n\n            <div class="col" style="padding-top:0; padding-bottom:0; margin-top:0; margin-bottom:0">\n                <img src="assets/img/gift.png" href="#" onclick="window.open(\'https://aacd.ejoinme.org/MyEvents/GiveBackaSmileSilentAuction2017/tabid/811205/Default.aspx\', \'_system\', \'location=yes\'); return false;" width="50%" height="auto" style="display: block; margin-left: auto; margin-right: auto;">\n                <p id="" style="color:#FFFFFF;text-align:center;font-weight:bold" class=""><span style="">GBAS Auction</span></p>\n            </div>\n          </div>\n\n        <div class="row" style="padding-top:10px; padding-bottom:0; margin-top:10px; margin-bottom:0">\n\n            <div class="col" style="padding-top:0; padding-bottom:0; margin-top:0; margin-bottom:0">\n                <img [navPush]="exhibitorsPage" src="assets/img/exhibitors1.png" width="50%" height="auto" style="display: block; margin-left: auto; margin-right: auto;">\n                <p id="" style="color:#FFFFFF;text-align:center;font-weight:bold" class=""><span style="">Exhibitors</span></p>\n            </div>\n\n            <div class="col" style="padding-top:0; padding-bottom:0; margin-top:0; margin-bottom:0">\n                <img src="assets/img/person1.png" href="#" onclick="window.open(\'https://www.aacd.com/index.php?module=login\', \'_system\', \'location=yes\'); return false;" width="50%" height="auto" style="display: block; margin-top:0; margin-left: auto; margin-right: auto;">\n                <p id="home-markdown3" style="color:#FFFFFF;text-align:center;font-weight:bold" class=""><span style="">Your AACD</span></p>\n            </div>\n\n            <div class="col" style="padding-top:0; padding-bottom:0; margin-top:0; margin-bottom:0">\n                <img [navPush]="mapPage" src="assets/img/map.png" width="50%" height="auto" style="display: block; margin-top:0; margin-left: auto; margin-right: auto; padding-top:0; padding-bottom:0; margin-top:0; margin-bottom:0">\n                <p id="home-markdown6"  style="color:#FFFFFF;text-align:center;font-weight:bold" class=""><span style="">Maps</span></p>\n            </div>\n        </div>\n	</div>\n\n	<div id="MenuDashboard" *ngIf="DisplayMenuDashboard">\n\n        <div class="row" style="width:100%; padding-top:0; padding-bottom:0; margin-top:0; margin-bottom:0">\n			<ion-list no-lines>\n				<ion-item class="steel" (click)="NavigateToAuthenticatedPage(\'MyAgenda\')">\n					Upcoming Agenda Items\n					<ion-icon name="calendar" item-left></ion-icon>\n				</ion-item>\n				<ion-item style="border-color: rgba(0, 0, 0, 0);background-color: rgba(0, 0, 0, 0);color: white; padding-bottom:-30px; margin-bottom:-30px;" (click)="EventDetails(upcomingAgenda.visEventID)" *ngFor="let upcomingAgenda of upcomingAgendaItems" id="upcomingAgenda-list-item19" >\n					<div>\n						<div class="row">\n							<div class="col">\n								<div style="float: left; padding-right: 10px;">\n									<ion-icon name="{{upcomingAgenda.eventTypeIcon}}"></ion-icon>\n								</div>\n								<div>\n									<p class="myLabelBold" style="color: white;">\n										{{upcomingAgenda.EventName}}\n									</p>\n									<p style="color: white;">\n										{{upcomingAgenda.visEventTimeframe}}\n										<br/>\n										{{upcomingAgenda.EventLocation}}\n									</p>\n								</div>\n								<div style="float: right; color: white;">\n									<ion-icon name="{{upcomingAgenda.navigationArrow}}"></ion-icon>\n								</div>\n							</div>\n						</div>\n					</div>\n				</ion-item>\n				<ion-item class="steel" (click)="NavigateToAuthenticatedPage(\'CETracking\')">\n					CE Credits Completed\n					<ion-icon name="school" item-left></ion-icon>\n				</ion-item>\n				<ion-item style="border-color: rgba(0, 0, 0, 0);background-color: rgba(0, 0, 0, 0);color: white;" (click)="NavigateToAuthenticatedPage(\'CETracking\')" id="cetrackervalue-list" >\n					<div>\n						<div class="row">\n							<div class="col">\n								<div>\n									<p class="myLabelBold" style="color: white;font-size:1.8em">\n										{{creditsTypeL}}L / {{creditsTypeP}}P\n									</p>\n								</div>\n							</div>\n						</div>\n					</div>\n				</ion-item>\n				<ion-item class="steel">\n					Announcements\n					<ion-icon name="bookmarks" item-left></ion-icon>\n				</ion-item>\n				<ion-item style="border-color: rgba(0, 0, 0, 0);background-color: rgba(0, 0, 0, 0);color: white;" id="announcement-list" >\n					<div>\n						<div class="row">\n							<div class="col">\n								<div style="float: left; padding-right: 10px;">\n									<ion-icon name="bookmark"></ion-icon>\n								</div>\n								<div>\n									<p class="myLabelBold" style="color: white;">\n										12:30pm<br/>\n										Head over now to the Exhibit Hall to see Dr. Phil Smith\n									</p>\n								</div>\n							</div>\n						</div>\n					</div>\n				</ion-item>\n			</ion-list>\n        </div>\n\n        <div class="row" style="padding-top:0; padding-bottom:0; margin-top:0; margin-bottom:0; position: fixed; bottom:0%;">\n\n            <div class="col" style="padding-top:0; padding-bottom:0; margin-top:0; margin-bottom:0">\n                <img [navPush]="programPage" src="assets/img/schedule.png" width="50%" height="auto" style="display: block; margin-left: auto; margin-right: auto; margin-top:0">\n                <p id="" style="color:#FFFFFF;text-align:center;font-weight:bold" class=""><span style="">Program</span></p>\n            </div>\n\n            <div class="col" style="padding-top:0; padding-bottom:0; margin-top:0; margin-bottom:0">\n                <img [navPush]="exhibitorsPage" src="assets/img/exhibitors1.png" width="50%" height="auto" style="display: block; margin-left: auto; margin-right: auto;">\n                <p id="" style="color:#FFFFFF;text-align:center;font-weight:bold" class=""><span style="">Exhibitors</span></p>\n            </div>\n\n            <div class="col" style="padding-top:0; padding-bottom:0; margin-top:0; margin-bottom:0;">\n                <img (click)="NavigateToAuthenticatedPage(\'CETracking\')" src="assets/img/ce.png" width="50%" height="auto" style="display: block; margin-top:0; margin-left: auto; margin-right: auto;">\n                <p id="" style="color:#ffffff;text-align:center;font-weight:bold" class=""><span style="">CE Tracker</span></p>\n            </div>\n\n		</div>\n\n	</div>\n\n\n</ion-content>\n'/*ion-inline-end:"/Users/petervroom/aacd19/src/pages/home/home.html"*/,
+        selector: 'page-home',template:/*ion-inline-start:"/Users/petervroom/aacd19/src/pages/home/home.html"*/'<ion-header>\n	<ion-navbar color="primary">\n		<button ion-button icon-only menuToggle>\n			<ion-icon name="menu"></ion-icon>\n		</button>\n\n		<ion-title>\n			AACD San Diego 2019\n		</ion-title>\n\n		<ion-buttons end>\n	\n			<button style="background:transparent!important">\n				<ion-avatar>\n					<ion-text-avatar class="avatar" color="secondary" style="z-index: 10;" (click)="AvatarNavigation()">{{AttendeeInitials}}\n						<ion-icon end name="{{LogInOutIcon}}" color="light" style="z-index: 1000;">\n						</ion-icon>\n					</ion-text-avatar>\n				</ion-avatar>\n			</button>\n\n		</ion-buttons>\n\n\n		<!--\n		<ion-buttons end>\n			<button ion-button icon-only color="light" (click)="NavigateToLoginPage()">\n				{{LoggedInUser}} <ion-icon name="{{LogInOutIcon}}"></ion-icon>\n			</button>\n		</ion-buttons>\n		-->\n	</ion-navbar>\n</ion-header>\n\n\n\n<!-- <ion-content style="background:url(assets/img/bgBlue.jpg)no-repeat center;background-size:cover;"> -->\n<ion-content class="{{MenuBackground}}" >\n\n	<!-- Disabled 2018-03-11 Due to being redundant with Social Media menu option on home page\n	<ion-fab top right edge>\n		<button ion-fab mini><ion-icon name="add"></ion-icon></button>\n		<ion-fab-list>\n			<button ion-fab><ion-icon name="logo-facebook"></ion-icon></button>\n			<button ion-fab><ion-icon name="logo-twitter"></ion-icon></button>\n			<button ion-fab><ion-icon name="logo-vimeo"></ion-icon></button>\n			<button ion-fab><ion-icon name="logo-googleplus"></ion-icon></button>\n		</ion-fab-list>\n	</ion-fab>\n	-->\n	\n	<img src="assets/img/header1.png">\n\n	<div id="MenuVertical" *ngIf="DisplayMenuVertical">\n\n		<ion-list no-lines class="bgCityscape">\n			<button ion-item class="opacity" [navPush]="programPage">\n				<p class="myFontSize26">Program</p>\n				<ion-icon name="list" item-left></ion-icon>\n			</button>\n\n			<button ion-item class="opacity" [navPush]="speakersPage">\n				<p class="myFontSize26">Speakers</p>\n				<ion-icon name="mic" item-left></ion-icon>\n			</button>\n\n			<button ion-item class="opacity" (click)="NavigateToAuthenticatedPage(\'MyAgenda\')">\n				<p class="myFontSize26">My Agenda</p>\n				<ion-icon name="calendar" item-left></ion-icon>\n			</button>\n\n			<button ion-item class="opacity" [navPush]="exhibitorsPage">\n				<p class="myFontSize26">Exhibitors</p>\n				<ion-icon name="people" item-left></ion-icon>\n			</button>\n\n			<button ion-item class="opacity" (click)="NavigateToAuthenticatedPage(\'CETracking\')">\n				<p class="myFontSize26">CE Tracking</p>\n				<ion-icon name="school" item-left></ion-icon>\n			</button>\n\n			<button ion-item class="opacity" (click)="NavigateToAuthenticatedPage(\'Networking\')">\n				<p class="myFontSize26">Networking</p>\n				<ion-icon name="contacts" item-left></ion-icon>\n			</button>\n\n			<button ion-item class="opacity" [navPush]="mapPage">\n				<p class="myFontSize26">Map</p>\n				<ion-icon name="map" item-left></ion-icon>\n			</button>\n\n			<button ion-item class="opacity" [navPush]="conferenceCityPage">\n				<p class="myFontSize26">San Diego</p>\n				<ion-icon name="plane" item-left></ion-icon>\n			</button>\n\n			<button ion-item class="opacity" [navPush]="socialPage">\n				<p class="myFontSize26">Social Media</p>\n				<ion-icon name="text" item-left></ion-icon>\n			</button>\n\n			<button ion-item class="opacity" [navPush]="helpPage">\n				<p class="myFontSize26">Help</p>\n				<ion-icon name="help" item-left></ion-icon>\n			</button>\n\n			<button ion-item class="opacity" onclick="window.open(\'https://na01.safelinks.protection.outlook.com/?url=https%3A%2F%2Faacd.ejoinme.org%2FMyEvents%2FGiveBackaSmileSilentAuction2018%2Ftabid%2F886099%2FDefault.aspx&data=02%7C01%7Clisab%40aacd.com%7C3affa1cb6109443e9e2808d5a16dd04d%7C867291cda2d943f284571ed60b355ed5%7C0%7C0%7C636592415380677523&sdata=gvaFvM0Ce2X9QYhrsE1PcRiiQroR1MLaMRzdpVpNi9A%3D&reserved=0\', \'_system\', \'location=yes\'); return false;">\n				<p class="myFontSize26">GBAS Silent Auction</p>\n				<ion-icon name="happy" item-left></ion-icon>\n			</button>\n\n			<button ion-item class="opacity" (click)="NavigateToAuthenticatedPage(\'Notes\')">\n				<p class="myFontSize26">Notes</p>\n				<ion-icon name="create" item-left></ion-icon>\n			</button>\n\n			<button ion-item class="opacity" [navPush]="morePage">\n				<p class="myFontSize26">More</p>\n				<ion-icon name="more" item-left></ion-icon>\n			</button>\n		</ion-list>\n\n\n\n\n\n	</div>\n\n	<div id="MenuGrid" *ngIf="DisplayMenuGrid">\n\n		<div class="row" style="padding-top:20px; padding-bottom:0; margin-top:20px; margin-bottom:0">\n\n            <div class="col" style="padding-top:0; padding-bottom:0; margin-top:0; margin-bottom:0">\n                <img (click)="NavigateToAuthenticatedPage(\'MyAgenda\')" src="assets/img/calendar2.png" width="50%" height="auto" style="display: block; margin-left:auto; margin-right:auto; margin-top:0">\n                <p id="" style="color:#FFFFFF;text-align:center;font-weight:bold"  class=""><span style="">YourAgenda</span></p>\n            </div>\n\n            <div class="col" style="padding-top:0; padding-bottom:0; margin-top:0; margin-bottom:0">\n                <img [navPush]="programPage" src="assets/img/schedule.png" width="50%" height="auto" style="display: block; margin-left: auto; margin-right: auto; margin-top:0">\n                <p id="" style="color:#FFFFFF;text-align:center;font-weight:bold" class=""><span style="">Program</span></p>\n            </div>\n\n            <div class="col" style="padding-top:0; padding-bottom:0; margin-top:0; margin-bottom:0">\n                <img [navPush]="speakersPage" src="assets/img/educator1.png" width="50%" height="auto" style="display: block; margin-left: auto; margin-right: auto;">\n                <p id="home-markdown6" style="color:#FFFFFF;text-align:center;font-weight:bold" class=""><span style="">Educators</span></p>\n            </div>\n          </div>\n\n        <div class="row" style="padding-top:10px; padding-bottom:0; margin-top:10px; margin-bottom:0">\n\n            <div class="col" style="padding-top:0; padding-bottom:0; margin-top:0; margin-bottom:0;">\n                <img (click)="NavigateToAuthenticatedPage(\'CETracking\')" src="assets/img/ce.png" width="50%" height="auto" style="display: block; margin-top:0; margin-left: auto; margin-right: auto;">\n                <p id="" style="color:#ffffff;text-align:center;font-weight:bold" class=""><span style="">CE Tracker</span></p>\n            </div>\n\n            <div class="col" style="padding-top:0; padding-bottom:0; margin-top:0; margin-bottom:0">\n\n              <img [navPush]="programPage" src="assets/img/book.png" width="50%" height="auto" style="display: block; margin-top:0; margin-left: auto; margin-right: auto;">\n                <p id="" style="color:#ffffff;text-align:center;font-weight:bold" class=""><span style="">Course Locations</span></p>\n            </div>\n\n\n            <div class="col" style="padding-top:0; padding-bottom:0; margin-top:0; margin-bottom:0">\n                <img src="assets/img/gift.png" href="#" onclick="window.open(\'https://aacd.ejoinme.org/MyEvents/GiveBackaSmileSilentAuction2017/tabid/811205/Default.aspx\', \'_system\', \'location=yes\'); return false;" width="50%" height="auto" style="display: block; margin-left: auto; margin-right: auto;">\n                <p id="" style="color:#FFFFFF;text-align:center;font-weight:bold" class=""><span style="">GBAS Auction</span></p>\n            </div>\n          </div>\n\n        <div class="row" style="padding-top:10px; padding-bottom:0; margin-top:10px; margin-bottom:0">\n\n            <div class="col" style="padding-top:0; padding-bottom:0; margin-top:0; margin-bottom:0">\n                <img [navPush]="exhibitorsPage" src="assets/img/exhibitors1.png" width="50%" height="auto" style="display: block; margin-left: auto; margin-right: auto;">\n                <p id="" style="color:#FFFFFF;text-align:center;font-weight:bold" class=""><span style="">Exhibitors</span></p>\n            </div>\n\n            <div class="col" style="padding-top:0; padding-bottom:0; margin-top:0; margin-bottom:0">\n                <img src="assets/img/person1.png" href="#" onclick="window.open(\'https://www.aacd.com/index.php?module=login\', \'_system\', \'location=yes\'); return false;" width="50%" height="auto" style="display: block; margin-top:0; margin-left: auto; margin-right: auto;">\n                <p id="home-markdown3" style="color:#FFFFFF;text-align:center;font-weight:bold" class=""><span style="">Your AACD</span></p>\n            </div>\n\n            <div class="col" style="padding-top:0; padding-bottom:0; margin-top:0; margin-bottom:0">\n                <img [navPush]="mapPage" src="assets/img/map.png" width="50%" height="auto" style="display: block; margin-top:0; margin-left: auto; margin-right: auto; padding-top:0; padding-bottom:0; margin-top:0; margin-bottom:0">\n                <p id="home-markdown6"  style="color:#FFFFFF;text-align:center;font-weight:bold" class=""><span style="">Maps</span></p>\n            </div>\n        </div>\n	</div>\n\n	<div id="MenuDashboard" *ngIf="DisplayMenuDashboard">\n\n        <div class="row" style="width:100%; padding-top:0; padding-bottom:0; margin-top:0; margin-bottom:0">\n			<ion-list no-lines>\n				<ion-item class="steel" (click)="NavigateToAuthenticatedPage(\'MyAgenda\')">\n					Upcoming Agenda Items\n					<ion-icon name="calendar" item-left></ion-icon>\n				</ion-item>\n				<ion-item style="border-color: rgba(0, 0, 0, 0);background-color: rgba(0, 0, 0, 0);color: white; padding-bottom:-30px; margin-bottom:-30px;" (click)="EventDetails(upcomingAgenda.visEventID)" *ngFor="let upcomingAgenda of upcomingAgendaItems" id="upcomingAgenda-list-item19" >\n					<div>\n						<div class="row">\n							<div class="col">\n								<div style="float: left; padding-right: 10px;">\n									<ion-icon name="{{upcomingAgenda.eventTypeIcon}}"></ion-icon>\n								</div>\n								<div>\n									<p class="myLabelBold" style="color: white;">\n										{{upcomingAgenda.EventName}}\n									</p>\n									<p style="color: white;">\n										{{upcomingAgenda.visEventTimeframe}}\n										<br/>\n										{{upcomingAgenda.EventLocation}}\n									</p>\n								</div>\n								<div style="float: right; color: white;">\n									<ion-icon name="{{upcomingAgenda.navigationArrow}}"></ion-icon>\n								</div>\n							</div>\n						</div>\n					</div>\n				</ion-item>\n				<ion-item class="steel" (click)="NavigateToAuthenticatedPage(\'CETracking\')">\n					CE Credits Completed\n					<ion-icon name="school" item-left></ion-icon>\n				</ion-item>\n				<ion-item style="border-color: rgba(0, 0, 0, 0);background-color: rgba(0, 0, 0, 0);color: white;" (click)="NavigateToAuthenticatedPage(\'CETracking\')" id="cetrackervalue-list" >\n					<div>\n						<div class="row">\n							<div class="col">\n								<div>\n									<p class="myLabelBold" style="color: white;font-size:1.8em">\n										{{creditsTypeL}}L / {{creditsTypeP}}P\n									</p>\n								</div>\n							</div>\n						</div>\n					</div>\n				</ion-item>\n				<ion-item class="steel">\n					Announcements\n					<ion-icon name="bookmarks" item-left></ion-icon>\n				</ion-item>\n				<ion-item style="border-color: rgba(0, 0, 0, 0);background-color: rgba(0, 0, 0, 0);color: white;" id="announcement-list" >\n					<div>\n						<div class="row">\n							<div class="col">\n								<div style="float: left; padding-right: 10px;">\n									<ion-icon name="bookmark"></ion-icon>\n								</div>\n								<div>\n									<p class="myLabelBold" style="color: white;">\n										12:30pm<br/>\n										Head over now to the Exhibit Hall to see Dr. Phil Smith\n									</p>\n								</div>\n							</div>\n						</div>\n					</div>\n				</ion-item>\n			</ion-list>\n        </div>\n\n        <div class="row" style="padding-top:0; padding-bottom:0; margin-top:0; margin-bottom:0; position: fixed; bottom:0%;">\n\n            <div class="col" style="padding-top:0; padding-bottom:0; margin-top:0; margin-bottom:0">\n                <img [navPush]="programPage" src="assets/img/schedule.png" width="50%" height="auto" style="display: block; margin-left: auto; margin-right: auto; margin-top:0">\n                <p id="" style="color:#FFFFFF;text-align:center;font-weight:bold" class=""><span style="">Program</span></p>\n            </div>\n\n            <div class="col" style="padding-top:0; padding-bottom:0; margin-top:0; margin-bottom:0">\n                <img [navPush]="exhibitorsPage" src="assets/img/exhibitors1.png" width="50%" height="auto" style="display: block; margin-left: auto; margin-right: auto;">\n                <p id="" style="color:#FFFFFF;text-align:center;font-weight:bold" class=""><span style="">Exhibitors</span></p>\n            </div>\n\n            <div class="col" style="padding-top:0; padding-bottom:0; margin-top:0; margin-bottom:0;">\n                <img (click)="NavigateToAuthenticatedPage(\'CETracking\')" src="assets/img/ce.png" width="50%" height="auto" style="display: block; margin-top:0; margin-left: auto; margin-right: auto;">\n                <p id="" style="color:#ffffff;text-align:center;font-weight:bold" class=""><span style="">CE Tracker</span></p>\n            </div>\n\n		</div>\n\n	</div>\n\n\n</ion-content>\n\n<ion-footer>\n		\n	<button ion-button block color="secondary" style="margin:0" (click)="NavigateToAuthenticatedPage(\'ActivityFeed\')">Activity Feed</button>\n\n</ion-footer>\n'/*ion-inline-end:"/Users/petervroom/aacd19/src/pages/home/home.html"*/,
         changeDetection: __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectionStrategy"].OnPush
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["u" /* NavController */],
@@ -606,7 +1600,7 @@ HomePage = __decorate([
 
 /***/ }),
 
-/***/ 108:
+/***/ 109:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -649,7 +1643,7 @@ HelpPage = __decorate([
 
 /***/ }),
 
-/***/ 109:
+/***/ 110:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -661,7 +1655,7 @@ HelpPage = __decorate([
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_rxjs_add_operator_map___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_rxjs_add_operator_map__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__providers_database_database__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__providers_localstorage_localstorage__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__home_home__ = __webpack_require__(100);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__home_home__ = __webpack_require__(101);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -932,7 +1926,7 @@ EvaluationConference = __decorate([
 
 /***/ }),
 
-/***/ 110:
+/***/ 111:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1119,7 +2113,7 @@ SpeakersPage = __decorate([
 
 /***/ }),
 
-/***/ 111:
+/***/ 112:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1192,7 +2186,7 @@ SocialPage = __decorate([
 
 /***/ }),
 
-/***/ 116:
+/***/ 117:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1476,7 +2470,7 @@ Localstorage = __decorate([
 
 /***/ }),
 
-/***/ 164:
+/***/ 165:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1486,7 +2480,7 @@ Localstorage = __decorate([
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_add_operator_map__ = __webpack_require__(22);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_add_operator_map___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_rxjs_add_operator_map__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__providers_localstorage_localstorage__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__speakers_speakers__ = __webpack_require__(110);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__speakers_speakers__ = __webpack_require__(111);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -1556,7 +2550,7 @@ ProgramPage = __decorate([
 
 /***/ }),
 
-/***/ 165:
+/***/ 166:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1590,14 +2584,14 @@ ConferenceCityPage = __decorate([
 
 /***/ }),
 
-/***/ 166:
+/***/ 167:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return MapPage; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ionic_native_google_maps__ = __webpack_require__(894);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ionic_native_google_maps__ = __webpack_require__(895);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -1712,7 +2706,7 @@ function onIndoorEvents(indoorBuilding) {
 
 /***/ }),
 
-/***/ 167:
+/***/ 168:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1887,7 +2881,7 @@ ExhibitorsPage = __decorate([
 
 /***/ }),
 
-/***/ 168:
+/***/ 169:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1896,11 +2890,11 @@ ExhibitorsPage = __decorate([
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__providers_localstorage_localstorage__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__providers_database_database__ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__attendees_attendees__ = __webpack_require__(195);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__profile_profile__ = __webpack_require__(116);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__attendees_attendees__ = __webpack_require__(196);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__profile_profile__ = __webpack_require__(117);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__notifications_notifications__ = __webpack_require__(197);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__activity_activity__ = __webpack_require__(169);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__social_social__ = __webpack_require__(111);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__activity_activity__ = __webpack_require__(170);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__social_social__ = __webpack_require__(112);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -2034,7 +3028,7 @@ NetworkingPage = __decorate([
 
 /***/ }),
 
-/***/ 169:
+/***/ 170:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2335,7 +3329,7 @@ ActivityPage = __decorate([
 
 /***/ }),
 
-/***/ 195:
+/***/ 196:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -2662,464 +3656,6 @@ AttendeesPage = __decorate([
 
 /***/ }),
 
-/***/ 196:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return EducationDetailsPage; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ionic_storage__ = __webpack_require__(25);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_rxjs_add_operator_map__ = __webpack_require__(22);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_rxjs_add_operator_map___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_rxjs_add_operator_map__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__providers_database_database__ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__providers_localstorage_localstorage__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__login_login__ = __webpack_require__(54);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__myagenda_myagenda__ = __webpack_require__(58);
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-// Components, functions, plugins
-
-
-
-
-
-
-// Pages
-
-
-let EducationDetailsPage = class EducationDetailsPage {
-    constructor(navCtrl, navParams, storage, databaseprovider, cd, alertCtrl, events, loadingCtrl, localstorage) {
-        this.navCtrl = navCtrl;
-        this.navParams = navParams;
-        this.storage = storage;
-        this.databaseprovider = databaseprovider;
-        this.cd = cd;
-        this.alertCtrl = alertCtrl;
-        this.events = events;
-        this.loadingCtrl = loadingCtrl;
-        this.localstorage = localstorage;
-        // Control Buttons
-        // Disabled per LIsa Bollenbach 2018-04-19
-        this.btnAgendaManagement = false;
-        this.btnNotes = true;
-        this.btnPrint = true;
-        // SubSection Control
-        this.SpeakerHostShow = true;
-        this.CorporateSupporterShow = true;
-        this.AuthorsDisplay = false;
-        this.AbstractDisplay = true;
-        this.DescriptionDisplay = true;
-        this.SubEventsDisplay = false;
-        this.RecordingShow = true;
-        this.HandoutShow = true;
-        this.OtherInformationDisplay = true;
-        this.SpeakerList = [];
-    }
-    ionViewDidLoad() {
-        console.log('ionViewDidLoad EducationDetailsPage');
-    }
-    ngOnInit() {
-        var AttendeeID = this.localstorage.getLocalValue('AttendeeID');
-        if (AttendeeID == '' || AttendeeID == null) {
-            AttendeeID = '0';
-        }
-        // Load initial data set here
-        //let loading = this.loadingCtrl.create({
-        //	spinner: 'crescent',
-        //	content: 'Please wait...'
-        //});
-        //loading.present();
-        // Blank and show loading info
-        this.cd.markForCheck();
-        // Temporary use variables
-        var flags = "dt|0|Alpha|" + this.navParams.get('EventID');
-        this.EventID = this.navParams.get('EventID');
-        this.localstorage.setLocalValue('EventID', this.navParams.get('EventID'));
-        // ---------------------
-        // Get Education Details
-        // ---------------------
-        var PrimarySpeakerName = "";
-        var SQLDate;
-        var DisplayDateTime;
-        var dbEventDateTime;
-        var courseID = "";
-        var UpdatedEventDescription;
-        var UpdatedEventDescription2;
-        var HandoutPDFName = "";
-        console.log('Education Details, flags: ' + flags);
-        // Get course detail record
-        this.databaseprovider.getLectureData(flags, AttendeeID).then(data => {
-            console.log("getLectureData: " + JSON.stringify(data));
-            if (data['length'] > 0) {
-                console.log("Educationa Details, begin parsing");
-                PrimarySpeakerName = "";
-                // Display start time
-                console.log("Educationa Details, Display start time");
-                dbEventDateTime = data[0].session_start_time.substring(0, 19);
-                dbEventDateTime = dbEventDateTime.replace(/-/g, '/');
-                dbEventDateTime = dbEventDateTime.replace(/T/g, ' ');
-                SQLDate = new Date(dbEventDateTime);
-                DisplayDateTime = dateFormat(SQLDate, "mm/dd h:MMtt");
-                // Display end time
-                console.log("Educationa Details, Display end time");
-                dbEventDateTime = data[0].session_end_time.substring(0, 19);
-                dbEventDateTime = dbEventDateTime.replace(/-/g, '/');
-                dbEventDateTime = dbEventDateTime.replace(/T/g, ' ');
-                SQLDate = new Date(dbEventDateTime);
-                DisplayDateTime = DisplayDateTime + " to " + dateFormat(SQLDate, "h:MMtt");
-                console.log("Educationa Details, Set primary speaker");
-                if (data[0].primary_speaker == "") {
-                    //PrimarySpeakerName = "No Assigned Primary Presenter";
-                    PrimarySpeakerName = "";
-                }
-                else {
-                    PrimarySpeakerName = data[0].primary_speaker;
-                }
-                console.log("Educationa Details, Set session title");
-                this.EventName = data[0].session_title;
-                //this.EventSubName = data[0].EventSubName;
-                console.log("Educationa Details, Add room name");
-                if (data[0].RoomName.length == 0) {
-                    this.DisplayEventTimeDateLocation = DisplayDateTime;
-                }
-                else {
-                    this.DisplayEventTimeDateLocation = DisplayDateTime + " in " + data[0].RoomName;
-                }
-                console.log("Educationa Details, Set speaker name");
-                this.SpeakerDisplayName = PrimarySpeakerName;
-                //this.EventTypeName = data[0].EventTypeName;
-                console.log('Host: ' + data[0].speaker_host_emcee);
-                if ((data[0].speaker_host_emcee === undefined) || (data[0].speaker_host_emcee === "") || (data[0].speaker_host_emcee === null)) {
-                    this.SpeakerHostShow = false;
-                }
-                else {
-                    this.SpeakerHostEmcee = data[0].speaker_host_emcee;
-                }
-                if ((data[0].corporate_supporter === undefined) || (data[0].corporate_supporter === "") || (data[0].corporate_supporter === null)) {
-                    this.CorporateSupporterShow = false;
-                }
-                else {
-                    this.EventCorporateSupporter = data[0].corporate_supporter;
-                }
-                UpdatedEventDescription2 = data[0].description;
-                UpdatedEventDescription2 = UpdatedEventDescription2.replace(/\\/g, '');
-                UpdatedEventDescription = UpdatedEventDescription2.replace("Educational Objectives:", "<br/><br/><b>Educational Objectives:</b>");
-                UpdatedEventDescription = UpdatedEventDescription.replace("1.", "<br/>1.");
-                UpdatedEventDescription = UpdatedEventDescription.replace("2.", "<br/>2.");
-                UpdatedEventDescription = UpdatedEventDescription.replace("3.", "<br/>3.");
-                UpdatedEventDescription = UpdatedEventDescription.replace("4.", "<br/>4.");
-                UpdatedEventDescription = UpdatedEventDescription.replace("5.", "<br/>5.");
-                UpdatedEventDescription = UpdatedEventDescription.replace("6.", "<br/>6.");
-                UpdatedEventDescription = UpdatedEventDescription.replace("DISCLAIMER:", "<br/><br/><b>DISCLAIMER:</b>");
-                UpdatedEventDescription = UpdatedEventDescription.replace("Learning Objectives:", "<br/><br/><b>Learning Objectives:</b>");
-                this.sessionAbstract = UpdatedEventDescription;
-                console.log("Abstract: " + UpdatedEventDescription);
-                //this.EventID = data[0].session_id;
-                console.log('db: ' + data[0].ce_credits_type);
-                console.log('db: ' + data[0].course_id);
-                console.log('db: ' + data[0].HandoutFilename);
-                console.log('db: ' + data[0].type);
-                HandoutPDFName = data[0].HandoutFilename + ".pdf";
-                this.HandoutURL = "https://aacdmobile.convergence-us.com/aacdmobile/www/assets/Handouts/" + HandoutPDFName;
-                this.HandoutFn = HandoutPDFName;
-                courseID = data[0].course_id;
-                this.localstorage.setLocalValue("PDFLink", data[0].course_id);
-                // Values for Agenda Management
-                this.localstorage.setLocalValue("AAOID", data[0].session_id);
-                this.localstorage.setLocalValue("EventStartTime", data[0].session_start_time.substring(11, 19));
-                this.localstorage.setLocalValue("EventEndTime", data[0].session_end_time.substring(11, 19));
-                this.localstorage.setLocalValue("EventLocation", data[0].RoomName);
-                this.localstorage.setLocalValue("EventName", data[0].session_title);
-                this.localstorage.setLocalValue("EventDate", data[0].session_start_time.substring(0, 10));
-                if (data[0].ce_credits_type == "") {
-                    this.AbstractDisplay = false;
-                }
-                else {
-                    this.DescriptionDisplay = false;
-                }
-                if ((data[0].description === undefined) || (data[0].description === "") || (data[0].description === null)) {
-                    this.AbstractDisplay = false;
-                    this.DescriptionDisplay = false;
-                }
-                if (data[0].session_recording.trim() == "N") {
-                    this.RecordingShow = false;
-                }
-                console.log('HandoutFilename: ' + HandoutPDFName);
-                if (data[0].HandoutFilename === "" || data[0].HandoutFilename === null) {
-                    this.HandoutShow = false;
-                }
-                if (data[0].OnAgenda != null) {
-                    this.visAgendaAddRemoveButton = "Remove";
-                }
-                else {
-                    this.visAgendaAddRemoveButton = "Add";
-                }
-                // Other Information grid
-                this.vSubjectCode = data[0].subject;
-                this.vCECredits = data[0].cs_credits;
-                this.vCECreditsType = data[0].ce_credits_type;
-                this.vSessionType = data[0].type;
-                this.vSessionLevel = data[0].level;
-                // Status checks
-                var SessionStatus = "";
-                var StatusStyle = "SessionStatusNormal";
-                // Room Capacity check
-                if (parseInt(data[0].room_capacity) <= parseInt(data[0].Attendees)) {
-                    SessionStatus = "Course at Capacity";
-                    StatusStyle = "SessionStatusRed";
-                }
-                // Waitlist check
-                if (data[0].Waitlist == "1") {
-                    if (SessionStatus == "") {
-                        SessionStatus = "You are Waitlisted";
-                        StatusStyle = "SessionStatusRed";
-                    }
-                    else {
-                        SessionStatus = SessionStatus + " / You are Waitlisted";
-                        StatusStyle = "SessionStatusRed";
-                    }
-                }
-                console.log(SessionStatus);
-                this.SessionStatusStyle = StatusStyle;
-                this.SessionStatus = SessionStatus;
-                // ---------------------------
-                // Get Linked Speakers
-                // ---------------------------
-                this.AuthorsDisplay = false;
-                if (data[0].ce_credits_type == "") {
-                    // Keep hidden for non-CE events
-                    console.log('Non-CE event');
-                    this.OtherInformationDisplay = false;
-                    this.cd.markForCheck();
-                    //loading.dismiss();
-                }
-                else {
-                    console.log('Loading speakers');
-                    flags = "cd|Alpha|0|0|" + courseID;
-                    // Get speaker detail record
-                    this.databaseprovider.getSpeakerData(flags, AttendeeID).then(data2 => {
-                        console.log("getSpeakerData: " + JSON.stringify(data2));
-                        if (data2['length'] > 0) {
-                            // Process returned records to display
-                            this.SpeakerList = [];
-                            var DisplayName = "";
-                            for (var i = 0; i < data2['length']; i++) {
-                                DisplayName = "";
-                                // Concatenate fields to build displayable name
-                                DisplayName = DisplayName + data2[i].FirstName;
-                                //if (resA.rows.item(i).MiddleInitial != "") {
-                                //    DisplayName = DisplayName + " " + data2[i].MiddleInitial;
-                                //}
-                                DisplayName = DisplayName + " " + data2[i].LastName;
-                                //if (data2[i].imis_designation != "" && data2[i].imis_designation != null) {
-                                //    DisplayName = DisplayName + ", " + data2[i].imis_designation;
-                                //}
-                                //if (data2[i].Credentials != "") {
-                                //	DisplayName = DisplayName + " " + data2[i].Credentials;
-                                //}
-                                //var imageAvatar = data2[i].imageFilename;
-                                var imageAvatar = "https://aacdmobile.convergence-us.com/AdminGateway/2019/images/Speakers/" + data2[i].imageFilename;
-                                //imageAvatar = imageAvatar.substr(0, imageAvatar.length - 3) + 'png';
-                                //console.log("imageAvatar: " + imageAvatar);
-                                //imageAvatar = "assets/img/speakers/" + imageAvatar;
-                                this.SpeakerList.push({
-                                    speakerIcon: "person",
-                                    speakerAvatar: imageAvatar,
-                                    navigationArrow: "arrow-dropright",
-                                    SpeakerID: data2[i].speakerID,
-                                    DisplayNameLastFirst: DisplayName,
-                                    DisplayCredentials: data2[i].Credentials
-                                    //Affiliation: data2[i].Affiliation
-                                });
-                            }
-                            this.AuthorsDisplay = true;
-                        }
-                        this.cd.markForCheck();
-                        //loading.dismiss();
-                    }).catch(function () {
-                        console.log("Speaker Promise Rejected");
-                    });
-                }
-            }
-        }).catch(function () {
-            console.log("Course Promise Rejected");
-        });
-        // -------------------
-        // Get Attendee Status
-        // -------------------
-        /*
-        console.log('Attendee Button Management, AttendeeID: ' + AttendeeID);
-        if (AttendeeID == '0') {
-            this.btnNotes = false;
-            this.btnAgendaManagement = false;
-        } else {
-            this.btnNotes = true;
-            this.btnAgendaManagement = true;
-        }
-        */
-    }
-    SpeakerDetails(SpeakerID) {
-        if (SpeakerID != 0) {
-            // Navigate to Speaker Details page
-            this.navCtrl.push('SpeakerDetailsPage', { SpeakerID: SpeakerID }, { animate: true, direction: 'forward' });
-        }
-    }
-    ;
-    printWindow() {
-        window.open('https://www.google.com/cloudprint/#printers', '_system');
-    }
-    ;
-    openPDF(PDFURL) {
-        var ref = window.open(PDFURL, '_system');
-    }
-    ;
-    navToMyAgenda() {
-        var AttendeeID = this.localstorage.getLocalValue('AttendeeID');
-        if (AttendeeID != '' && AttendeeID != null) {
-            // If not, store the page they want to go to and go to the Login page
-            console.log('Stored AttendeeID: ' + AttendeeID);
-            this.localstorage.setLocalValue('NavigateToPage', "MyAgenda");
-            this.navCtrl.push(__WEBPACK_IMPORTED_MODULE_6__login_login__["a" /* LoginPage */], {}, { animate: true, direction: 'forward' });
-        }
-        else {
-            // Otherwise just go to the page they want
-            this.navCtrl.push(__WEBPACK_IMPORTED_MODULE_7__myagenda_myagenda__["a" /* MyAgenda */], {}, { animate: true, direction: 'forward' });
-        }
-    }
-    ;
-    navToNotes(EventID) {
-        console.log("NoteDetails: " + EventID);
-        var AttendeeID = this.localstorage.getLocalValue('AttendeeID');
-        if (AttendeeID == '' || AttendeeID == null) {
-            // If not, store the page they want to go to and go to the Login page
-            console.log('Stored AttendeeID: ' + AttendeeID);
-            this.localstorage.setLocalValue('NavigateToPage', "NotesDetailsPage");
-            this.navCtrl.push(__WEBPACK_IMPORTED_MODULE_6__login_login__["a" /* LoginPage */], {}, { animate: true, direction: 'forward' });
-        }
-        else {
-            // Otherwise just go to the page they want
-            this.navCtrl.push('NotesDetailsPage', { EventID: EventID }, { animate: true, direction: 'forward' });
-        }
-    }
-    ;
-    AgendaManagement() {
-        console.log("Begin AgendaManagement process...");
-        var AttendeeID = this.localstorage.getLocalValue('AttendeeID');
-        var AAOID = this.localstorage.getLocalValue("AAOID");
-        var EventID = this.localstorage.getLocalValue("EventID");
-        var EventStartTime = this.localstorage.getLocalValue("EventStartTime");
-        var EventEndTime = this.localstorage.getLocalValue("EventEndTime");
-        var EventLocation = this.localstorage.getLocalValue("EventLocation");
-        var EventName = this.localstorage.getLocalValue("EventName");
-        EventName = EventName.replace(/'/g, "''");
-        var EventDate = this.localstorage.getLocalValue("EventDate");
-        var flags = '';
-        // Starting variables
-        console.log("AttendeeID: " + AttendeeID);
-        console.log("AAOID: " + AAOID);
-        console.log("EventID: " + EventID);
-        console.log("EventStartTime: " + EventStartTime);
-        console.log("EventEndTime: " + EventEndTime);
-        console.log("EventLocation: " + EventLocation);
-        console.log("EventName: " + EventName);
-        console.log("EventDate: " + EventDate);
-        this.cd.markForCheck();
-        // Get last update performed by this app
-        var LastUpdateDate = this.localstorage.getLocalValue("LastUpdateDate");
-        if (LastUpdateDate == null) {
-            // If never, then set variable and localStorage item to NA
-            LastUpdateDate = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
-            this.localstorage.setLocalValue("LastUpdateDate", LastUpdateDate);
-        }
-        if (this.visAgendaAddRemoveButton == "Add") {
-            // ------------------------
-            // Add item to Agenda
-            // ------------------------
-            flags = 'ad|0|' + EventID + '|' + EventStartTime + '|' + EventEndTime + '|' + EventLocation + '|' + EventName + '|' + EventDate + '|' + AAOID + '|' + LastUpdateDate;
-            console.log("flags: " + flags);
-            this.databaseprovider.getAgendaData(flags, AttendeeID).then(data => {
-                console.log("getAgendaData: " + JSON.stringify(data));
-                if (data['length'] > 0) {
-                    console.log("Return status: " + data[0].AddStatus);
-                    if (data[0].AddStatus == "Success") {
-                        this.events.publish('user:Status', 'AgendaItem Add');
-                        this.visAgendaAddRemoveButton = "Remove";
-                        this.cd.markForCheck();
-                    }
-                    else {
-                        console.log("Return query: " + data[0].AddQuery);
-                        let alert = this.alertCtrl.create({
-                            title: 'Agenda Item',
-                            subTitle: 'Unable to add the item to your agenda at this time. Please try again shortly.',
-                            buttons: ['OK']
-                        });
-                        alert.present();
-                    }
-                }
-            }).catch(function () {
-                console.log("Promise Rejected");
-            });
-        }
-        else {
-            // -----------------------
-            // Remove Item from Agenda
-            // -----------------------
-            flags = 'dl|0|' + EventID + '|' + EventStartTime + '|' + EventEndTime + '|' + EventLocation + '|' + EventName + '|' + EventDate + '|' + AAOID + '|' + LastUpdateDate;
-            console.log("flags: " + flags);
-            this.databaseprovider.getAgendaData(flags, AttendeeID).then(data => {
-                console.log("getAgendaData: " + JSON.stringify(data));
-                if (data['length'] > 0) {
-                    console.log("Return status: " + data[0].DeleteStatus);
-                    if (data[0].DeleteStatus == "Success") {
-                        this.events.publish('user:Status', 'AgendaItem Remove');
-                        this.visAgendaAddRemoveButton = "Add";
-                        this.cd.markForCheck();
-                    }
-                    else {
-                        console.log("Return query: " + data[0].DeleteQuery);
-                        let alert = this.alertCtrl.create({
-                            title: 'Agenda Item',
-                            subTitle: 'Unable to remove the item from your agenda at this time. Please try again shortly.',
-                            buttons: ['OK']
-                        });
-                        alert.present();
-                    }
-                }
-            }).catch(function () {
-                console.log("Promise Rejected");
-            });
-        }
-    }
-    ;
-};
-EducationDetailsPage = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
-        selector: 'page-educationdetails',template:/*ion-inline-start:"/Users/petervroom/aacd19/src/pages/educationdetails/educationdetails.html"*/'<ion-header>\n\n  <ion-navbar color="primary">\n    <button ion-button menuToggle>\n      <ion-icon name="menu"></ion-icon>\n    </button>\n    <ion-title>Education Details</ion-title>\n  </ion-navbar>\n\n</ion-header>\n\n<ion-content class="page-speakers" padding>\n\n	<div class="myLabelBold" style="margin-top:10px!important">\n		<h2>{{EventName}}</h2>\n		<p>{{EventSubName}}</p>\n		<p>{{DisplayEventTimeDateLocation}}</p>\n		<p>{{SpeakerDisplayName}}</p>\n		<p>{{EventTypeName}}</p>\n		<p [ngClass]="SessionStatusStyle">{{SessionStatus}}</p>\n	</div>\n	<div class="button-bar myMarginTopBottom">\n\n		<!-- Disabled per LIsa Bollenbach 2018-04-19 -->\n		<button ion-button outline *ngIf="btnAgendaManagement" (click)="AgendaManagement()" [disabled]=true>\n			<div>\n				<ion-icon name="calendar"></ion-icon>\n				<label>{{visAgendaAddRemoveButton}}</label>\n			</div>\n		</button>\n		<button ion-button outline  *ngIf="btnNotes" (click)="navToNotes(EventID)">\n			<div>\n				<ion-icon name="create"></ion-icon>\n				<label>Notes</label>\n			</div>\n		</button>\n		<button ion-button outline  *ngIf="btnPrint" (click)="printWindow()">\n			<div>\n				<ion-icon name="print"></ion-icon>\n				<label>Print</label>\n			</div>\n		</button>\n\n	</div>\n	<p *ngIf="SpeakerHostShow" class="myLabelBold myHeader">\n		Speaker Host / Emcee\n	</p>\n	<div *ngIf="SpeakerHostShow" class="list">\n		{{SpeakerHostEmcee}}\n	</div>\n	<p *ngIf="CorporateSupporterShow" class="myLabelBold myHeader">\n		Corporate Supporter\n	</p>\n	<div *ngIf="CorporateSupporterShow" class="list">\n		{{EventCorporateSupporter}}\n	</div>\n	<p *ngIf="AuthorsDisplay" class="myLabelBold myHeader dark">\n		Speakers\n	</p>\n	<ion-list id="author-list3">\n		<ion-item (click)="SpeakerDetails(speaker.SpeakerID)" *ngFor="let speaker of SpeakerList" id="speakersessions-list-item19">\n		\n				<ion-avatar item-start>\n					<img src="{{speaker.speakerAvatar}}" onerror="this.src=\'assets/img/personIcon.png\'">\n				</ion-avatar>\n\n			<ion-icon item-right name="{{speaker.navigationArrow}}"></ion-icon>\n			<h2>{{speaker.DisplayNameLastFirst}}</h2>\n			{{speaker.DisplayCredentials}}\n		</ion-item>\n	</ion-list>\n	<p></p>\n	<p *ngIf="AbstractDisplay" class="myLabelBold myHeader">\n		Abstract\n	</p>\n	<div *ngIf="AbstractDisplay" [innerHTML]="sessionAbstract" class="myMarginTopBottom">\n		{{EventDetails}}\n	</div>\n	<p *ngIf="DescriptionDisplay" class="myLabelBold myHeader">\n		Description\n	</p>\n	<div *ngIf="DescriptionDisplay" [innerHTML]="sessionAbstract" class="myMarginTopBottom">\n		{{EventDetails}}\n	</div>\n	<p *ngIf="SubEventsDisplay" class="myLabelBold myHeader">\n		SubEvents\n	</p>\n	<ion-list id="session-list3">\n		<ion-item (click)="EventDetails(session.EventID)" *ngFor="let session of sessions" id="speakersessions-list-item20">\n			<div style="float: left; padding-right: 10px;">\n				<ion-icon name="{{session.eventTypeIcon}}"></ion-icon>\n			</div>\n			<div>\n				<p class="myLabelBold">\n					{{session.DisplayEventName}}\n				</p>\n				<p>\n					{{session.DisplayEventTimeDateLocation}}\n				</p>\n			</div>\n			<div style="float: right">\n				<ion-icon name="{{session.navigationArrow}}"></ion-icon>\n			</div>\n		</ion-item>\n	</ion-list>\n	<p *ngIf="RecordingShow" class="myLabelBold myHeader">\n		Session Recording\n	</p>\n	<div *ngIf="RecordingShow" class="list">\n		<ion-icon item-left name="mic" style="padding-right: 10px;"></ion-icon>\n		This session is being recorded.\n	</div>\n	<p *ngIf="HandoutShow" class="myLabelBold myHeader">\n		Handout\n	</p>\n	<div *ngIf="HandoutShow" class="list" (click)="openPDF(HandoutURL)">\n		<ion-icon item-left name="cloud-download" style="padding-right: 10px;"></ion-icon>\n		{{HandoutFn}}\n	</div>\n	<p class="myLabelBold myHeader" *ngIf="OtherInformationDisplay">\n		Other Information\n	</p>\n	<div class="myMarginTopBottom" *ngIf="OtherInformationDisplay">\n		<ion-row>\n			<ion-col>\n				<ion-item>\n					<ion-label><b>Subject</b><br/>{{vSubjectCode}}</ion-label>\n				</ion-item>\n			</ion-col>\n			<ion-col>\n				<ion-item>\n					<ion-label><b>CE Credits</b><br/>{{vCECredits}}</ion-label>\n				</ion-item>\n			</ion-col>\n		</ion-row>\n		<ion-row>\n			<ion-col>\n				<ion-item>\n					<ion-label><b>Type</b><br/>{{vSessionType}}</ion-label>\n				</ion-item>\n			</ion-col>\n			<ion-col>\n				<ion-item>\n					<ion-label><b>CE Credits Type</b><br/>{{vCECreditsType}}</ion-label>\n				</ion-item>\n			</ion-col>\n		</ion-row>\n		<ion-row>\n			<ion-col>\n				<ion-item>\n					<ion-label><b>Level</b><br/>{{vSessionLevel}}</ion-label>\n				</ion-item>\n			</ion-col>\n			<ion-col>\n			</ion-col>\n		</ion-row>\n	</div>\n	\n\n	<p *ngIf="MeetingLocationDisplay" class="myLabelBold myHeader">\n		Locator\n	</p>\n\n	<div class="myMarginTopBottom" *ngIf="MeetingLocationDisplay">\n		<div id="map1" style="width:100%; height:400px;"></div>\n	</div>\n\n\n</ion-content>\n'/*ion-inline-end:"/Users/petervroom/aacd19/src/pages/educationdetails/educationdetails.html"*/,
-        changeDetection: __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectionStrategy"].OnPush
-    }),
-    __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["u" /* NavController */],
-        __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["v" /* NavParams */],
-        __WEBPACK_IMPORTED_MODULE_2__ionic_storage__["b" /* Storage */],
-        __WEBPACK_IMPORTED_MODULE_4__providers_database_database__["a" /* Database */],
-        __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"],
-        __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["b" /* AlertController */],
-        __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* Events */],
-        __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["q" /* LoadingController */],
-        __WEBPACK_IMPORTED_MODULE_5__providers_localstorage_localstorage__["a" /* Localstorage */]])
-], EducationDetailsPage);
-
-//# sourceMappingURL=educationdetails.js.map
-
-/***/ }),
-
 /***/ 197:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -3250,10 +3786,10 @@ webpackEmptyAsyncContext.id = 208;
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Database; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__ionic_native_sqlite__ = __webpack_require__(94);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__ionic_native_sqlite__ = __webpack_require__(95);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_ionic_angular__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__angular_http__ = __webpack_require__(95);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_rxjs_add_operator_catch__ = __webpack_require__(148);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__angular_http__ = __webpack_require__(96);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_rxjs_add_operator_catch__ = __webpack_require__(149);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_rxjs_add_operator_catch___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_rxjs_add_operator_catch__);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -5841,91 +6377,91 @@ Database = __decorate([
 var map = {
 	"../pages/activityfeedcomment/activityfeedcomment.module": [
 		945,
-		42
+		17
 	],
 	"../pages/activityfeeddetails/activityfeeddetails.module": [
-		946,
-		41
+		958,
+		16
 	],
 	"../pages/activityfeedleaderboard/activityfeedleaderboard.module": [
 		947,
-		40
+		15
 	],
 	"../pages/activityfeedposting/activityfeedposting.module": [
-		948,
-		39
+		960,
+		14
 	],
 	"../pages/attendeesprofile/attendeesprofile.module": [
-		949,
-		38
+		959,
+		13
 	],
 	"../pages/cetracking/cetracking.module": [
-		950,
-		37
+		948,
+		12
 	],
 	"../pages/conversations/conversations.module": [
-		951,
-		36
+		949,
+		11
 	],
 	"../pages/evaluationlecture/evaluationlecture.module": [
-		953,
-		35
+		961,
+		10
 	],
 	"../pages/evaluationworkshop/evaluationworkshop.module": [
-		954,
-		34
+		962,
+		9
 	],
 	"../pages/exhibitordetails/exhibitordetails.module": [
-		955,
-		25
+		963,
+		8
 	],
 	"../pages/listinglevel1/listinglevel1.module": [
-		956,
-		33
+		966,
+		7
 	],
 	"../pages/myagendapersonal/myagendapersonal.module": [
-		957,
-		32
+		964,
+		6
 	],
 	"../pages/notifications/notifications.module": [
-		958,
-		45
+		950,
+		20
 	],
 	"../pages/profile/profile.module": [
-		959,
-		44
+		951,
+		19
 	],
 	"../pages/profileimage/profileimage.module": [
-		965,
-		31
+		952,
+		5
 	],
 	"../pages/profilepasswordchange/profilepasswordchange.module": [
-		960,
-		30
+		953,
+		4
 	],
 	"../pages/profilesocialmediaentry/profilesocialmediaentry.module": [
-		961,
-		29
+		954,
+		3
 	],
 	"../pages/searchbytopic/searchbytopic.module": [
-		962,
-		28
+		955,
+		2
 	],
 	"../pages/searchresults/searchresults.module": [
-		963,
-		27
+		965,
+		1
 	],
 	"../pages/slider/slider.module": [
-		964,
-		43
+		956,
+		18
 	],
 	"../pages/speakerdetails/speakerdetails.module": [
-		966,
-		26
+		957,
+		0
 	],
 	"main.module": [
-		944,
-		46
+		946,
+		21
 	]
 };
 function webpackAsyncContext(req) {
@@ -6085,12 +6621,12 @@ ChatService = __decorate([
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ionic_storage__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__providers_localstorage_localstorage__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__database_database__ = __webpack_require__(488);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__help_help__ = __webpack_require__(108);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__help_help__ = __webpack_require__(109);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__notes_notes__ = __webpack_require__(81);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__login_login__ = __webpack_require__(54);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__myagendafull_myagendafull__ = __webpack_require__(82);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__myagenda_myagenda__ = __webpack_require__(58);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__evaluationconference_evaluationconference__ = __webpack_require__(109);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__evaluationconference_evaluationconference__ = __webpack_require__(110);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -6114,14 +6650,27 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 let MorePage = class MorePage {
-    constructor(navCtrl, storage, navParams, localstorage) {
+    constructor(navCtrl, storage, navParams, cd, localstorage) {
         this.navCtrl = navCtrl;
         this.storage = storage;
         this.navParams = navParams;
+        this.cd = cd;
         this.localstorage = localstorage;
     }
     ionViewDidLoad() {
         console.log('ionViewDidLoad MorePage');
+    }
+    ngOnInit() {
+        // Load diagnostic values
+        var AttendeeID = this.localstorage.getLocalValue('AttendeeID');
+        var DevPlatform = this.localstorage.getLocalValue('DevicePlatform');
+        var LastSync = this.localstorage.getLocalValue('LastSync');
+        var PlayerID = this.localstorage.getLocalValue("PlayerID");
+        this.DeviceType = DevPlatform;
+        this.RegistrationID = AttendeeID;
+        this.LSync = LastSync;
+        this.PushID = PlayerID;
+        this.cd.markForCheck();
     }
     NavToPage(PageID) {
         var AttendeeID = this.localstorage.getLocalValue('AttendeeID');
@@ -6238,11 +6787,13 @@ let MorePage = class MorePage {
 };
 MorePage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
-        selector: 'page-more',template:/*ion-inline-start:"/Users/petervroom/aacd19/src/pages/more/more.html"*/'<ion-header>\n  <ion-navbar color="primary">\n    <button ion-button menuToggle>\n      <ion-icon name="menu"></ion-icon>\n    </button>\n    <ion-title>More</ion-title>\n  </ion-navbar>\n</ion-header>\n\n\n\n\n\n<ion-content>\n\n	<ion-list>\n	\n		<button ion-item (click)="NavToPage(\'NotesPage\')">Notes\n			<ion-icon item-start name="create"></ion-icon>\n		</button>\n\n		<button ion-item (click)="NavToPage(\'EventSurvey\')">Event Survey\n			<ion-icon item-start name="checkbox"></ion-icon>\n		</button>\n\n		<button ion-item (click)="NavToPage(\'MyAgenda\')">MyAgenda\n			<ion-icon item-start name="list-box"></ion-icon>\n		</button>\n\n		<img src="assets/img/gbasBig.jpeg" onclick="window.open(\'https://na01.safelinks.protection.outlook.com/?url=https%3A%2F%2Faacd.ejoinme.org%2FMyEvents%2FGiveBackaSmileSilentAuction2018%2Ftabid%2F886099%2FDefault.aspx&data=02%7C01%7Clisab%40aacd.com%7C3affa1cb6109443e9e2808d5a16dd04d%7C867291cda2d943f284571ed60b355ed5%7C0%7C0%7C636592415380677523&sdata=gvaFvM0Ce2X9QYhrsE1PcRiiQroR1MLaMRzdpVpNi9A%3D&reserved=0\', \'_system\', \'location=yes\'); return false;">\n\n		<button ion-item (click)="NavToPage(\'MyAgendaFull\')">Agenda All\n			<ion-icon item-start name="list-box"></ion-icon>\n		</button>\n\n		<button ion-item (click)="NavToPage(\'HelpPage\')">Help\n			<ion-icon item-start name="list-box"></ion-icon>\n		</button>\n\n		<button ion-item (click)="NavToPage(\'DatabasePage\')">Database Stats\n			<ion-icon item-start name="stats"></ion-icon>\n		</button>\n\n		<!--\n		<button ion-item (click)="NavToPage(\'EvalTest1Page\')">Evaluation Test 1\n			<ion-icon item-start name="checkbox"></ion-icon>\n		</button>\n\n		<button ion-item (click)="NavToPage(\'EvalTest2Page\')">Evaluation Test 2\n			<ion-icon item-start name="checkbox"></ion-icon>\n		</button>\n\n		<button ion-item (click)="NavToPage(\'EvalTest3Page\')">Evaluation Test 3\n			<ion-icon item-start name="checkbox"></ion-icon>\n		</button>\n\n		<button ion-item (click)="NavToPage(\'EvalTest4Page\')">Evaluation Test 4\n			<ion-icon item-start name="checkbox"></ion-icon>\n		</button>\n		-->\n		\n	</ion-list>\n\n</ion-content>\n'/*ion-inline-end:"/Users/petervroom/aacd19/src/pages/more/more.html"*/,
+        selector: 'page-more',template:/*ion-inline-start:"/Users/petervroom/aacd19/src/pages/more/more.html"*/'<ion-header>\n  <ion-navbar color="primary">\n    <button ion-button menuToggle>\n      <ion-icon name="menu"></ion-icon>\n    </button>\n    <ion-title>More</ion-title>\n  </ion-navbar>\n</ion-header>\n\n\n\n\n\n<ion-content>\n\n	<ion-list>\n	\n		<button ion-item (click)="NavToPage(\'NotesPage\')">Notes\n			<ion-icon item-start name="create"></ion-icon>\n		</button>\n\n		<button ion-item (click)="NavToPage(\'EventSurvey\')">Event Survey\n			<ion-icon item-start name="checkbox"></ion-icon>\n		</button>\n\n		<button ion-item (click)="NavToPage(\'MyAgenda\')">MyAgenda\n			<ion-icon item-start name="list-box"></ion-icon>\n		</button>\n\n		<img src="assets/img/gbasBig.jpeg" onclick="window.open(\'https://na01.safelinks.protection.outlook.com/?url=https%3A%2F%2Faacd.ejoinme.org%2FMyEvents%2FGiveBackaSmileSilentAuction2018%2Ftabid%2F886099%2FDefault.aspx&data=02%7C01%7Clisab%40aacd.com%7C3affa1cb6109443e9e2808d5a16dd04d%7C867291cda2d943f284571ed60b355ed5%7C0%7C0%7C636592415380677523&sdata=gvaFvM0Ce2X9QYhrsE1PcRiiQroR1MLaMRzdpVpNi9A%3D&reserved=0\', \'_system\', \'location=yes\'); return false;">\n\n		<button ion-item (click)="NavToPage(\'MyAgendaFull\')">Agenda All\n			<ion-icon item-start name="list-box"></ion-icon>\n		</button>\n\n		<button ion-item (click)="NavToPage(\'HelpPage\')">Help\n			<ion-icon item-start name="list-box"></ion-icon>\n		</button>\n\n		<button ion-item (click)="NavToPage(\'DatabasePage\')">Database Stats\n			<ion-icon item-start name="stats"></ion-icon>\n		</button>\n\n		<!--\n		<button ion-item (click)="NavToPage(\'EvalTest1Page\')">Evaluation Test 1\n			<ion-icon item-start name="checkbox"></ion-icon>\n		</button>\n\n		<button ion-item (click)="NavToPage(\'EvalTest2Page\')">Evaluation Test 2\n			<ion-icon item-start name="checkbox"></ion-icon>\n		</button>\n\n		<button ion-item (click)="NavToPage(\'EvalTest3Page\')">Evaluation Test 3\n			<ion-icon item-start name="checkbox"></ion-icon>\n		</button>\n\n		<button ion-item (click)="NavToPage(\'EvalTest4Page\')">Evaluation Test 4\n			<ion-icon item-start name="checkbox"></ion-icon>\n		</button>\n		-->\n		\n	</ion-list>\n\n</ion-content>\n\n<ion-footer no-border>\n	<ion-grid style="padding:20px; margin:0">\n		<ion-row>\n			<ion-col style="padding:0">\n				<p>Deploy Version: 1.00</p>\n				<p style="margin-top: -13px;">Device Type: {{DeviceType}}</p>\n			</ion-col>\n			<ion-col style="padding:0">\n				<p>Registration ID: {{RegistrationID}}</p>\n				<p style="margin-top: -13px;">Last Sync: {{LSync}}</p>\n			</ion-col>\n			<ion-col style="padding:0">\n				<p>Push ID: {{PushID}}</p>\n				<p style="margin-top: -13px;">&nbsp;</p>\n			</ion-col>\n		</ion-row>\n	</ion-grid>\n</ion-footer>\n'/*ion-inline-end:"/Users/petervroom/aacd19/src/pages/more/more.html"*/,
+        changeDetection: __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectionStrategy"].OnPush
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["u" /* NavController */],
         __WEBPACK_IMPORTED_MODULE_2__ionic_storage__["b" /* Storage */],
         __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["v" /* NavParams */],
+        __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"],
         __WEBPACK_IMPORTED_MODULE_3__providers_localstorage_localstorage__["a" /* Localstorage */]])
 ], MorePage);
 
@@ -6261,7 +6812,7 @@ MorePage = __decorate([
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_rxjs_add_operator_map___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_2_rxjs_add_operator_map__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__providers_database_database__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__providers_localstorage_localstorage__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__providers_synchronization_synchronization__ = __webpack_require__(99);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__providers_synchronization_synchronization__ = __webpack_require__(100);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -6373,7 +6924,7 @@ DatabasePage = __decorate([
 
 /***/ }),
 
-/***/ 539:
+/***/ 538:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -6585,17 +7136,17 @@ ConversationPage = __decorate([
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return LoginPage; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_http__ = __webpack_require__(95);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_http__ = __webpack_require__(96);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_rxjs_add_operator_map__ = __webpack_require__(22);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_rxjs_add_operator_map___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_rxjs_add_operator_map__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__ionic_storage__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__providers_localstorage_localstorage__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__providers_synchronization_synchronization__ = __webpack_require__(99);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__home_home__ = __webpack_require__(100);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__providers_synchronization_synchronization__ = __webpack_require__(100);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__home_home__ = __webpack_require__(101);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__notes_notes__ = __webpack_require__(81);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__myagenda_myagenda__ = __webpack_require__(58);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__myagendafull_myagendafull__ = __webpack_require__(82);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__evaluationconference_evaluationconference__ = __webpack_require__(109);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__evaluationconference_evaluationconference__ = __webpack_require__(110);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -6697,9 +7248,9 @@ let LoginPage = class LoginPage {
         this.localstorage.setLocalValue("loginUsername", '');
         this.localstorage.setLocalValue("loginPassword", '');
         this.localstorage.setLocalValue('LastSync', '');
-        this.localstorage.setLocalValue("AgendaDays", '');
-        this.localstorage.setLocalValue("AgendaDates", '');
-        this.localstorage.setLocalValue("AgendaDayButtonLabels", '');
+        //this.localstorage.setLocalValue("AgendaDays", '');
+        //this.localstorage.setLocalValue("AgendaDates", '');
+        //this.localstorage.setLocalValue("AgendaDayButtonLabels", '');
         this.LoginName = '';
         this.LoginPassword = '';
         this.LoggedInUser = "";
@@ -6741,13 +7292,15 @@ let LoginPage = class LoginPage {
             this.localstorage.setLocalValue("loginUsername", '');
             this.localstorage.setLocalValue("loginPassword", '');
             this.localstorage.setLocalValue('LastSync', '');
-            this.localstorage.setLocalValue("AgendaDays", '');
-            this.localstorage.setLocalValue("AgendaDates", '');
-            this.localstorage.setLocalValue("AgendaDayButtonLabels", '');
+            //this.localstorage.setLocalValue("AgendaDays", '');
+            //this.localstorage.setLocalValue("AgendaDates", '');
+            //this.localstorage.setLocalValue("AgendaDayButtonLabels", '');
             var pushID = this.localstorage.getLocalValue('PlayerID');
             var deviceType = this.localstorage.getLocalValue('DevicePlatform');
+            var encodedLoginName = encodeURI(this.LoginName);
+            var encodedLoginPassword = encodeURI(this.LoginPassword);
             // AACD Login API			
-            this.http.get('https://www.aacd.com/wsAPI.php', {
+            this.http.get('https://aacd.com/wsAPI.php', {
                 params: {
                     // 2017 parameters
                     //'u': this.LoginName,
@@ -6759,9 +7312,9 @@ let LoginPage = class LoginPage {
                     //'output': 'json'
                     // Test parameter for Convergence API
                     //'action':   'authenticate'
-                    // 2018 parameters
-                    'u': this.LoginName,
-                    'p': this.LoginPassword,
+                    // 2018-2019 parameters
+                    'u': encodedLoginName,
+                    'p': encodedLoginPassword,
                     'module': 'aacd.websiteforms',
                     'method': 'validateMember',
                     'username': 'wsapiconvergence',
@@ -6808,7 +7361,10 @@ let LoginPage = class LoginPage {
                                 var ns = '0' + mn;
                             }
                             var todayS = yyyy + '-' + ms + '-' + ds + ' ' + hs + ':' + ns + ':00';
-                            var initials = loginService.data.login.teammembers[0].fullname.match(/\b\w/g) || [];
+                            var Fullname = loginService.data.login.teammembers[0].fullname;
+                            var n = Fullname.indexOf(',');
+                            Fullname = Fullname.substring(0, n != -1 ? n : Fullname.length);
+                            var initials = Fullname.match(/\b\w/g) || [];
                             initials = ((initials.shift() || '') + (initials.pop() || '')).toUpperCase();
                             this.localstorage.setLocalValue("LoginNameInitials", initials);
                             // Use the only one available
@@ -6819,7 +7375,7 @@ let LoginPage = class LoginPage {
                             // -------------------------------------------
                             // Get conference dates after successful login
                             // -------------------------------------------
-                            var URL2 = 'https://aacdmobile.convergence-us.com/flyinPlanner.php';
+                            var URL2 = 'https://aacdmobile.convergence-us.com/cvPlanner.php';
                             URL2 = URL2 + '?action=conferencedates';
                             //URL2 = URL2 + '&em=' + this.LoginName;
                             //URL2 = URL2 + '&ps=' + this.LoginPassword;
@@ -7132,12 +7688,18 @@ let LoginPage = class LoginPage {
             this.localstorage.setLocalValue("AttendeeFullName", this.selectedLogin["DisplayName"]);
             this.localstorage.setLocalValue("LastLoggedInDate", todayS);
             this.localstorage.setLocalValue('LoginFullName', this.selectedLogin["DisplayName"]);
+            var Fullname = this.selectedLogin["DisplayName"];
+            var n = Fullname.indexOf(',');
+            Fullname = Fullname.substring(0, n != -1 ? n : Fullname.length);
+            var initials = Fullname.match(/\b\w/g) || [];
+            initials = ((initials.shift() || '') + (initials.pop() || '')).toUpperCase();
+            this.localstorage.setLocalValue("LoginNameInitials", initials);
             var pushID = this.localstorage.getLocalValue('PlayerID');
             var deviceType = this.localstorage.getLocalValue('DevicePlatform');
             // -------------------------------------------
             // Get conference dates after successful login
             // -------------------------------------------
-            var URL2 = 'https://aacdmobile.convergence-us.com/flyinPlanner.php';
+            var URL2 = 'https://aacdmobile.convergence-us.com/cvPlanner.php';
             URL2 = URL2 + '?action=conferencedates';
             URL2 = URL2 + '&atID=' + this.selectedLogin["ct_id"];
             URL2 = URL2 + '&pushID=' + pushID;
@@ -7274,8 +7836,8 @@ LoginPage = __decorate([
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "MainPage", function() { return MainPage; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__ = __webpack_require__(542);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__app_module__ = __webpack_require__(546);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser_dynamic__ = __webpack_require__(543);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__app_module__ = __webpack_require__(547);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_core__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_ionic_angular__ = __webpack_require__(6);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -7315,7 +7877,7 @@ MainPage = MainPage_1 = __decorate([
 
 /***/ }),
 
-/***/ 541:
+/***/ 542:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7359,7 +7921,7 @@ SliderPage = __decorate([
 
 /***/ }),
 
-/***/ 546:
+/***/ 547:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -7369,52 +7931,53 @@ SliderPage = __decorate([
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_core__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_ionic_angular__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__ionic_storage__ = __webpack_require__(25);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__angular_http__ = __webpack_require__(95);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__angular_http__ = __webpack_require__(96);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__angular_common_http__ = __webpack_require__(83);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__ionic_native_status_bar__ = __webpack_require__(529);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__ionic_native_splash_screen__ = __webpack_require__(530);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__ionic_native_sqlite__ = __webpack_require__(94);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__app_component__ = __webpack_require__(911);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__ionic_native_sqlite__ = __webpack_require__(95);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__app_component__ = __webpack_require__(912);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__ionic_native_onesignal__ = __webpack_require__(531);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12_ionic_img_viewer__ = __webpack_require__(912);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__ionic_native_camera__ = __webpack_require__(538);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14_ionic_text_avatar__ = __webpack_require__(919);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12_ionic_img_viewer__ = __webpack_require__(913);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__ionic_native_camera__ = __webpack_require__(539);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_14_ionic_text_avatar__ = __webpack_require__(920);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_15_ionic_image_loader__ = __webpack_require__(60);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_16_ng2_charts__ = __webpack_require__(537);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_16_ng2_charts___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_16_ng2_charts__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17_ng2_file_upload__ = __webpack_require__(921);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_17_ng2_file_upload__ = __webpack_require__(922);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_17_ng2_file_upload___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_17_ng2_file_upload__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__ionic_native_keyboard__ = __webpack_require__(396);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__providers_database_database__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__providers_localstorage_localstorage__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__providers_synchronization_synchronization__ = __webpack_require__(99);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_22__pipes_relative_time__ = __webpack_require__(924);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_23__services_post_service__ = __webpack_require__(939);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_24__services_user_service__ = __webpack_require__(941);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__providers_synchronization_synchronization__ = __webpack_require__(100);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_22__pipes_relative_time__ = __webpack_require__(925);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_23__services_post_service__ = __webpack_require__(940);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_24__services_user_service__ = __webpack_require__(942);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_25__services_chat_service__ = __webpack_require__(395);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_26__pages_home_home__ = __webpack_require__(100);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_27__pages_conferencecity_conferencecity__ = __webpack_require__(165);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_28__pages_social_social__ = __webpack_require__(111);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_26__pages_home_home__ = __webpack_require__(101);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_27__pages_conferencecity_conferencecity__ = __webpack_require__(166);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_28__pages_social_social__ = __webpack_require__(112);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_29__pages_more_more__ = __webpack_require__(487);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_30__pages_slider_slider__ = __webpack_require__(541);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_31__pages_help_help__ = __webpack_require__(108);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_32__pages_speakers_speakers__ = __webpack_require__(110);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_33__pages_program_program__ = __webpack_require__(164);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_34__pages_map_map__ = __webpack_require__(166);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_30__pages_slider_slider__ = __webpack_require__(542);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_31__pages_help_help__ = __webpack_require__(109);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_32__pages_speakers_speakers__ = __webpack_require__(111);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_33__pages_program_program__ = __webpack_require__(165);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_34__pages_map_map__ = __webpack_require__(167);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_35__pages_login_login__ = __webpack_require__(54);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_36__pages_exhibitors_exhibitors__ = __webpack_require__(167);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_36__pages_exhibitors_exhibitors__ = __webpack_require__(168);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_37__pages_notes_notes__ = __webpack_require__(81);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_38__pages_database_database__ = __webpack_require__(488);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_39__pages_evaluationconference_evaluationconference__ = __webpack_require__(109);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_39__pages_evaluationconference_evaluationconference__ = __webpack_require__(110);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_40__pages_myagenda_myagenda__ = __webpack_require__(58);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_41__pages_myagendafull_myagendafull__ = __webpack_require__(82);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_42__pages_activity_activity__ = __webpack_require__(169);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_43__pages_profile_profile__ = __webpack_require__(116);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_44__pages_notifications_notifications__ = __webpack_require__(197);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_45__pages_attendees_attendees__ = __webpack_require__(195);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_46__pages_networking_networking__ = __webpack_require__(168);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_47__pages_attendeebookmarks_attendeebookmarks__ = __webpack_require__(943);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_48__pages_conversation_conversation__ = __webpack_require__(539);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_42__pages_educationdetails_educationdetails__ = __webpack_require__(84);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_43__pages_activity_activity__ = __webpack_require__(170);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_44__pages_profile_profile__ = __webpack_require__(117);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_45__pages_notifications_notifications__ = __webpack_require__(197);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_46__pages_attendees_attendees__ = __webpack_require__(196);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_47__pages_networking_networking__ = __webpack_require__(169);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_48__pages_attendeebookmarks_attendeebookmarks__ = __webpack_require__(944);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_49__pages_conversation_conversation__ = __webpack_require__(538);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -7475,6 +8038,9 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 
 
 
+
+// Temporary Support Pages
+//import { FloorplanMappingPage } from '../pages/floorplanmapping/floorplanmapping';
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -7494,18 +8060,20 @@ AppModule = __decorate([
             __WEBPACK_IMPORTED_MODULE_36__pages_exhibitors_exhibitors__["a" /* ExhibitorsPage */],
             __WEBPACK_IMPORTED_MODULE_37__pages_notes_notes__["a" /* NotesPage */],
             __WEBPACK_IMPORTED_MODULE_38__pages_database_database__["a" /* DatabasePage */],
+            __WEBPACK_IMPORTED_MODULE_42__pages_educationdetails_educationdetails__["a" /* EducationDetailsPage */],
             __WEBPACK_IMPORTED_MODULE_39__pages_evaluationconference_evaluationconference__["a" /* EvaluationConference */],
+            //FloorplanMappingPage,
             __WEBPACK_IMPORTED_MODULE_40__pages_myagenda_myagenda__["a" /* MyAgenda */],
             __WEBPACK_IMPORTED_MODULE_41__pages_myagendafull_myagendafull__["a" /* MyAgendaFull */],
-            __WEBPACK_IMPORTED_MODULE_48__pages_conversation_conversation__["a" /* ConversationPage */],
-            __WEBPACK_IMPORTED_MODULE_44__pages_notifications_notifications__["a" /* NotificationsPage */],
-            __WEBPACK_IMPORTED_MODULE_45__pages_attendees_attendees__["a" /* AttendeesPage */],
-            __WEBPACK_IMPORTED_MODULE_47__pages_attendeebookmarks_attendeebookmarks__["a" /* AttendeeBookmarksPage */],
-            __WEBPACK_IMPORTED_MODULE_46__pages_networking_networking__["a" /* NetworkingPage */],
+            __WEBPACK_IMPORTED_MODULE_49__pages_conversation_conversation__["a" /* ConversationPage */],
+            __WEBPACK_IMPORTED_MODULE_45__pages_notifications_notifications__["a" /* NotificationsPage */],
+            __WEBPACK_IMPORTED_MODULE_46__pages_attendees_attendees__["a" /* AttendeesPage */],
+            __WEBPACK_IMPORTED_MODULE_48__pages_attendeebookmarks_attendeebookmarks__["a" /* AttendeeBookmarksPage */],
+            __WEBPACK_IMPORTED_MODULE_47__pages_networking_networking__["a" /* NetworkingPage */],
             __WEBPACK_IMPORTED_MODULE_22__pipes_relative_time__["a" /* RelativeTime */],
             __WEBPACK_IMPORTED_MODULE_14_ionic_text_avatar__["a" /* IonTextAvatar */],
-            __WEBPACK_IMPORTED_MODULE_43__pages_profile_profile__["a" /* ProfilePage */],
-            __WEBPACK_IMPORTED_MODULE_42__pages_activity_activity__["a" /* ActivityPage */]
+            __WEBPACK_IMPORTED_MODULE_44__pages_profile_profile__["a" /* ProfilePage */],
+            __WEBPACK_IMPORTED_MODULE_43__pages_activity_activity__["a" /* ActivityPage */]
         ],
         imports: [
             __WEBPACK_IMPORTED_MODULE_0__angular_platform_browser__["a" /* BrowserModule */],
@@ -7520,29 +8088,28 @@ AppModule = __decorate([
             __WEBPACK_IMPORTED_MODULE_15_ionic_image_loader__["b" /* IonicImageLoader */].forRoot(),
             __WEBPACK_IMPORTED_MODULE_3_ionic_angular__["o" /* IonicModule */].forRoot(__WEBPACK_IMPORTED_MODULE_10__app_component__["a" /* MyApp */], { tabsPlacement: 'bottom' }, {
                 links: [
-                    { loadChildren: 'main.module#MainPageModule', name: 'MainPage', segment: 'main', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/activityfeedcomment/activityfeedcomment.module#ActivityFeedCommentPageModule', name: 'ActivityFeedCommentPage', segment: 'activityfeedcomment', priority: 'low', defaultHistory: [] },
-                    { loadChildren: '../pages/activityfeeddetails/activityfeeddetails.module#ActivityFeedDetailsPageModule', name: 'ActivityFeedDetailsPage', segment: 'activityfeeddetails', priority: 'low', defaultHistory: [] },
+                    { loadChildren: 'main.module#MainPageModule', name: 'MainPage', segment: 'main', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/activityfeedleaderboard/activityfeedleaderboard.module#ActivityFeedLeaderboardPageModule', name: 'ActivityFeedLeaderboardPage', segment: 'activityfeedleaderboard', priority: 'low', defaultHistory: [] },
-                    { loadChildren: '../pages/activityfeedposting/activityfeedposting.module#ActivityFeedPostingPageModule', name: 'ActivityFeedPostingPage', segment: 'activityfeedposting', priority: 'low', defaultHistory: [] },
-                    { loadChildren: '../pages/attendeesprofile/attendeesprofile.module#AttendeesProfilePageModule', name: 'AttendeesProfilePage', segment: 'attendeesprofile', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/cetracking/cetracking.module#CetrackingPageModule', name: 'CetrackingPage', segment: 'cetracking', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/conversations/conversations.module#ConversationsPageModule', name: 'ConversationsPage', segment: 'conversations', priority: 'low', defaultHistory: [] },
-                    { loadChildren: '../pages/educationdetails/educationdetails.module#EducationDetailsPageModule', name: 'EducationDetailsPage', segment: 'educationdetails', priority: 'low', defaultHistory: [] },
-                    { loadChildren: '../pages/evaluationlecture/evaluationlecture.module#EvaluationLectureModule', name: 'EvaluationLecture', segment: 'evaluationlecture', priority: 'low', defaultHistory: [] },
-                    { loadChildren: '../pages/evaluationworkshop/evaluationworkshop.module#EvaluationWorkshopModule', name: 'EvaluationWorkshop', segment: 'evaluationworkshop', priority: 'low', defaultHistory: [] },
-                    { loadChildren: '../pages/exhibitordetails/exhibitordetails.module#ExhibitorDetailsPageModule', name: 'ExhibitorDetailsPage', segment: 'exhibitordetails', priority: 'low', defaultHistory: [] },
-                    { loadChildren: '../pages/listinglevel1/listinglevel1.module#ListingLevel1Module', name: 'ListingLevel1', segment: 'listinglevel1', priority: 'low', defaultHistory: [] },
-                    { loadChildren: '../pages/myagendapersonal/myagendapersonal.module#MyAgendaPersonalModule', name: 'MyAgendaPersonal', segment: 'myagendapersonal', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/notifications/notifications.module#NotificationsPageModule', name: 'NotificationsPage', segment: 'notifications', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/profile/profile.module#ProfilePageModule', name: 'ProfilePage', segment: 'profile', priority: 'low', defaultHistory: [] },
+                    { loadChildren: '../pages/profileimage/profileimage.module#ProfileImagePageModule', name: 'ProfileImagePage', segment: 'profileimage', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/profilepasswordchange/profilepasswordchange.module#ProfilePasswordChangePageModule', name: 'ProfilePasswordChangePage', segment: 'profilepasswordchange', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/profilesocialmediaentry/profilesocialmediaentry.module#ProfileSocialMediaEntryPageModule', name: 'ProfileSocialMediaEntryPage', segment: 'profilesocialmediaentry', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/searchbytopic/searchbytopic.module#SearchByTopicPageModule', name: 'SearchByTopicPage', segment: 'searchbytopic', priority: 'low', defaultHistory: [] },
-                    { loadChildren: '../pages/searchresults/searchresults.module#SearchResultsPageModule', name: 'SearchResultsPage', segment: 'searchresults', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/slider/slider.module#SliderPageModule', name: 'SliderPage', segment: 'slider', priority: 'low', defaultHistory: [] },
-                    { loadChildren: '../pages/profileimage/profileimage.module#ProfileImagePageModule', name: 'ProfileImagePage', segment: 'profileimage', priority: 'low', defaultHistory: [] },
-                    { loadChildren: '../pages/speakerdetails/speakerdetails.module#SpeakerDetailsPageModule', name: 'SpeakerDetailsPage', segment: 'speakerdetails', priority: 'low', defaultHistory: [] }
+                    { loadChildren: '../pages/speakerdetails/speakerdetails.module#SpeakerDetailsPageModule', name: 'SpeakerDetailsPage', segment: 'speakerdetails', priority: 'low', defaultHistory: [] },
+                    { loadChildren: '../pages/activityfeeddetails/activityfeeddetails.module#ActivityFeedDetailsPageModule', name: 'ActivityFeedDetailsPage', segment: 'activityfeeddetails', priority: 'low', defaultHistory: [] },
+                    { loadChildren: '../pages/attendeesprofile/attendeesprofile.module#AttendeesProfilePageModule', name: 'AttendeesProfilePage', segment: 'attendeesprofile', priority: 'low', defaultHistory: [] },
+                    { loadChildren: '../pages/activityfeedposting/activityfeedposting.module#ActivityFeedPostingPageModule', name: 'ActivityFeedPostingPage', segment: 'activityfeedposting', priority: 'low', defaultHistory: [] },
+                    { loadChildren: '../pages/evaluationlecture/evaluationlecture.module#EvaluationLectureModule', name: 'EvaluationLecture', segment: 'evaluationlecture', priority: 'low', defaultHistory: [] },
+                    { loadChildren: '../pages/evaluationworkshop/evaluationworkshop.module#EvaluationWorkshopModule', name: 'EvaluationWorkshop', segment: 'evaluationworkshop', priority: 'low', defaultHistory: [] },
+                    { loadChildren: '../pages/exhibitordetails/exhibitordetails.module#ExhibitorDetailsPageModule', name: 'ExhibitorDetailsPage', segment: 'exhibitordetails', priority: 'low', defaultHistory: [] },
+                    { loadChildren: '../pages/myagendapersonal/myagendapersonal.module#MyAgendaPersonalModule', name: 'MyAgendaPersonal', segment: 'myagendapersonal', priority: 'low', defaultHistory: [] },
+                    { loadChildren: '../pages/searchresults/searchresults.module#SearchResultsPageModule', name: 'SearchResultsPage', segment: 'searchresults', priority: 'low', defaultHistory: [] },
+                    { loadChildren: '../pages/listinglevel1/listinglevel1.module#ListingLevel1Module', name: 'ListingLevel1', segment: 'listinglevel1', priority: 'low', defaultHistory: [] }
                 ]
             })
         ],
@@ -7560,18 +8127,20 @@ AppModule = __decorate([
             __WEBPACK_IMPORTED_MODULE_35__pages_login_login__["a" /* LoginPage */],
             __WEBPACK_IMPORTED_MODULE_27__pages_conferencecity_conferencecity__["a" /* ConferenceCityPage */],
             __WEBPACK_IMPORTED_MODULE_38__pages_database_database__["a" /* DatabasePage */],
+            __WEBPACK_IMPORTED_MODULE_42__pages_educationdetails_educationdetails__["a" /* EducationDetailsPage */],
             __WEBPACK_IMPORTED_MODULE_36__pages_exhibitors_exhibitors__["a" /* ExhibitorsPage */],
             __WEBPACK_IMPORTED_MODULE_37__pages_notes_notes__["a" /* NotesPage */],
             __WEBPACK_IMPORTED_MODULE_39__pages_evaluationconference_evaluationconference__["a" /* EvaluationConference */],
+            //FloorplanMappingPage,
             __WEBPACK_IMPORTED_MODULE_40__pages_myagenda_myagenda__["a" /* MyAgenda */],
             __WEBPACK_IMPORTED_MODULE_41__pages_myagendafull_myagendafull__["a" /* MyAgendaFull */],
-            __WEBPACK_IMPORTED_MODULE_48__pages_conversation_conversation__["a" /* ConversationPage */],
-            __WEBPACK_IMPORTED_MODULE_44__pages_notifications_notifications__["a" /* NotificationsPage */],
-            __WEBPACK_IMPORTED_MODULE_45__pages_attendees_attendees__["a" /* AttendeesPage */],
-            __WEBPACK_IMPORTED_MODULE_47__pages_attendeebookmarks_attendeebookmarks__["a" /* AttendeeBookmarksPage */],
-            __WEBPACK_IMPORTED_MODULE_46__pages_networking_networking__["a" /* NetworkingPage */],
-            __WEBPACK_IMPORTED_MODULE_43__pages_profile_profile__["a" /* ProfilePage */],
-            __WEBPACK_IMPORTED_MODULE_42__pages_activity_activity__["a" /* ActivityPage */]
+            __WEBPACK_IMPORTED_MODULE_49__pages_conversation_conversation__["a" /* ConversationPage */],
+            __WEBPACK_IMPORTED_MODULE_45__pages_notifications_notifications__["a" /* NotificationsPage */],
+            __WEBPACK_IMPORTED_MODULE_46__pages_attendees_attendees__["a" /* AttendeesPage */],
+            __WEBPACK_IMPORTED_MODULE_48__pages_attendeebookmarks_attendeebookmarks__["a" /* AttendeeBookmarksPage */],
+            __WEBPACK_IMPORTED_MODULE_47__pages_networking_networking__["a" /* NetworkingPage */],
+            __WEBPACK_IMPORTED_MODULE_44__pages_profile_profile__["a" /* ProfilePage */],
+            __WEBPACK_IMPORTED_MODULE_43__pages_activity_activity__["a" /* ActivityPage */]
         ],
         providers: [
             __WEBPACK_IMPORTED_MODULE_13__ionic_native_camera__["a" /* Camera */],
@@ -7596,277 +8165,6 @@ AppModule = __decorate([
 
 /***/ }),
 
-/***/ 574:
-/***/ (function(module, exports, __webpack_require__) {
-
-var map = {
-	"./af": 256,
-	"./af.js": 256,
-	"./ar": 257,
-	"./ar-dz": 258,
-	"./ar-dz.js": 258,
-	"./ar-kw": 259,
-	"./ar-kw.js": 259,
-	"./ar-ly": 260,
-	"./ar-ly.js": 260,
-	"./ar-ma": 261,
-	"./ar-ma.js": 261,
-	"./ar-sa": 262,
-	"./ar-sa.js": 262,
-	"./ar-tn": 263,
-	"./ar-tn.js": 263,
-	"./ar.js": 257,
-	"./az": 264,
-	"./az.js": 264,
-	"./be": 265,
-	"./be.js": 265,
-	"./bg": 266,
-	"./bg.js": 266,
-	"./bm": 267,
-	"./bm.js": 267,
-	"./bn": 268,
-	"./bn.js": 268,
-	"./bo": 269,
-	"./bo.js": 269,
-	"./br": 270,
-	"./br.js": 270,
-	"./bs": 271,
-	"./bs.js": 271,
-	"./ca": 272,
-	"./ca.js": 272,
-	"./cs": 273,
-	"./cs.js": 273,
-	"./cv": 274,
-	"./cv.js": 274,
-	"./cy": 275,
-	"./cy.js": 275,
-	"./da": 276,
-	"./da.js": 276,
-	"./de": 277,
-	"./de-at": 278,
-	"./de-at.js": 278,
-	"./de-ch": 279,
-	"./de-ch.js": 279,
-	"./de.js": 277,
-	"./dv": 280,
-	"./dv.js": 280,
-	"./el": 281,
-	"./el.js": 281,
-	"./en-au": 282,
-	"./en-au.js": 282,
-	"./en-ca": 283,
-	"./en-ca.js": 283,
-	"./en-gb": 284,
-	"./en-gb.js": 284,
-	"./en-ie": 285,
-	"./en-ie.js": 285,
-	"./en-il": 286,
-	"./en-il.js": 286,
-	"./en-nz": 287,
-	"./en-nz.js": 287,
-	"./eo": 288,
-	"./eo.js": 288,
-	"./es": 289,
-	"./es-do": 290,
-	"./es-do.js": 290,
-	"./es-us": 291,
-	"./es-us.js": 291,
-	"./es.js": 289,
-	"./et": 292,
-	"./et.js": 292,
-	"./eu": 293,
-	"./eu.js": 293,
-	"./fa": 294,
-	"./fa.js": 294,
-	"./fi": 295,
-	"./fi.js": 295,
-	"./fo": 296,
-	"./fo.js": 296,
-	"./fr": 297,
-	"./fr-ca": 298,
-	"./fr-ca.js": 298,
-	"./fr-ch": 299,
-	"./fr-ch.js": 299,
-	"./fr.js": 297,
-	"./fy": 300,
-	"./fy.js": 300,
-	"./gd": 301,
-	"./gd.js": 301,
-	"./gl": 302,
-	"./gl.js": 302,
-	"./gom-latn": 303,
-	"./gom-latn.js": 303,
-	"./gu": 304,
-	"./gu.js": 304,
-	"./he": 305,
-	"./he.js": 305,
-	"./hi": 306,
-	"./hi.js": 306,
-	"./hr": 307,
-	"./hr.js": 307,
-	"./hu": 308,
-	"./hu.js": 308,
-	"./hy-am": 309,
-	"./hy-am.js": 309,
-	"./id": 310,
-	"./id.js": 310,
-	"./is": 311,
-	"./is.js": 311,
-	"./it": 312,
-	"./it.js": 312,
-	"./ja": 313,
-	"./ja.js": 313,
-	"./jv": 314,
-	"./jv.js": 314,
-	"./ka": 315,
-	"./ka.js": 315,
-	"./kk": 316,
-	"./kk.js": 316,
-	"./km": 317,
-	"./km.js": 317,
-	"./kn": 318,
-	"./kn.js": 318,
-	"./ko": 319,
-	"./ko.js": 319,
-	"./ku": 320,
-	"./ku.js": 320,
-	"./ky": 321,
-	"./ky.js": 321,
-	"./lb": 322,
-	"./lb.js": 322,
-	"./lo": 323,
-	"./lo.js": 323,
-	"./lt": 324,
-	"./lt.js": 324,
-	"./lv": 325,
-	"./lv.js": 325,
-	"./me": 326,
-	"./me.js": 326,
-	"./mi": 327,
-	"./mi.js": 327,
-	"./mk": 328,
-	"./mk.js": 328,
-	"./ml": 329,
-	"./ml.js": 329,
-	"./mn": 330,
-	"./mn.js": 330,
-	"./mr": 331,
-	"./mr.js": 331,
-	"./ms": 332,
-	"./ms-my": 333,
-	"./ms-my.js": 333,
-	"./ms.js": 332,
-	"./mt": 334,
-	"./mt.js": 334,
-	"./my": 335,
-	"./my.js": 335,
-	"./nb": 336,
-	"./nb.js": 336,
-	"./ne": 337,
-	"./ne.js": 337,
-	"./nl": 338,
-	"./nl-be": 339,
-	"./nl-be.js": 339,
-	"./nl.js": 338,
-	"./nn": 340,
-	"./nn.js": 340,
-	"./pa-in": 341,
-	"./pa-in.js": 341,
-	"./pl": 342,
-	"./pl.js": 342,
-	"./pt": 343,
-	"./pt-br": 344,
-	"./pt-br.js": 344,
-	"./pt.js": 343,
-	"./ro": 345,
-	"./ro.js": 345,
-	"./ru": 346,
-	"./ru.js": 346,
-	"./sd": 347,
-	"./sd.js": 347,
-	"./se": 348,
-	"./se.js": 348,
-	"./si": 349,
-	"./si.js": 349,
-	"./sk": 350,
-	"./sk.js": 350,
-	"./sl": 351,
-	"./sl.js": 351,
-	"./sq": 352,
-	"./sq.js": 352,
-	"./sr": 353,
-	"./sr-cyrl": 354,
-	"./sr-cyrl.js": 354,
-	"./sr.js": 353,
-	"./ss": 355,
-	"./ss.js": 355,
-	"./sv": 356,
-	"./sv.js": 356,
-	"./sw": 357,
-	"./sw.js": 357,
-	"./ta": 358,
-	"./ta.js": 358,
-	"./te": 359,
-	"./te.js": 359,
-	"./tet": 360,
-	"./tet.js": 360,
-	"./tg": 361,
-	"./tg.js": 361,
-	"./th": 362,
-	"./th.js": 362,
-	"./tl-ph": 363,
-	"./tl-ph.js": 363,
-	"./tlh": 364,
-	"./tlh.js": 364,
-	"./tr": 365,
-	"./tr.js": 365,
-	"./tzl": 366,
-	"./tzl.js": 366,
-	"./tzm": 367,
-	"./tzm-latn": 368,
-	"./tzm-latn.js": 368,
-	"./tzm.js": 367,
-	"./ug-cn": 369,
-	"./ug-cn.js": 369,
-	"./uk": 370,
-	"./uk.js": 370,
-	"./ur": 371,
-	"./ur.js": 371,
-	"./uz": 372,
-	"./uz-latn": 373,
-	"./uz-latn.js": 373,
-	"./uz.js": 372,
-	"./vi": 374,
-	"./vi.js": 374,
-	"./x-pseudo": 375,
-	"./x-pseudo.js": 375,
-	"./yo": 376,
-	"./yo.js": 376,
-	"./zh-cn": 377,
-	"./zh-cn.js": 377,
-	"./zh-hk": 378,
-	"./zh-hk.js": 378,
-	"./zh-tw": 379,
-	"./zh-tw.js": 379
-};
-function webpackContext(req) {
-	return __webpack_require__(webpackContextResolve(req));
-};
-function webpackContextResolve(req) {
-	var id = map[req];
-	if(!(id + 1)) // check for number or string
-		throw new Error("Cannot find module '" + req + "'.");
-	return id;
-};
-webpackContext.keys = function webpackContextKeys() {
-	return Object.keys(map);
-};
-webpackContext.resolve = webpackContextResolve;
-module.exports = webpackContext;
-webpackContext.id = 574;
-
-/***/ }),
-
 /***/ 58:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -7880,7 +8178,7 @@ webpackContext.id = 574;
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__providers_database_database__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__providers_localstorage_localstorage__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__myagendafull_myagendafull__ = __webpack_require__(82);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__educationdetails_educationdetails__ = __webpack_require__(196);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__educationdetails_educationdetails__ = __webpack_require__(84);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -9371,6 +9669,277 @@ MyAgenda = __decorate([
 
 /***/ }),
 
+/***/ 599:
+/***/ (function(module, exports, __webpack_require__) {
+
+var map = {
+	"./af": 265,
+	"./af.js": 265,
+	"./ar": 266,
+	"./ar-dz": 267,
+	"./ar-dz.js": 267,
+	"./ar-kw": 268,
+	"./ar-kw.js": 268,
+	"./ar-ly": 269,
+	"./ar-ly.js": 269,
+	"./ar-ma": 270,
+	"./ar-ma.js": 270,
+	"./ar-sa": 271,
+	"./ar-sa.js": 271,
+	"./ar-tn": 272,
+	"./ar-tn.js": 272,
+	"./ar.js": 266,
+	"./az": 273,
+	"./az.js": 273,
+	"./be": 274,
+	"./be.js": 274,
+	"./bg": 275,
+	"./bg.js": 275,
+	"./bm": 276,
+	"./bm.js": 276,
+	"./bn": 277,
+	"./bn.js": 277,
+	"./bo": 278,
+	"./bo.js": 278,
+	"./br": 279,
+	"./br.js": 279,
+	"./bs": 280,
+	"./bs.js": 280,
+	"./ca": 281,
+	"./ca.js": 281,
+	"./cs": 282,
+	"./cs.js": 282,
+	"./cv": 283,
+	"./cv.js": 283,
+	"./cy": 284,
+	"./cy.js": 284,
+	"./da": 285,
+	"./da.js": 285,
+	"./de": 286,
+	"./de-at": 287,
+	"./de-at.js": 287,
+	"./de-ch": 288,
+	"./de-ch.js": 288,
+	"./de.js": 286,
+	"./dv": 289,
+	"./dv.js": 289,
+	"./el": 290,
+	"./el.js": 290,
+	"./en-au": 291,
+	"./en-au.js": 291,
+	"./en-ca": 292,
+	"./en-ca.js": 292,
+	"./en-gb": 293,
+	"./en-gb.js": 293,
+	"./en-ie": 294,
+	"./en-ie.js": 294,
+	"./en-il": 295,
+	"./en-il.js": 295,
+	"./en-nz": 296,
+	"./en-nz.js": 296,
+	"./eo": 297,
+	"./eo.js": 297,
+	"./es": 298,
+	"./es-do": 299,
+	"./es-do.js": 299,
+	"./es-us": 300,
+	"./es-us.js": 300,
+	"./es.js": 298,
+	"./et": 301,
+	"./et.js": 301,
+	"./eu": 302,
+	"./eu.js": 302,
+	"./fa": 303,
+	"./fa.js": 303,
+	"./fi": 304,
+	"./fi.js": 304,
+	"./fo": 305,
+	"./fo.js": 305,
+	"./fr": 306,
+	"./fr-ca": 307,
+	"./fr-ca.js": 307,
+	"./fr-ch": 308,
+	"./fr-ch.js": 308,
+	"./fr.js": 306,
+	"./fy": 309,
+	"./fy.js": 309,
+	"./gd": 310,
+	"./gd.js": 310,
+	"./gl": 311,
+	"./gl.js": 311,
+	"./gom-latn": 312,
+	"./gom-latn.js": 312,
+	"./gu": 313,
+	"./gu.js": 313,
+	"./he": 314,
+	"./he.js": 314,
+	"./hi": 315,
+	"./hi.js": 315,
+	"./hr": 316,
+	"./hr.js": 316,
+	"./hu": 317,
+	"./hu.js": 317,
+	"./hy-am": 318,
+	"./hy-am.js": 318,
+	"./id": 319,
+	"./id.js": 319,
+	"./is": 320,
+	"./is.js": 320,
+	"./it": 321,
+	"./it.js": 321,
+	"./ja": 322,
+	"./ja.js": 322,
+	"./jv": 323,
+	"./jv.js": 323,
+	"./ka": 324,
+	"./ka.js": 324,
+	"./kk": 325,
+	"./kk.js": 325,
+	"./km": 326,
+	"./km.js": 326,
+	"./kn": 327,
+	"./kn.js": 327,
+	"./ko": 328,
+	"./ko.js": 328,
+	"./ku": 329,
+	"./ku.js": 329,
+	"./ky": 330,
+	"./ky.js": 330,
+	"./lb": 331,
+	"./lb.js": 331,
+	"./lo": 332,
+	"./lo.js": 332,
+	"./lt": 333,
+	"./lt.js": 333,
+	"./lv": 334,
+	"./lv.js": 334,
+	"./me": 335,
+	"./me.js": 335,
+	"./mi": 336,
+	"./mi.js": 336,
+	"./mk": 337,
+	"./mk.js": 337,
+	"./ml": 338,
+	"./ml.js": 338,
+	"./mn": 339,
+	"./mn.js": 339,
+	"./mr": 340,
+	"./mr.js": 340,
+	"./ms": 341,
+	"./ms-my": 342,
+	"./ms-my.js": 342,
+	"./ms.js": 341,
+	"./mt": 343,
+	"./mt.js": 343,
+	"./my": 344,
+	"./my.js": 344,
+	"./nb": 345,
+	"./nb.js": 345,
+	"./ne": 346,
+	"./ne.js": 346,
+	"./nl": 347,
+	"./nl-be": 348,
+	"./nl-be.js": 348,
+	"./nl.js": 347,
+	"./nn": 349,
+	"./nn.js": 349,
+	"./pa-in": 350,
+	"./pa-in.js": 350,
+	"./pl": 351,
+	"./pl.js": 351,
+	"./pt": 352,
+	"./pt-br": 353,
+	"./pt-br.js": 353,
+	"./pt.js": 352,
+	"./ro": 354,
+	"./ro.js": 354,
+	"./ru": 355,
+	"./ru.js": 355,
+	"./sd": 356,
+	"./sd.js": 356,
+	"./se": 357,
+	"./se.js": 357,
+	"./si": 358,
+	"./si.js": 358,
+	"./sk": 359,
+	"./sk.js": 359,
+	"./sl": 360,
+	"./sl.js": 360,
+	"./sq": 361,
+	"./sq.js": 361,
+	"./sr": 362,
+	"./sr-cyrl": 363,
+	"./sr-cyrl.js": 363,
+	"./sr.js": 362,
+	"./ss": 364,
+	"./ss.js": 364,
+	"./sv": 365,
+	"./sv.js": 365,
+	"./sw": 366,
+	"./sw.js": 366,
+	"./ta": 367,
+	"./ta.js": 367,
+	"./te": 368,
+	"./te.js": 368,
+	"./tet": 369,
+	"./tet.js": 369,
+	"./tg": 370,
+	"./tg.js": 370,
+	"./th": 371,
+	"./th.js": 371,
+	"./tl-ph": 372,
+	"./tl-ph.js": 372,
+	"./tlh": 373,
+	"./tlh.js": 373,
+	"./tr": 374,
+	"./tr.js": 374,
+	"./tzl": 375,
+	"./tzl.js": 375,
+	"./tzm": 376,
+	"./tzm-latn": 377,
+	"./tzm-latn.js": 377,
+	"./tzm.js": 376,
+	"./ug-cn": 378,
+	"./ug-cn.js": 378,
+	"./uk": 379,
+	"./uk.js": 379,
+	"./ur": 380,
+	"./ur.js": 380,
+	"./uz": 381,
+	"./uz-latn": 382,
+	"./uz-latn.js": 382,
+	"./uz.js": 381,
+	"./vi": 383,
+	"./vi.js": 383,
+	"./x-pseudo": 384,
+	"./x-pseudo.js": 384,
+	"./yo": 385,
+	"./yo.js": 385,
+	"./zh-cn": 386,
+	"./zh-cn.js": 386,
+	"./zh-hk": 387,
+	"./zh-hk.js": 387,
+	"./zh-tw": 388,
+	"./zh-tw.js": 388
+};
+function webpackContext(req) {
+	return __webpack_require__(webpackContextResolve(req));
+};
+function webpackContextResolve(req) {
+	var id = map[req];
+	if(!(id + 1)) // check for number or string
+		throw new Error("Cannot find module '" + req + "'.");
+	return id;
+};
+webpackContext.keys = function webpackContextKeys() {
+	return Object.keys(map);
+};
+webpackContext.resolve = webpackContextResolve;
+module.exports = webpackContext;
+webpackContext.id = 599;
+
+/***/ }),
+
 /***/ 81:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -9383,7 +9952,7 @@ MyAgenda = __decorate([
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_rxjs_add_operator_map___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_rxjs_add_operator_map__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__providers_database_database__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__providers_localstorage_localstorage__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__notesdetails_notesdetails__ = __webpack_require__(893);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__notesdetails_notesdetails__ = __webpack_require__(894);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -9799,7 +10368,7 @@ NotesPage = __decorate([
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_rxjs_add_operator_map___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_rxjs_add_operator_map__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__providers_database_database__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__providers_localstorage_localstorage__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__educationdetails_educationdetails__ = __webpack_require__(196);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__educationdetails_educationdetails__ = __webpack_require__(84);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -10290,7 +10859,541 @@ MyAgendaFull = __decorate([
 
 /***/ }),
 
-/***/ 893:
+/***/ 84:
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return EducationDetailsPage; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ionic_storage__ = __webpack_require__(25);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_rxjs_add_operator_map__ = __webpack_require__(22);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_rxjs_add_operator_map___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_rxjs_add_operator_map__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__providers_database_database__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__providers_localstorage_localstorage__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_leaflet__ = __webpack_require__(541);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_leaflet___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6_leaflet__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__login_login__ = __webpack_require__(54);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__myagenda_myagenda__ = __webpack_require__(58);
+var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
+    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
+    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
+    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
+    return c > 3 && r && Object.defineProperty(target, key, r), r;
+};
+var __metadata = (this && this.__metadata) || function (k, v) {
+    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
+};
+// Components, functions, plugins
+
+
+
+
+
+
+
+// Pages
+
+
+let EducationDetailsPage = class EducationDetailsPage {
+    constructor(navCtrl, navParams, storage, databaseprovider, cd, alertCtrl, events, loadingCtrl, localstorage) {
+        this.navCtrl = navCtrl;
+        this.navParams = navParams;
+        this.storage = storage;
+        this.databaseprovider = databaseprovider;
+        this.cd = cd;
+        this.alertCtrl = alertCtrl;
+        this.events = events;
+        this.loadingCtrl = loadingCtrl;
+        this.localstorage = localstorage;
+        // Control Buttons
+        // Disabled per LIsa Bollenbach 2018-04-19
+        this.btnAgendaManagement = false;
+        this.btnNotes = true;
+        this.btnPrint = true;
+        // SubSection Control
+        this.SpeakerHostShow = true;
+        this.CorporateSupporterShow = true;
+        this.AuthorsDisplay = false;
+        this.AbstractDisplay = true;
+        this.DescriptionDisplay = true;
+        this.SubEventsDisplay = false;
+        this.RecordingShow = true;
+        this.HandoutShow = true;
+        this.OtherInformationDisplay = true;
+        this.MeetingLocationDisplay = true;
+        this.SpeakerList = [];
+    }
+    ionViewDidLoad() {
+        console.log('ionViewDidLoad EducationDetailsPage');
+    }
+    ngOnInit() {
+        var AttendeeID = this.localstorage.getLocalValue('AttendeeID');
+        if (AttendeeID == '' || AttendeeID == null) {
+            AttendeeID = '0';
+        }
+        // Load initial data set here
+        //let loading = this.loadingCtrl.create({
+        //	spinner: 'crescent',
+        //	content: 'Please wait...'
+        //});
+        //loading.present();
+        // Blank and show loading info
+        this.cd.markForCheck();
+        // Temporary use variables
+        var flags = "dt|0|Alpha|" + this.navParams.get('EventID');
+        this.EventID = this.navParams.get('EventID');
+        this.localstorage.setLocalValue('EventID', this.navParams.get('EventID'));
+        // ---------------------
+        // Get Education Details
+        // ---------------------
+        var PrimarySpeakerName = "";
+        var SQLDate;
+        var DisplayDateTime;
+        var dbEventDateTime;
+        var courseID = "";
+        var UpdatedEventDescription;
+        var UpdatedEventDescription2;
+        var HandoutPDFName = "";
+        console.log('Education Details, flags: ' + flags);
+        // Get course detail record
+        this.databaseprovider.getLectureData(flags, AttendeeID).then(data => {
+            console.log("getLectureData: " + JSON.stringify(data));
+            if (data['length'] > 0) {
+                console.log("Educationa Details, begin parsing");
+                PrimarySpeakerName = "";
+                // Display start time
+                console.log("Educationa Details, Display start time");
+                dbEventDateTime = data[0].session_start_time.substring(0, 19);
+                dbEventDateTime = dbEventDateTime.replace(/-/g, '/');
+                dbEventDateTime = dbEventDateTime.replace(/T/g, ' ');
+                SQLDate = new Date(dbEventDateTime);
+                DisplayDateTime = dateFormat(SQLDate, "mm/dd h:MMtt");
+                // Display end time
+                console.log("Educationa Details, Display end time");
+                dbEventDateTime = data[0].session_end_time.substring(0, 19);
+                dbEventDateTime = dbEventDateTime.replace(/-/g, '/');
+                dbEventDateTime = dbEventDateTime.replace(/T/g, ' ');
+                SQLDate = new Date(dbEventDateTime);
+                DisplayDateTime = DisplayDateTime + " to " + dateFormat(SQLDate, "h:MMtt");
+                console.log("Educationa Details, Set primary speaker");
+                if (data[0].primary_speaker == "") {
+                    //PrimarySpeakerName = "No Assigned Primary Presenter";
+                    PrimarySpeakerName = "";
+                }
+                else {
+                    PrimarySpeakerName = data[0].primary_speaker;
+                }
+                console.log("Educationa Details, Set session title");
+                this.EventName = data[0].session_title;
+                //this.EventSubName = data[0].EventSubName;
+                console.log("Educationa Details, Add room name");
+                if (data[0].RoomName.length == 0) {
+                    this.DisplayEventTimeDateLocation = DisplayDateTime;
+                }
+                else {
+                    this.DisplayEventTimeDateLocation = DisplayDateTime + " in " + data[0].RoomName;
+                }
+                console.log("Educationa Details, Set speaker name");
+                this.SpeakerDisplayName = PrimarySpeakerName;
+                //this.EventTypeName = data[0].EventTypeName;
+                console.log('Host: ' + data[0].speaker_host_emcee);
+                if ((data[0].speaker_host_emcee === undefined) || (data[0].speaker_host_emcee === "") || (data[0].speaker_host_emcee === null)) {
+                    this.SpeakerHostShow = false;
+                }
+                else {
+                    this.SpeakerHostEmcee = data[0].speaker_host_emcee;
+                }
+                if ((data[0].corporate_supporter === undefined) || (data[0].corporate_supporter === "") || (data[0].corporate_supporter === null)) {
+                    this.CorporateSupporterShow = false;
+                }
+                else {
+                    this.EventCorporateSupporter = data[0].corporate_supporter;
+                }
+                UpdatedEventDescription2 = data[0].description;
+                UpdatedEventDescription2 = UpdatedEventDescription2.replace(/\\/g, '');
+                UpdatedEventDescription = UpdatedEventDescription2.replace("Educational Objectives:", "<br/><br/><b>Educational Objectives:</b>");
+                UpdatedEventDescription = UpdatedEventDescription.replace("1.", "<br/>1.");
+                UpdatedEventDescription = UpdatedEventDescription.replace("2.", "<br/>2.");
+                UpdatedEventDescription = UpdatedEventDescription.replace("3.", "<br/>3.");
+                UpdatedEventDescription = UpdatedEventDescription.replace("4.", "<br/>4.");
+                UpdatedEventDescription = UpdatedEventDescription.replace("5.", "<br/>5.");
+                UpdatedEventDescription = UpdatedEventDescription.replace("6.", "<br/>6.");
+                UpdatedEventDescription = UpdatedEventDescription.replace("DISCLAIMER:", "<br/><br/><b>DISCLAIMER:</b>");
+                UpdatedEventDescription = UpdatedEventDescription.replace("Learning Objectives:", "<br/><br/><b>Learning Objectives:</b>");
+                this.sessionAbstract = UpdatedEventDescription;
+                console.log("Abstract: " + UpdatedEventDescription);
+                //this.EventID = data[0].session_id;
+                console.log('db: ' + data[0].ce_credits_type);
+                console.log('db: ' + data[0].course_id);
+                console.log('db: ' + data[0].HandoutFilename);
+                console.log('db: ' + data[0].type);
+                HandoutPDFName = data[0].HandoutFilename + ".pdf";
+                this.HandoutURL = "https://aacdmobile.convergence-us.com/aacdmobile/www/assets/Handouts/" + HandoutPDFName;
+                this.HandoutFn = HandoutPDFName;
+                courseID = data[0].course_id;
+                this.localstorage.setLocalValue("PDFLink", data[0].course_id);
+                // Values for Agenda Management
+                this.localstorage.setLocalValue("AAOID", data[0].session_id);
+                this.localstorage.setLocalValue("EventStartTime", data[0].session_start_time.substring(11, 19));
+                this.localstorage.setLocalValue("EventEndTime", data[0].session_end_time.substring(11, 19));
+                this.localstorage.setLocalValue("EventLocation", data[0].RoomName);
+                this.localstorage.setLocalValue("EventName", data[0].session_title);
+                this.localstorage.setLocalValue("EventDate", data[0].session_start_time.substring(0, 10));
+                if (data[0].ce_credits_type == "") {
+                    this.AbstractDisplay = false;
+                }
+                else {
+                    this.DescriptionDisplay = false;
+                }
+                if ((data[0].description === undefined) || (data[0].description === "") || (data[0].description === null)) {
+                    this.AbstractDisplay = false;
+                    this.DescriptionDisplay = false;
+                }
+                if (data[0].session_recording.trim() == "N") {
+                    this.RecordingShow = false;
+                }
+                console.log('HandoutFilename: ' + HandoutPDFName);
+                if (data[0].HandoutFilename === "" || data[0].HandoutFilename === null) {
+                    this.HandoutShow = false;
+                }
+                if (data[0].OnAgenda != null) {
+                    this.visAgendaAddRemoveButton = "Remove";
+                }
+                else {
+                    this.visAgendaAddRemoveButton = "Add";
+                }
+                // Other Information grid
+                this.vSubjectCode = data[0].subject;
+                this.vCECredits = data[0].cs_credits;
+                this.vCECreditsType = data[0].ce_credits_type;
+                this.vSessionType = data[0].type;
+                this.vSessionLevel = data[0].level;
+                // Status checks
+                var SessionStatus = "";
+                var StatusStyle = "SessionStatusNormal";
+                // Room Capacity check
+                if (parseInt(data[0].room_capacity) <= parseInt(data[0].Attendees)) {
+                    SessionStatus = "Course at Capacity";
+                    StatusStyle = "SessionStatusRed";
+                }
+                // Waitlist check
+                if (data[0].Waitlist == "1") {
+                    if (SessionStatus == "") {
+                        SessionStatus = "You are Waitlisted";
+                        StatusStyle = "SessionStatusRed";
+                    }
+                    else {
+                        SessionStatus = SessionStatus + " / You are Waitlisted";
+                        StatusStyle = "SessionStatusRed";
+                    }
+                }
+                console.log(SessionStatus);
+                this.SessionStatusStyle = StatusStyle;
+                this.SessionStatus = SessionStatus;
+                // --------------------
+                // Session room mapping
+                // --------------------
+                console.log('Meeting room mapping');
+                var RoomX = data[0].RoomX;
+                var RoomY = data[0].RoomY;
+                console.log('Variables set');
+                console.log('RoomX: ' + RoomX);
+                console.log('RoomY: ' + RoomY);
+                if (RoomX === null || RoomY == undefined) {
+                    RoomX = 0;
+                    RoomY = 0;
+                    var OfficeName = "Room: " + data[0].RoomName;
+                }
+                else {
+                    //var FloorNumber = data[0].RoomNumber.charAt(0);
+                    var OfficeName = "Room: " + data[0].RoomName;
+                }
+                // Override
+                //RoomX = 10;
+                //RoomY = 10;
+                console.log('Meeting room mapping: Determine map type');
+                if ((RoomX == 0) || (RoomY == 0)) {
+                    // Don't show the Locator block
+                    this.MeetingLocationDisplay = false;
+                    /*
+                    // Show empty map
+                    console.log('Meeting room mapping: Show empty map');
+                    this.myMap = L.map('map2', {
+                        crs: L.CRS.Simple,
+                        minZoom: 0,
+                        maxZoom: 2,
+                        zoomControl: false
+                    });
+
+                    var bounds = L.latLngBounds([0, 0], [1500, 2000]);    // Normally 1000, 1000; stretched to 2000,1000 for AACD 2017
+                    var image = L.imageOverlay('assets/img/SessionRooms.png', bounds, {
+                        attribution: 'Convergence'
+                    }).addTo(this.myMap);
+
+                    this.myMap.fitBounds(bounds);
+                    this.myMap.setMaxBounds(bounds);
+                    */
+                }
+                else {
+                    // Simple coordinate system mapping
+                    console.log('Meeting room mapping: Simple coordinate system mapping');
+                    this.myMap = __WEBPACK_IMPORTED_MODULE_6_leaflet__["map"]('map1', {
+                        crs: __WEBPACK_IMPORTED_MODULE_6_leaflet__["CRS"].Simple,
+                        minZoom: -2,
+                        maxZoom: 0,
+                        zoomControl: true
+                    });
+                    console.log('Meeting room mapping: Set bounds');
+                    var bounds = __WEBPACK_IMPORTED_MODULE_6_leaflet__["latLngBounds"]([0, 0], [1500, 2000]);
+                    console.log('Meeting room mapping: Add image');
+                    var image = __WEBPACK_IMPORTED_MODULE_6_leaflet__["imageOverlay"]('assets/img/SessionRooms.png', bounds, {
+                        attribution: 'Convergence'
+                    }).addTo(this.myMap);
+                    console.log('Meeting room mapping: Set Fit and max bounds');
+                    this.myMap.fitBounds(bounds);
+                    this.myMap.setMaxBounds(bounds);
+                    console.log('Meeting room mapping: Set pindrop position');
+                    var CongressionalOffice = __WEBPACK_IMPORTED_MODULE_6_leaflet__["latLng"]([RoomY, RoomX]);
+                    console.log('Meeting room mapping: Display pindrop');
+                    __WEBPACK_IMPORTED_MODULE_6_leaflet__["marker"](CongressionalOffice).addTo(this.myMap)
+                        .bindPopup(OfficeName)
+                        .openPopup();
+                    console.log('Meeting room mapping: Center map on pindrop');
+                    this.myMap.setView([RoomY, RoomX], 1);
+                }
+                this.cd.markForCheck();
+                // ---------------------------
+                // Get Linked Speakers
+                // ---------------------------
+                this.AuthorsDisplay = false;
+                if (data[0].ce_credits_type == "") {
+                    // Keep hidden for non-CE events
+                    console.log('Non-CE event');
+                    this.OtherInformationDisplay = false;
+                    this.cd.markForCheck();
+                    //loading.dismiss();
+                }
+                else {
+                    console.log('Loading speakers');
+                    flags = "cd|Alpha|0|0|" + courseID;
+                    // Get speaker detail record
+                    this.databaseprovider.getSpeakerData(flags, AttendeeID).then(data2 => {
+                        console.log("getSpeakerData: " + JSON.stringify(data2));
+                        if (data2['length'] > 0) {
+                            // Process returned records to display
+                            this.SpeakerList = [];
+                            var DisplayName = "";
+                            for (var i = 0; i < data2['length']; i++) {
+                                DisplayName = "";
+                                // Concatenate fields to build displayable name
+                                DisplayName = DisplayName + data2[i].FirstName;
+                                //if (resA.rows.item(i).MiddleInitial != "") {
+                                //    DisplayName = DisplayName + " " + data2[i].MiddleInitial;
+                                //}
+                                DisplayName = DisplayName + " " + data2[i].LastName;
+                                //if (data2[i].imis_designation != "" && data2[i].imis_designation != null) {
+                                //    DisplayName = DisplayName + ", " + data2[i].imis_designation;
+                                //}
+                                //if (data2[i].Credentials != "") {
+                                //	DisplayName = DisplayName + " " + data2[i].Credentials;
+                                //}
+                                //var imageAvatar = data2[i].imageFilename;
+                                var imageAvatar = "https://aacdmobile.convergence-us.com/AdminGateway/2019/images/Speakers/" + data2[i].imageFilename;
+                                //imageAvatar = imageAvatar.substr(0, imageAvatar.length - 3) + 'png';
+                                //console.log("imageAvatar: " + imageAvatar);
+                                //imageAvatar = "assets/img/speakers/" + imageAvatar;
+                                this.SpeakerList.push({
+                                    speakerIcon: "person",
+                                    speakerAvatar: imageAvatar,
+                                    navigationArrow: "arrow-dropright",
+                                    SpeakerID: data2[i].speakerID,
+                                    DisplayNameLastFirst: DisplayName,
+                                    DisplayCredentials: data2[i].Credentials
+                                    //Affiliation: data2[i].Affiliation
+                                });
+                            }
+                            this.AuthorsDisplay = true;
+                        }
+                        this.cd.markForCheck();
+                        //loading.dismiss();
+                    }).catch(function () {
+                        console.log("Speaker Promise Rejected");
+                    });
+                }
+            }
+        }).catch(function () {
+            console.log("Course Promise Rejected");
+        });
+        // -------------------
+        // Get Attendee Status
+        // -------------------
+        /*
+        console.log('Attendee Button Management, AttendeeID: ' + AttendeeID);
+        if (AttendeeID == '0') {
+            this.btnNotes = false;
+            this.btnAgendaManagement = false;
+        } else {
+            this.btnNotes = true;
+            this.btnAgendaManagement = true;
+        }
+        */
+    }
+    SpeakerDetails(SpeakerID) {
+        if (SpeakerID != 0) {
+            // Navigate to Speaker Details page
+            this.navCtrl.push('SpeakerDetailsPage', { SpeakerID: SpeakerID }, { animate: true, direction: 'forward' });
+        }
+    }
+    ;
+    printWindow() {
+        window.open('https://www.google.com/cloudprint/#printers', '_system');
+    }
+    ;
+    openPDF(PDFURL) {
+        var ref = window.open(PDFURL, '_system');
+    }
+    ;
+    navToMyAgenda() {
+        var AttendeeID = this.localstorage.getLocalValue('AttendeeID');
+        if (AttendeeID != '' && AttendeeID != null) {
+            // If not, store the page they want to go to and go to the Login page
+            console.log('Stored AttendeeID: ' + AttendeeID);
+            this.localstorage.setLocalValue('NavigateToPage', "MyAgenda");
+            this.navCtrl.push(__WEBPACK_IMPORTED_MODULE_7__login_login__["a" /* LoginPage */], {}, { animate: true, direction: 'forward' });
+        }
+        else {
+            // Otherwise just go to the page they want
+            this.navCtrl.push(__WEBPACK_IMPORTED_MODULE_8__myagenda_myagenda__["a" /* MyAgenda */], {}, { animate: true, direction: 'forward' });
+        }
+    }
+    ;
+    navToNotes(EventID) {
+        console.log("NoteDetails: " + EventID);
+        var AttendeeID = this.localstorage.getLocalValue('AttendeeID');
+        if (AttendeeID == '' || AttendeeID == null) {
+            // If not, store the page they want to go to and go to the Login page
+            console.log('Stored AttendeeID: ' + AttendeeID);
+            this.localstorage.setLocalValue('NavigateToPage', "NotesDetailsPage");
+            this.navCtrl.push(__WEBPACK_IMPORTED_MODULE_7__login_login__["a" /* LoginPage */], {}, { animate: true, direction: 'forward' });
+        }
+        else {
+            // Otherwise just go to the page they want
+            this.navCtrl.push('NotesDetailsPage', { EventID: EventID }, { animate: true, direction: 'forward' });
+        }
+    }
+    ;
+    AgendaManagement() {
+        console.log("Begin AgendaManagement process...");
+        var AttendeeID = this.localstorage.getLocalValue('AttendeeID');
+        var AAOID = this.localstorage.getLocalValue("AAOID");
+        var EventID = this.localstorage.getLocalValue("EventID");
+        var EventStartTime = this.localstorage.getLocalValue("EventStartTime");
+        var EventEndTime = this.localstorage.getLocalValue("EventEndTime");
+        var EventLocation = this.localstorage.getLocalValue("EventLocation");
+        var EventName = this.localstorage.getLocalValue("EventName");
+        EventName = EventName.replace(/'/g, "''");
+        var EventDate = this.localstorage.getLocalValue("EventDate");
+        var flags = '';
+        // Starting variables
+        console.log("AttendeeID: " + AttendeeID);
+        console.log("AAOID: " + AAOID);
+        console.log("EventID: " + EventID);
+        console.log("EventStartTime: " + EventStartTime);
+        console.log("EventEndTime: " + EventEndTime);
+        console.log("EventLocation: " + EventLocation);
+        console.log("EventName: " + EventName);
+        console.log("EventDate: " + EventDate);
+        this.cd.markForCheck();
+        // Get last update performed by this app
+        var LastUpdateDate = this.localstorage.getLocalValue("LastUpdateDate");
+        if (LastUpdateDate == null) {
+            // If never, then set variable and localStorage item to NA
+            LastUpdateDate = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
+            this.localstorage.setLocalValue("LastUpdateDate", LastUpdateDate);
+        }
+        if (this.visAgendaAddRemoveButton == "Add") {
+            // ------------------------
+            // Add item to Agenda
+            // ------------------------
+            flags = 'ad|0|' + EventID + '|' + EventStartTime + '|' + EventEndTime + '|' + EventLocation + '|' + EventName + '|' + EventDate + '|' + AAOID + '|' + LastUpdateDate;
+            console.log("flags: " + flags);
+            this.databaseprovider.getAgendaData(flags, AttendeeID).then(data => {
+                console.log("getAgendaData: " + JSON.stringify(data));
+                if (data['length'] > 0) {
+                    console.log("Return status: " + data[0].AddStatus);
+                    if (data[0].AddStatus == "Success") {
+                        this.events.publish('user:Status', 'AgendaItem Add');
+                        this.visAgendaAddRemoveButton = "Remove";
+                        this.cd.markForCheck();
+                    }
+                    else {
+                        console.log("Return query: " + data[0].AddQuery);
+                        let alert = this.alertCtrl.create({
+                            title: 'Agenda Item',
+                            subTitle: 'Unable to add the item to your agenda at this time. Please try again shortly.',
+                            buttons: ['OK']
+                        });
+                        alert.present();
+                    }
+                }
+            }).catch(function () {
+                console.log("Promise Rejected");
+            });
+        }
+        else {
+            // -----------------------
+            // Remove Item from Agenda
+            // -----------------------
+            flags = 'dl|0|' + EventID + '|' + EventStartTime + '|' + EventEndTime + '|' + EventLocation + '|' + EventName + '|' + EventDate + '|' + AAOID + '|' + LastUpdateDate;
+            console.log("flags: " + flags);
+            this.databaseprovider.getAgendaData(flags, AttendeeID).then(data => {
+                console.log("getAgendaData: " + JSON.stringify(data));
+                if (data['length'] > 0) {
+                    console.log("Return status: " + data[0].DeleteStatus);
+                    if (data[0].DeleteStatus == "Success") {
+                        this.events.publish('user:Status', 'AgendaItem Remove');
+                        this.visAgendaAddRemoveButton = "Add";
+                        this.cd.markForCheck();
+                    }
+                    else {
+                        console.log("Return query: " + data[0].DeleteQuery);
+                        let alert = this.alertCtrl.create({
+                            title: 'Agenda Item',
+                            subTitle: 'Unable to remove the item from your agenda at this time. Please try again shortly.',
+                            buttons: ['OK']
+                        });
+                        alert.present();
+                    }
+                }
+            }).catch(function () {
+                console.log("Promise Rejected");
+            });
+        }
+    }
+    ;
+};
+EducationDetailsPage = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
+        selector: 'page-educationdetails',template:/*ion-inline-start:"/Users/petervroom/aacd19/src/pages/educationdetails/educationdetails.html"*/'<ion-header>\n\n  <ion-navbar color="primary">\n    <button ion-button menuToggle>\n      <ion-icon name="menu"></ion-icon>\n    </button>\n    <ion-title>Education Details</ion-title>\n  </ion-navbar>\n\n</ion-header>\n\n<ion-content class="page-speakers" padding>\n\n	<div class="myLabelBold" style="margin-top:10px!important">\n		<h2>{{EventName}}</h2>\n		<p>{{EventSubName}}</p>\n		<p>{{DisplayEventTimeDateLocation}}</p>\n		<p>{{SpeakerDisplayName}}</p>\n		<p>{{EventTypeName}}</p>\n		<p [ngClass]="SessionStatusStyle">{{SessionStatus}}</p>\n	</div>\n	<div class="button-bar myMarginTopBottom">\n\n		<!-- Disabled per LIsa Bollenbach 2018-04-19 -->\n		<button ion-button outline *ngIf="btnAgendaManagement" (click)="AgendaManagement()" [disabled]=true>\n			<div>\n				<ion-icon name="calendar"></ion-icon>\n				<label>{{visAgendaAddRemoveButton}}</label>\n			</div>\n		</button>\n		<button ion-button outline  *ngIf="btnNotes" (click)="navToNotes(EventID)">\n			<div>\n				<ion-icon name="create"></ion-icon>\n				<label>Notes</label>\n			</div>\n		</button>\n		<button ion-button outline  *ngIf="btnPrint" (click)="printWindow()">\n			<div>\n				<ion-icon name="print"></ion-icon>\n				<label>Print</label>\n			</div>\n		</button>\n\n	</div>\n	<p *ngIf="SpeakerHostShow" class="myLabelBold myHeader">\n		Speaker Host / Emcee\n	</p>\n	<div *ngIf="SpeakerHostShow" class="list">\n		{{SpeakerHostEmcee}}\n	</div>\n	<p *ngIf="CorporateSupporterShow" class="myLabelBold myHeader">\n		Corporate Supporter\n	</p>\n	<div *ngIf="CorporateSupporterShow" class="list">\n		{{EventCorporateSupporter}}\n	</div>\n	<p *ngIf="AuthorsDisplay" class="myLabelBold myHeader dark">\n		Speakers\n	</p>\n	<ion-list id="author-list3">\n		<ion-item (click)="SpeakerDetails(speaker.SpeakerID)" *ngFor="let speaker of SpeakerList" id="speakersessions-list-item19">\n		\n				<ion-avatar item-start>\n					<img src="{{speaker.speakerAvatar}}" onerror="this.src=\'assets/img/personIcon.png\'">\n				</ion-avatar>\n\n			<ion-icon item-right name="{{speaker.navigationArrow}}"></ion-icon>\n			<h2>{{speaker.DisplayNameLastFirst}}</h2>\n			{{speaker.DisplayCredentials}}\n		</ion-item>\n	</ion-list>\n	<p></p>\n	<p *ngIf="AbstractDisplay" class="myLabelBold myHeader">\n		Abstract\n	</p>\n	<div *ngIf="AbstractDisplay" [innerHTML]="sessionAbstract" class="myMarginTopBottom">\n		{{EventDetails}}\n	</div>\n	<p *ngIf="DescriptionDisplay" class="myLabelBold myHeader">\n		Description\n	</p>\n	<div *ngIf="DescriptionDisplay" [innerHTML]="sessionAbstract" class="myMarginTopBottom">\n		{{EventDetails}}\n	</div>\n	<p *ngIf="SubEventsDisplay" class="myLabelBold myHeader">\n		SubEvents\n	</p>\n	<ion-list id="session-list3">\n		<ion-item (click)="EventDetails(session.EventID)" *ngFor="let session of sessions" id="speakersessions-list-item20">\n			<div style="float: left; padding-right: 10px;">\n				<ion-icon name="{{session.eventTypeIcon}}"></ion-icon>\n			</div>\n			<div>\n				<p class="myLabelBold">\n					{{session.DisplayEventName}}\n				</p>\n				<p>\n					{{session.DisplayEventTimeDateLocation}}\n				</p>\n			</div>\n			<div style="float: right">\n				<ion-icon name="{{session.navigationArrow}}"></ion-icon>\n			</div>\n		</ion-item>\n	</ion-list>\n	<p *ngIf="RecordingShow" class="myLabelBold myHeader">\n		Session Recording\n	</p>\n	<div *ngIf="RecordingShow" class="list">\n		<ion-icon item-left name="mic" style="padding-right: 10px;"></ion-icon>\n		This session is being recorded.\n	</div>\n	<p *ngIf="HandoutShow" class="myLabelBold myHeader">\n		Handout\n	</p>\n	<div *ngIf="HandoutShow" class="list" (click)="openPDF(HandoutURL)">\n		<ion-icon item-left name="cloud-download" style="padding-right: 10px;"></ion-icon>\n		{{HandoutFn}}\n	</div>\n	<p class="myLabelBold myHeader" *ngIf="OtherInformationDisplay">\n		Other Information\n	</p>\n	<div class="myMarginTopBottom" *ngIf="OtherInformationDisplay">\n		<ion-row>\n			<ion-col>\n				<ion-item>\n					<ion-label><b>Subject</b><br/>{{vSubjectCode}}</ion-label>\n				</ion-item>\n			</ion-col>\n			<ion-col>\n				<ion-item>\n					<ion-label><b>CE Credits</b><br/>{{vCECredits}}</ion-label>\n				</ion-item>\n			</ion-col>\n		</ion-row>\n		<ion-row>\n			<ion-col>\n				<ion-item>\n					<ion-label><b>Type</b><br/>{{vSessionType}}</ion-label>\n				</ion-item>\n			</ion-col>\n			<ion-col>\n				<ion-item>\n					<ion-label><b>CE Credits Type</b><br/>{{vCECreditsType}}</ion-label>\n				</ion-item>\n			</ion-col>\n		</ion-row>\n		<ion-row>\n			<ion-col>\n				<ion-item>\n					<ion-label><b>Level</b><br/>{{vSessionLevel}}</ion-label>\n				</ion-item>\n			</ion-col>\n			<ion-col>\n			</ion-col>\n		</ion-row>\n	</div>\n	\n\n	<p *ngIf="MeetingLocationDisplay" class="myLabelBold myHeader">\n		Locator\n	</p>\n\n	<div class="myMarginTopBottom" *ngIf="MeetingLocationDisplay">\n		<div id="map1" style="width:100%; height:400px;"></div>\n	</div>\n\n\n</ion-content>\n'/*ion-inline-end:"/Users/petervroom/aacd19/src/pages/educationdetails/educationdetails.html"*/,
+        changeDetection: __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectionStrategy"].OnPush
+    }),
+    __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["u" /* NavController */],
+        __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["v" /* NavParams */],
+        __WEBPACK_IMPORTED_MODULE_2__ionic_storage__["b" /* Storage */],
+        __WEBPACK_IMPORTED_MODULE_4__providers_database_database__["a" /* Database */],
+        __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"],
+        __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["b" /* AlertController */],
+        __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* Events */],
+        __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["q" /* LoadingController */],
+        __WEBPACK_IMPORTED_MODULE_5__providers_localstorage_localstorage__["a" /* Localstorage */]])
+], EducationDetailsPage);
+
+//# sourceMappingURL=educationdetails.js.map
+
+/***/ }),
+
+/***/ 894:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10489,7 +11592,7 @@ NotesDetailsPage = __decorate([
 
 /***/ }),
 
-/***/ 911:
+/***/ 912:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -10502,20 +11605,21 @@ NotesDetailsPage = __decorate([
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__providers_database_database__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__providers_localstorage_localstorage__ = __webpack_require__(15);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__ionic_native_onesignal__ = __webpack_require__(531);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__pages_home_home__ = __webpack_require__(100);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__pages_conferencecity_conferencecity__ = __webpack_require__(165);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__pages_help_help__ = __webpack_require__(108);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__pages_speakers_speakers__ = __webpack_require__(110);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__pages_program_program__ = __webpack_require__(164);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__pages_map_map__ = __webpack_require__(166);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__pages_home_home__ = __webpack_require__(101);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_9__pages_conferencecity_conferencecity__ = __webpack_require__(166);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_10__pages_help_help__ = __webpack_require__(109);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_11__pages_speakers_speakers__ = __webpack_require__(111);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_12__pages_program_program__ = __webpack_require__(165);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_13__pages_map_map__ = __webpack_require__(167);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_14__pages_login_login__ = __webpack_require__(54);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__pages_exhibitors_exhibitors__ = __webpack_require__(167);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_15__pages_exhibitors_exhibitors__ = __webpack_require__(168);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_16__pages_notes_notes__ = __webpack_require__(81);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_17__pages_myagenda_myagenda__ = __webpack_require__(58);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_18__pages_myagendafull_myagendafull__ = __webpack_require__(82);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__pages_evaluationconference_evaluationconference__ = __webpack_require__(109);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__pages_networking_networking__ = __webpack_require__(168);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__pages_social_social__ = __webpack_require__(111);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_19__pages_evaluationconference_evaluationconference__ = __webpack_require__(110);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_20__pages_educationdetails_educationdetails__ = __webpack_require__(84);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_21__pages_networking_networking__ = __webpack_require__(169);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_22__pages_social_social__ = __webpack_require__(112);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -10551,6 +11655,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
+
 let MyApp = class MyApp {
     constructor(pltfrm, statusBar, loadingCtrl, storage, splashScreen, alertCtrl, oneSignal, 
     //private IonicPro: Pro,
@@ -10577,13 +11682,14 @@ let MyApp = class MyApp {
             { title: 'Program', icon: 'list', component: __WEBPACK_IMPORTED_MODULE_12__pages_program_program__["a" /* ProgramPage */], naventry: 'Program' },
             { title: 'Speakers', icon: 'mic', component: __WEBPACK_IMPORTED_MODULE_11__pages_speakers_speakers__["a" /* SpeakersPage */], naventry: 'Speakers' },
             { title: 'My Agenda', icon: 'calendar', component: __WEBPACK_IMPORTED_MODULE_17__pages_myagenda_myagenda__["a" /* MyAgenda */], naventry: 'MyAgenda' },
-            { title: 'Networking', icon: 'contacts', component: __WEBPACK_IMPORTED_MODULE_20__pages_networking_networking__["a" /* NetworkingPage */], naventry: 'Networking' },
+            { title: 'Networking', icon: 'contacts', component: __WEBPACK_IMPORTED_MODULE_21__pages_networking_networking__["a" /* NetworkingPage */], naventry: 'Networking' },
             //{ title: 'My Agenda Full', icon: 'calendar', component: MyAgendaFull, naventry: 'MyAgendaFull' },
             { title: 'Exhibitors', icon: 'people', component: __WEBPACK_IMPORTED_MODULE_15__pages_exhibitors_exhibitors__["a" /* ExhibitorsPage */], naventry: 'Exhibitors' },
             { title: 'CE Tracker', icon: 'school', component: 'CetrackingPage', naventry: 'CETracking' },
             { title: 'Map', icon: 'map', component: __WEBPACK_IMPORTED_MODULE_13__pages_map_map__["a" /* MapPage */], naventry: 'Map' },
+            //{ title: 'Floor Plan', icon: 'map', component: FloorplanMappingPage, naventry: 'FloorplanMapping' },
             { title: 'San Diego', icon: 'plane', component: __WEBPACK_IMPORTED_MODULE_9__pages_conferencecity_conferencecity__["a" /* ConferenceCityPage */], naventry: 'SanDiego' },
-            { title: 'Social Media', icon: 'text', component: __WEBPACK_IMPORTED_MODULE_21__pages_social_social__["a" /* SocialPage */], naventry: 'SocialMedia' },
+            { title: 'Social Media', icon: 'text', component: __WEBPACK_IMPORTED_MODULE_22__pages_social_social__["a" /* SocialPage */], naventry: 'SocialMedia' },
             { title: 'Help', icon: 'help', component: __WEBPACK_IMPORTED_MODULE_10__pages_help_help__["a" /* HelpPage */], naventry: 'Help' },
             { title: 'Notes', icon: 'create', component: __WEBPACK_IMPORTED_MODULE_16__pages_notes_notes__["a" /* NotesPage */], naventry: 'Notes' },
             { title: 'Event Survey', icon: 'bookmarks', component: __WEBPACK_IMPORTED_MODULE_19__pages_evaluationconference_evaluationconference__["a" /* EvaluationConference */], naventry: 'EventSurvey' },
@@ -10612,9 +11718,12 @@ let MyApp = class MyApp {
         if (AttendeeID != '' && AttendeeID != null) {
             flags = "li2|0";
             this.databaseprovider.getAgendaData(flags, AttendeeID).then(data => {
+                this.upcomingAgendaItems = [];
+                this.cd.markForCheck();
                 console.log('AppComponents: Getting agenda data for side menu');
-                //console.log("AppComponents: getAgendaData: " + JSON.stringify(data));
+                console.log("AppComponents: getAgendaData: " + JSON.stringify(data));
                 if (data['length'] > 0) {
+                    console.log('AppComponents: Processing agenda data');
                     if (data['length'] > 4) {
                         maxRecs = 4;
                     }
@@ -10645,6 +11754,7 @@ let MyApp = class MyApp {
                     }
                 }
                 else {
+                    console.log('AppComponents: Nothing to process for agenda');
                     this.upcomingAgendaItems.push({
                         EventName: "No upcoming agenda entries",
                         visEventTimeframe: "",
@@ -10657,30 +11767,30 @@ let MyApp = class MyApp {
             }).catch(function () {
                 console.log("AppComponents: Promise Rejected");
             });
-            this.databaseprovider.getCETrackerData(AttendeeID).then(data => {
+            this.databaseprovider.getCETrackerData(AttendeeID).then(data2 => {
                 console.log('AppComponents: Getting CE data for side menu');
-                //console.log("getCETrackerData: " + JSON.stringify(data));
+                console.log("getCETrackerData: " + JSON.stringify(data2));
                 var sumCreditsL = 0;
                 var sumCreditsP = 0;
-                if (data['length'] > 0) {
-                    console.log('AppComponents: Processing ' + data['length'] + ' record(s)');
-                    for (var i = 0; i < data['length']; i++) {
-                        var EvalType = data[i].ce_credits_type.substring(0, 1);
+                if (data2['length'] > 0) {
+                    console.log('AppComponents: Processing ' + data2['length'] + ' record(s)');
+                    for (var i = 0; i < data2['length']; i++) {
+                        var EvalType = data2[i].ce_credits_type.substring(0, 1);
                         var iconSet = 0;
                         if (EvalType == "") { // Evals that don't require an eval are completed
                             iconSet = 1;
-                            sumCreditsL = sumCreditsL + parseFloat(data[i].CEcreditsL);
-                            sumCreditsP = sumCreditsP + parseFloat(data[i].CEcreditsP);
+                            sumCreditsL = sumCreditsL + parseFloat(data2[i].CEcreditsL);
+                            sumCreditsP = sumCreditsP + parseFloat(data2[i].CEcreditsP);
                         }
-                        if (data[i].ceStatusScan == "0" && iconSet == 0) { // No scan (shouldn't happen with AACD)
+                        if (data2[i].ceStatusScan == "0" && iconSet == 0) { // No scan (shouldn't happen with AACD)
                             iconSet = 1;
                         }
-                        if ((data[i].Evaluated == "0" || data[i].Evaluated === null) && iconSet == 0) { // Eval not completed
+                        if ((data2[i].Evaluated == "0" || data2[i].Evaluated === null) && iconSet == 0) { // Eval not completed
                             iconSet = 1;
                         }
                         if (iconSet == 0) { // Otherwise mark as completed
-                            sumCreditsL = sumCreditsL + parseFloat(data[i].CEcreditsL);
-                            sumCreditsP = sumCreditsP + parseFloat(data[i].CEcreditsP);
+                            sumCreditsL = sumCreditsL + parseFloat(data2[i].CEcreditsL);
+                            sumCreditsP = sumCreditsP + parseFloat(data2[i].CEcreditsP);
                         }
                     }
                     this.creditsTypeL = sumCreditsL.toFixed(2);
@@ -10688,7 +11798,7 @@ let MyApp = class MyApp {
                     this.cd.markForCheck();
                 }
                 else {
-                    console.log('AppComponents: No records');
+                    console.log('AppComponents: Nothing to process for CE');
                     this.creditsTypeL = '0.00';
                     this.creditsTypeP = '0.00';
                     this.cd.markForCheck();
@@ -10698,6 +11808,8 @@ let MyApp = class MyApp {
             });
         }
         else {
+            this.upcomingAgendaItems = [];
+            this.cd.markForCheck();
             this.upcomingAgendaItems.push({
                 EventName: "You need to be logged in to see your agenda",
                 visEventTimeframe: "",
@@ -10833,7 +11945,7 @@ let MyApp = class MyApp {
                 this.localstorage.setLocalValue('EventID', storeEventID);
                 // Navigate to Education Details page
                 this.menuCtrl.close();
-                this.navCtrl.push('EducationDetailsPage', { EventID: storeEventID }, { animate: true, direction: 'forward' });
+                this.navCtrl.push(__WEBPACK_IMPORTED_MODULE_20__pages_educationdetails_educationdetails__["a" /* EducationDetailsPage */], { EventID: storeEventID }, { animate: true, direction: 'forward' });
             }
         }
     }
@@ -10920,7 +12032,7 @@ __decorate([
     __metadata("design:type", __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["t" /* Nav */])
 ], MyApp.prototype, "navCtrl", void 0);
 MyApp = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({template:/*ion-inline-start:"/Users/petervroom/aacd19/src/app/app.html"*/'<ion-split-pane>\n\n	<ion-menu [content]="content" side="left" id="menu1">\n		<ion-header>\n			<ion-toolbar color=primary>\n				<ion-title>Menu</ion-title>\n				<ion-buttons end>\n					<button end ion-button menuClose icon-only color="light">\n						<ion-icon name="close"></ion-icon>\n					</button>\n				</ion-buttons>\n			</ion-toolbar>\n		</ion-header>\n\n		<ion-content>\n	\n			<img src="assets/img/orange3.png" (click)="navToWebsite()"><img>\n\n				<ion-list>\n				<ion-item tappable style="background:linear-gradient(to bottom right, #283593 0%, #283593 100%); color:#fff" \n			\n				(click)="NavigateToAuthenticatedPage(\'MyAgenda\')">\n					Upcoming Agenda Items\n				<ion-icon name="calendar" item-left></ion-icon>\n				</ion-item>\n\n\n				<ion-item tappable style="color:#444" (click)="EventDetails(upcomingAgenda.visEventID)" \n				*ngFor="let upcomingAgenda of upcomingAgendaItems" id="upcomingAgenda-list-item19">\n				<ion-icon item-start name="{{upcomingAgenda.eventTypeIcon}}"></ion-icon>\n				<p style="color: #444; font-weight:bold">\n				{{upcomingAgenda.EventName}}</p>		\n				<p style="color:#444">\n				{{upcomingAgenda.visEventTimeframe}}\n				</p>\n				<p>{{upcomingAgenda.EventLocation}}</p>\n				</ion-item>\n				</ion-list>\n\n              <ion-list>\n				<ion-item style="background:linear-gradient(to bottom right, #283593 0%, #283593 100%); color:#fff" (click)="NavigateToAuthenticatedPage(\'CETracking\')">\n					CE Credits Completed\n					<ion-icon name="school" item-left></ion-icon>\n				</ion-item>\n				<ion-item tappable style="border-color: rgba(0, 0, 0, 0);background-color: rgba(0, 0, 0, 0);\n				color: rgb(116, 33, 33);" (click)="NavigateToAuthenticatedPage(\'CETracking\')" id="cetrackervalue-list" >\n	\n									<p style="color: #444; font-size:1.2em">\n										{{creditsTypeL}}L / {{creditsTypeP}}P\n									</p>\n				</ion-item>\n\n\n			<ion-item tappable style="background:rgb(245, 245, 245); color:#444" \n			menuClose ion-item *ngFor="let p of pages" [class.activeHighlight]="checkActive(p)" (click)="openPage(p)">\n			<ion-icon name="{{p.icon}}" item-left></ion-icon>\n			{{p.title}}\n	\n			</ion-item>\n			</ion-list>\n\n		</ion-content>\n		\n	</ion-menu>\n\n	<ion-nav [root]="rootPage" main #content swipeBackEnabled="false"></ion-nav>\n\n</ion-split-pane>\n'/*ion-inline-end:"/Users/petervroom/aacd19/src/app/app.html"*/,
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({template:/*ion-inline-start:"/Users/petervroom/aacd19/src/app/app.html"*/'<ion-split-pane>\n\n	<ion-menu [content]="content" side="left" id="menu1">\n		<ion-header>\n			<ion-toolbar color=primary>\n				<ion-title>Menu</ion-title>\n				<ion-buttons end>\n					<button end ion-button menuClose icon-only color="light">\n						<ion-icon name="close"></ion-icon>\n					</button>\n				</ion-buttons>\n			</ion-toolbar>\n		</ion-header>\n\n		<ion-content>\n	\n			<img src="assets/img/orlando.png" (click)="navToWebsite()"><img>\n\n				<ion-list>\n				<ion-item tappable style="background:linear-gradient(to bottom right, #283593 0%, #283593 100%); color:#fff" \n			\n				(click)="NavigateToAuthenticatedPage(\'MyAgenda\')">\n					Upcoming Agenda Items\n				<ion-icon name="calendar" item-left></ion-icon>\n				</ion-item>\n\n\n				<ion-item tappable style="color:#444" (click)="EventDetails(upcomingAgenda.visEventID)" \n				*ngFor="let upcomingAgenda of upcomingAgendaItems" id="upcomingAgenda-list-item19">\n				<ion-icon item-start name="{{upcomingAgenda.eventTypeIcon}}"></ion-icon>\n				<p style="color: #444; font-weight:bold">\n				{{upcomingAgenda.EventName}}</p>		\n				<p style="color:#444">\n				{{upcomingAgenda.visEventTimeframe}}\n				</p>\n				<p>{{upcomingAgenda.EventLocation}}</p>\n				</ion-item>\n				</ion-list>\n\n              <ion-list>\n				<ion-item style="background:linear-gradient(to bottom right, #283593 0%, #283593 100%); color:#fff" (click)="NavigateToAuthenticatedPage(\'CETracking\')">\n					CE Credits Completed\n					<ion-icon name="school" item-left></ion-icon>\n				</ion-item>\n				<ion-item tappable style="border-color: rgba(0, 0, 0, 0);background-color: rgba(0, 0, 0, 0);\n				color: rgb(116, 33, 33);" (click)="NavigateToAuthenticatedPage(\'CETracking\')" id="cetrackervalue-list" >\n	\n									<p style="color: #444; font-size:1.2em">\n										{{creditsTypeL}}L / {{creditsTypeP}}P\n									</p>\n				</ion-item>\n\n\n			<ion-item tappable style="background:rgb(245, 245, 245); color:#444" \n			menuClose ion-item *ngFor="let p of pages" [class.activeHighlight]="checkActive(p)" (click)="openPage(p)">\n			<ion-icon name="{{p.icon}}" item-left></ion-icon>\n			{{p.title}}\n	\n			</ion-item>\n			</ion-list>\n\n		</ion-content>\n		\n	</ion-menu>\n\n	<ion-nav [root]="rootPage" main #content swipeBackEnabled="false"></ion-nav>\n\n</ion-split-pane>\n'/*ion-inline-end:"/Users/petervroom/aacd19/src/app/app.html"*/,
         changeDetection: __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectionStrategy"].OnPush
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["x" /* Platform */],
@@ -10941,13 +12053,13 @@ MyApp = __decorate([
 
 /***/ }),
 
-/***/ 924:
+/***/ 925:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return RelativeTime; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_date_fns_distance_in_words_to_now__ = __webpack_require__(925);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_date_fns_distance_in_words_to_now__ = __webpack_require__(926);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_date_fns_distance_in_words_to_now___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_1_date_fns_distance_in_words_to_now__);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -10975,13 +12087,13 @@ RelativeTime = __decorate([
 
 /***/ }),
 
-/***/ 939:
+/***/ 940:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return PostService; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__mock_posts__ = __webpack_require__(940);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__mock_posts__ = __webpack_require__(941);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11021,7 +12133,7 @@ PostService = __decorate([
 
 /***/ }),
 
-/***/ 940:
+/***/ 941:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -11125,13 +12237,13 @@ let POSTS = [
 
 /***/ }),
 
-/***/ 941:
+/***/ 942:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return UserService; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__mock_users__ = __webpack_require__(942);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__mock_users__ = __webpack_require__(943);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -11171,7 +12283,7 @@ UserService = __decorate([
 
 /***/ }),
 
-/***/ 942:
+/***/ 943:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -11231,7 +12343,7 @@ let USERS = [
 
 /***/ }),
 
-/***/ 943:
+/***/ 944:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -11577,962 +12689,6 @@ AttendeeBookmarksPage = __decorate([
 ], AttendeeBookmarksPage);
 
 //# sourceMappingURL=attendeebookmarks.js.map
-
-/***/ }),
-
-/***/ 99:
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Synchronization; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__angular_http__ = __webpack_require__(95);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__providers_localstorage_localstorage__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__ionic_native_sqlite__ = __webpack_require__(94);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_rxjs_add_operator_catch__ = __webpack_require__(148);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5_rxjs_add_operator_catch___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5_rxjs_add_operator_catch__);
-var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
-    var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
-    if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
-    else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
-    return c > 3 && r && Object.defineProperty(target, key, r), r;
-};
-var __metadata = (this && this.__metadata) || function (k, v) {
-    if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
-};
-// Components, functions, plugins
-
-
-
-
-
-
-// Global URL and conference year reference used for all AJAX-to-MySQL calls
-var SyncURLReference = "https://aacdmobile.convergence-us.com/cvPlanner.php?";
-let Synchronization = class Synchronization {
-    constructor(platform, httpCall, alertCtrl, events, sqlite, localstorage) {
-        this.platform = platform;
-        this.httpCall = httpCall;
-        this.alertCtrl = alertCtrl;
-        this.events = events;
-        this.sqlite = sqlite;
-        this.localstorage = localstorage;
-    }
-    // -----------------------------------
-    // Push Notification
-    // 
-    // Sends token, logged in user, device type to database
-    // -----------------------------------
-    SendPushRecord(ptokenID, pattendeeID, pUserName, pDeviceType, pSyncType) {
-        console.log("PushSync Begin Token ID = " + ptokenID + ", Attendee ID = " + pattendeeID + ", User Name = " + pUserName + ", Device Type = " + pDeviceType + ", Sync Type = " + pSyncType);
-        let qp = new __WEBPACK_IMPORTED_MODULE_2__angular_http__["d" /* URLSearchParams */]();
-        qp.set('action', 'push');
-        qp.set('TokenID', ptokenID);
-        qp.set('AttendeeID', pattendeeID);
-        qp.set('UserName', pUserName);
-        qp.set('DeviceType', pDeviceType);
-        qp.set('SyncType', pSyncType);
-        qp.set('acy', '2018');
-        let options = new __WEBPACK_IMPORTED_MODULE_2__angular_http__["c" /* RequestOptions */]({ params: qp });
-        return new Promise(resolve => {
-            this.httpCall.get(SyncURLReference, options).subscribe(response => {
-                console.log("PushSync Success Data returned: " + JSON.stringify(response));
-                resolve(response.json());
-            }, err => {
-                console.log("PushSync Error Data returned: " + JSON.stringify(err) + " Status: " + err);
-                if (err.status == "412") {
-                    console.log("App and API versions don't match.");
-                    var emptyJSONArray = {};
-                    resolve(emptyJSONArray);
-                }
-                else {
-                    console.log(err.status);
-                    console.log("API Error: ", err);
-                }
-            });
-        });
-    }
-    // -----------------------------------
-    // Database call for M2S
-    // -----------------------------------
-    DBCallQuery(SQLSelectQuery, SQLInsertQuery, SQLUpdateQuery, SQLQueryDelete) {
-        //console.log('DBCall: ' + SQLSelectQuery);
-        return new Promise(resolve => {
-            this.sqlite.create({ name: 'cvPlanner.db', location: 'default' }).then((db) => {
-                this.db = db;
-                if (SQLQueryDelete != 'NO') {
-                    this.db.executeSql(SQLQueryDelete, {}).then((dataS) => {
-                        console.log('DBCall Return: ' + JSON.stringify(dataS));
-                        resolve(SQLInsertQuery);
-                    })
-                        .catch(e => console.log('Sync DBCall: Error selecting (' + SQLSelectQuery + ') base record: ' + JSON.stringify(e)));
-                }
-                else {
-                    this.db.executeSql(SQLSelectQuery, {}).then((dataS) => {
-                        console.log('DBCall Return: ' + JSON.stringify(dataS));
-                        if (dataS.rows.length > 0) {
-                            //console.log('DBCall: ' + SQLUpdateQuery);
-                            resolve(SQLUpdateQuery);
-                        }
-                        else {
-                            //console.log('DBCall: ' + SQLInsertQuery);
-                            resolve(SQLInsertQuery);
-                        }
-                    })
-                        .catch(e => console.log('Sync DBCall: Error selecting (' + SQLSelectQuery + ') base record: ' + JSON.stringify(e)));
-                }
-            });
-        });
-    }
-    DBCallQuery2(SQLQuery) {
-        //console.log('DBCall2: ' + SQLQuery);
-        return new Promise(resolve => {
-            this.sqlite.create({ name: 'cvPlanner.db', location: 'default' }).then((db) => {
-                this.db = db;
-                this.db.executeSql(SQLQuery, {}).then((dataS) => {
-                    resolve(SQLQuery);
-                })
-                    .catch(e => console.log('Sync DBCall2: Error selecting (' + SQLQuery + ') base record: ' + JSON.stringify(e)));
-            });
-        });
-    }
-    // -----------------------------------
-    // Database call for S2M
-    // -----------------------------------
-    DBGetData(QueryType, SQLQuery) {
-        console.log('DBGetData: ' + SQLQuery);
-        return new Promise(resolve => {
-            this.sqlite.create({ name: 'cvPlanner.db', location: 'default' }).then((db) => {
-                this.db = db;
-                let DatabaseResponse = [];
-                this.db.executeSql(SQLQuery, {}).then((dataS) => {
-                    console.log('DBGetData: Response: ' + JSON.stringify(dataS));
-                    if (dataS.rows.length > 0) {
-                        if (QueryType == "itinerary") {
-                            for (let i = 0; i < dataS.rows.length; i++) {
-                                DatabaseResponse.push({
-                                    mtgID: dataS.rows.item(i).mtgID,
-                                    Date_Start: dataS.rows.item(i).Date_Start,
-                                    Date_End: dataS.rows.item(i).Date_End,
-                                    Time_Start: dataS.rows.item(i).Time_Start,
-                                    Time_End: dataS.rows.item(i).Time_End,
-                                    Subject: dataS.rows.item(i).Subject,
-                                    Location: dataS.rows.item(i).Location,
-                                    Description: dataS.rows.item(i).Description,
-                                    atID: dataS.rows.item(i).atID,
-                                    AttendeeID: dataS.rows.item(i).AttendeeID,
-                                    EventID: dataS.rows.item(i).EventID,
-                                    LastUpdated: dataS.rows.item(i).LastUpdated,
-                                    UpdateType: dataS.rows.item(i).UpdateType
-                                });
-                            }
-                        }
-                        if (QueryType == "evaluations") {
-                            for (let i = 0; i < dataS.rows.length; i++) {
-                                DatabaseResponse.push({
-                                    AttendeeID: dataS.rows.item(i).AttendeeID,
-                                    session_id: dataS.rows.item(i).session_id,
-                                    evaluationType: dataS.rows.item(i).evaluationType,
-                                    Q11: dataS.rows.item(i).Q11,
-                                    Q12: dataS.rows.item(i).Q12,
-                                    Q21: dataS.rows.item(i).Q21,
-                                    Q22: dataS.rows.item(i).Q22,
-                                    Q23: dataS.rows.item(i).Q23,
-                                    Q24: dataS.rows.item(i).Q24,
-                                    Q25: dataS.rows.item(i).Q25,
-                                    Q26: dataS.rows.item(i).Q26,
-                                    Q31: dataS.rows.item(i).Q31,
-                                    Q32: dataS.rows.item(i).Q32,
-                                    Q33: dataS.rows.item(i).Q33,
-                                    Q41: dataS.rows.item(i).Q41,
-                                    LastUpdated: dataS.rows.item(i).LastUpdated,
-                                    UpdateType: dataS.rows.item(i).UpdateType
-                                });
-                            }
-                        }
-                        if (QueryType == "evaluation_conference") {
-                            for (let i = 0; i < dataS.rows.length; i++) {
-                                DatabaseResponse.push({
-                                    AttendeeID: dataS.rows.item(i).AttendeeID,
-                                    session_id: dataS.rows.item(i).session_id,
-                                    evaluationType: dataS.rows.item(i).evaluationType,
-                                    Q1: dataS.rows.item(i).Q1,
-                                    Q2: dataS.rows.item(i).Q2,
-                                    Q3: dataS.rows.item(i).Q3,
-                                    Q4: dataS.rows.item(i).Q4,
-                                    Q5: dataS.rows.item(i).Q5,
-                                    Q5C: dataS.rows.item(i).Q5C,
-                                    Q6: dataS.rows.item(i).Q6,
-                                    Q7: dataS.rows.item(i).Q7,
-                                    Q7C: dataS.rows.item(i).Q7C,
-                                    Q8: dataS.rows.item(i).Q8,
-                                    Q9: dataS.rows.item(i).Q9,
-                                    Q10: dataS.rows.item(i).Q10,
-                                    Q10C: dataS.rows.item(i).Q10C,
-                                    Q11: dataS.rows.item(i).Q11,
-                                    Q11C: dataS.rows.item(i).Q11C,
-                                    LastUpdated: dataS.rows.item(i).LastUpdated,
-                                    UpdateType: dataS.rows.item(i).UpdateType
-                                });
-                            }
-                        }
-                        if (QueryType == "attendee_notes") {
-                            for (let i = 0; i < dataS.rows.length; i++) {
-                                DatabaseResponse.push({
-                                    AttendeeID: dataS.rows.item(i).AttendeeID,
-                                    EventID: dataS.rows.item(i).EventID,
-                                    Note: dataS.rows.item(i).Note,
-                                    LastUpdated: dataS.rows.item(i).LastUpdated,
-                                    UpdateType: dataS.rows.item(i).UpdateType
-                                });
-                            }
-                        }
-                        if (QueryType == "activities_feed") {
-                            for (let i = 0; i < dataS.rows.length; i++) {
-                                DatabaseResponse.push({
-                                    AttendeeID: dataS.rows.item(i).AttendeeID,
-                                    afDateTime: dataS.rows.item(i).afDateTime,
-                                    afChatCounter: dataS.rows.item(i).afChatCounter,
-                                    afLikesCounter: dataS.rows.item(i).afLikesCounter,
-                                    afMessage: dataS.rows.item(i).afMessage,
-                                    afImageAttachment: dataS.rows.item(i).afImageAttachment,
-                                    DateAdded: dataS.rows.item(i).DateAdded,
-                                    UpdateType: dataS.rows.item(i).UpdateType
-                                });
-                            }
-                        }
-                        if (QueryType == "activities_feed_comments") {
-                            for (let i = 0; i < dataS.rows.length; i++) {
-                                DatabaseResponse.push({
-                                    afID: dataS.rows.item(i).afID,
-                                    AttendeeID: dataS.rows.item(i).AttendeeID,
-                                    afcComment: dataS.rows.item(i).afcComment,
-                                    afcDateAdded: dataS.rows.item(i).afcDateAdded,
-                                    afcUpdateType: dataS.rows.item(i).afcUpdateType
-                                });
-                            }
-                        }
-                        if (QueryType == "attendee_bookmarks") {
-                            for (let i = 0; i < dataS.rows.length; i++) {
-                                DatabaseResponse.push({
-                                    AttendeeID: dataS.rows.item(i).AttendeeID,
-                                    BookmarkType: dataS.rows.item(i).BookmarkType,
-                                    BookmarkID: dataS.rows.item(i).BookmarkID,
-                                    DateAdded: dataS.rows.item(i).DateAdded,
-                                    UpdateType: dataS.rows.item(i).UpdateType
-                                });
-                            }
-                        }
-                        resolve(DatabaseResponse);
-                    }
-                    else {
-                        resolve(DatabaseResponse);
-                    }
-                })
-                    .catch(e => console.log('Sync DBGetData: Error selecting (' + SQLQuery + ') base record: ' + JSON.stringify(e)));
-            });
-        });
-    }
-    // -----------------------------------
-    // Database Sync
-    // 
-    // Updated records: MySQL to SQLite
-    // 
-    // -----------------------------------
-    DBSyncUpdateM2S(LastSync, ThisSync) {
-        var flags = "UpdateM2S|" + LastSync + "|" + ThisSync;
-        var AttendeeID = this.localstorage.getLocalValue('AttendeeID');
-        // Perform query against server-based MySQL database
-        var url = SyncURLReference + "action=sync&flags=" + flags + "&AttendeeID=" + AttendeeID;
-        console.log('Sync UpdateM2S: ' + url);
-        return new Promise(resolve => {
-            this.httpCall.get(url).subscribe(data3 => {
-                let data = [];
-                console.log('Sync NewM2S: ' + JSON.stringify(data3.json()));
-                data = data3.json();
-                console.log('Sync UpdateM2S: Records: ' + data['length']);
-                if (data['length'] > 0) {
-                    // Parse records and insert into SQLite DB
-                    var SQLQuerySelect = "";
-                    var SQLQueryInsert = "";
-                    var SQLQueryUpdate = "";
-                    var SQLQueryDelete = "";
-                    var DBCallOutput = "";
-                    var DBCallOutput2 = "";
-                    for (var i = 0; i < data['length']; i++) {
-                        SQLQuerySelect = "";
-                        SQLQueryInsert = "";
-                        SQLQueryUpdate = "";
-                        SQLQueryDelete = "";
-                        //console.log('Sync UpdateM2S: Creating query for: ' + data[i].TableName);
-                        // Determine query to use based on table name
-                        switch (data[i].TableName) {
-                            case "courses":
-                                SQLQuerySelect = "SELECT * FROM courses WHERE session_id = '" + data[i].session_id + "'";
-                                SQLQueryInsert = "INSERT INTO courses(";
-                                SQLQueryInsert = SQLQueryInsert + "session_id, session_title, description, ";
-                                SQLQueryInsert = SQLQueryInsert + "session_start_time, session_end_time, primary_speaker, ";
-                                SQLQueryInsert = SQLQueryInsert + "other_speakers, course_id, subject, ";
-                                SQLQueryInsert = SQLQueryInsert + "cs_credits, ce_credits_type, room_number, ";
-                                SQLQueryInsert = SQLQueryInsert + "verification_code, nadl_verification, type, ";
-                                SQLQueryInsert = SQLQueryInsert + "level, speaker_host_emcee, room_capacity, ";
-                                SQLQueryInsert = SQLQueryInsert + "course_topics, ActiveYN, corporate_supporter, ";
-                                SQLQueryInsert = SQLQueryInsert + "session_recording, HandoutFilename, CEcreditsL, ";
-                                SQLQueryInsert = SQLQueryInsert + "CEcreditsP, SearchField) ";
-                                SQLQueryInsert = SQLQueryInsert + "VALUES('" + data[i].session_id + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].session_title + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].description + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].session_start_time + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].session_end_time + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].primary_speaker + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].other_speakers + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].course_id + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].subject + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].cs_credits + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].ce_credits_type + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].room_number + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].verification_code + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].nadl_verification + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].type + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].level + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].speaker_host_emcee + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].room_capacity + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].course_topics + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].ActiveYN + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].corporate_supporter + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].session_recording + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].HandoutFilename + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].CEcreditsL + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].CEcreditsP + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].SearchField + "')";
-                                SQLQueryUpdate = "UPDATE courses ";
-                                SQLQueryUpdate = SQLQueryUpdate + "SET session_title = '" + data[i].session_title + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "description = '" + data[i].description + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "session_start_time = '" + data[i].session_start_time + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "session_end_time = '" + data[i].session_end_time + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "primary_speaker = '" + data[i].primary_speaker + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "other_speakers = '" + data[i].other_speakers + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "course_id = '" + data[i].course_id + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "subject = '" + data[i].subject + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "cs_credits = '" + data[i].cs_credits + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "ce_credits_type = '" + data[i].ce_credits_type + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "room_number = '" + data[i].room_number + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "verification_code = '" + data[i].verification_code + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "type = '" + data[i].type + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "level = '" + data[i].level + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "speaker_host_emcee = '" + data[i].speaker_host_emcee + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "room_capacity = '" + data[i].room_capacity + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "course_topics = '" + data[i].course_topics + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "ActiveYN = '" + data[i].ActiveYN + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "corporate_supporter = '" + data[i].corporate_supporter + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "session_recording = '" + data[i].session_recording + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "HandoutFilename = '" + data[i].HandoutFilename + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "CEcreditsL = '" + data[i].CEcreditsL + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "CEcreditsP = '" + data[i].CEcreditsP + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "SearchField = '" + data[i].SearchField + "' ";
-                                SQLQueryUpdate = SQLQueryUpdate + "WHERE session_id = '" + data[i].session_id + "' ";
-                                SQLQueryDelete = "NO";
-                                break;
-                            case "itinerary":
-                                SQLQuerySelect = "SELECT * FROM itinerary ";
-                                SQLQuerySelect = SQLQuerySelect + "WHERE AttendeeID = '" + data[i].AttendeeID + "' ";
-                                SQLQuerySelect = SQLQuerySelect + "AND mtgID = '" + data[i].mtgID + "' ";
-                                SQLQuerySelect = SQLQuerySelect + "AND EventID = '" + data[i].EventID + "' ";
-                                SQLQueryInsert = "INSERT INTO itinerary(";
-                                SQLQueryInsert = SQLQueryInsert + "mtgID, Date_Start, ";
-                                SQLQueryInsert = SQLQueryInsert + "Date_End, Time_Start, Time_End, ";
-                                SQLQueryInsert = SQLQueryInsert + "Subject, Location, Description, ";
-                                SQLQueryInsert = SQLQueryInsert + "atID, AttendeeID, EventID, ";
-                                SQLQueryInsert = SQLQueryInsert + "LastUpdated, UpdateType) ";
-                                SQLQueryInsert = SQLQueryInsert + "VALUES('" + data[i].mtgID + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Date_Start + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Date_End + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Time_Start + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Time_End + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Subject + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Location + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Description + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].atID + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].AttendeeID + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].EventID + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].LastUpdated + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].UpdateType + "')";
-                                SQLQueryUpdate = "UPDATE itinerary ";
-                                SQLQueryUpdate = SQLQueryUpdate + "SET Date_Start = '" + data[i].Date_Start + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "Date_End = '" + data[i].Date_End + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "Time_Start = '" + data[i].Time_Start + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "Time_End = '" + data[i].Time_End + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "Subject = '" + data[i].Subject + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "Location = '" + data[i].Location + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "Description = '" + data[i].Description + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "LastUpdated = '" + data[i].LastUpdated + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "UpdateType = '" + data[i].UpdateType + "' ";
-                                SQLQueryUpdate = SQLQueryUpdate + "WHERE AttendeeID = '" + data[i].AttendeeID + "' ";
-                                SQLQueryUpdate = SQLQueryUpdate + "AND mtgID = '" + data[i].mtgID + "' ";
-                                SQLQueryUpdate = SQLQueryUpdate + "AND EventID = '" + data[i].EventID + "' ";
-                                SQLQueryDelete = "NO";
-                                break;
-                            case "attendee_ces":
-                                SQLQuerySelect = "SELECT * FROM attendee_ces ";
-                                SQLQuerySelect = SQLQuerySelect + "WHERE AttendeeID = '" + data[i].AttendeeID + "' ";
-                                SQLQuerySelect = SQLQuerySelect + "AND session_id = '" + data[i].session_id + "' ";
-                                SQLQueryInsert = "INSERT INTO attendee_ces(";
-                                SQLQueryInsert = SQLQueryInsert + "AttendeeID, session_id, course_id, ";
-                                SQLQueryInsert = SQLQueryInsert + "scannedYN, evalID, DateAdded, LastUpdated, ceNotes, ";
-                                SQLQueryInsert = SQLQueryInsert + "UpdateType) ";
-                                SQLQueryInsert = SQLQueryInsert + "VALUES('" + data[i].AttendeeID + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].session_id + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].course_id + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].scannedYN + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].evalID + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].DateAdded + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].LastUpdated + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].ceNotes + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].UpdateType + "')";
-                                SQLQueryUpdate = "UPDATE attendee_ces ";
-                                SQLQueryUpdate = SQLQueryUpdate + "SET AttendeeID = '" + data[i].AttendeeID + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "session_id = '" + data[i].session_id + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "course_id = '" + data[i].course_id + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "scannedYN = '" + data[i].scannedYN + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "evalID = '" + data[i].evalID + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "DateAdded = '" + data[i].DateAdded + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "LastUpdated = '" + data[i].LastUpdated + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "ceNotes = '" + data[i].ceNotes + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "UpdateType = '" + data[i].UpdateType + "' ";
-                                SQLQueryUpdate = SQLQueryUpdate + "WHERE AttendeeID = '" + data[i].AttendeeID + "' ";
-                                SQLQueryUpdate = SQLQueryUpdate + "AND session_id = '" + data[i].session_id + "' ";
-                                SQLQueryDelete = "DELETE FROM attendee_ces ";
-                                SQLQueryDelete = SQLQueryDelete + "WHERE AttendeeID = '" + data[i].AttendeeID + "' ";
-                                SQLQueryDelete = SQLQueryDelete + "AND session_id = '" + data[i].session_id + "' ";
-                                break;
-                            case "courses_speakers":
-                                SQLQuerySelect = "SELECT * FROM courses_speakers WHERE speakerID = '" + data[i].speakerID + "'";
-                                SQLQueryInsert = "INSERT INTO courses_speakers(";
-                                SQLQueryInsert = SQLQueryInsert + "speakerID, FullName, FirstName, LastName, ";
-                                SQLQueryInsert = SQLQueryInsert + "Credentials, Bio, Courses, imageFilename, email, ";
-                                SQLQueryInsert = SQLQueryInsert + "SearchField) ";
-                                SQLQueryInsert = SQLQueryInsert + "VALUES(" + data[i].speakerID + ", ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].FullName + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].FirstName + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].LastName + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Credentials + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Bio + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Courses + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].imageFilename + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].email + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].SearchField + "')";
-                                SQLQueryUpdate = "UPDATE courses_speakers ";
-                                SQLQueryUpdate = SQLQueryUpdate + "SET FullName = '" + data[i].FullName + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "FirstName = '" + data[i].FirstName + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "LastName = '" + data[i].LastName + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "Credentials = '" + data[i].Credentials + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "Bio = '" + data[i].Bio + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "Courses = '" + data[i].Courses + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "imageFilename = '" + data[i].imageFilename + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "email = '" + data[i].email + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "SearchField = '" + data[i].SearchField + "' ";
-                                SQLQueryUpdate = SQLQueryUpdate + "WHERE speakerID = '" + data[i].speakerID + "' ";
-                                SQLQueryDelete = "DELETE FROM courses_speakers ";
-                                break;
-                            case "exhibitors":
-                                SQLQuerySelect = "SELECT * FROM exhibitors WHERE ExhibitorID = " + data[i].ExhibitorID;
-                                SQLQueryInsert = "INSERT INTO exhibitors(";
-                                SQLQueryInsert = SQLQueryInsert + "ExhibitorID, ClientExhibitorID, CompanyName, ";
-                                SQLQueryInsert = SQLQueryInsert + "AddressLine1, AddressLine2, City, ";
-                                SQLQueryInsert = SQLQueryInsert + "State, ZipPostalCode, Country, ";
-                                SQLQueryInsert = SQLQueryInsert + "Website, PrimaryOnsiteContactName, PrimaryOnsiteContactEmail, ";
-                                SQLQueryInsert = SQLQueryInsert + "PrimaryOnsiteContactPhone, BoothNumber, ProductsServices, ";
-                                SQLQueryInsert = SQLQueryInsert + "CompanyDescription, SearchField, SocialMediaFacebook, ";
-                                SQLQueryInsert = SQLQueryInsert + "SocialMediaTwitter, SocialMediaGooglePlus, SocialMediaYouTube, ";
-                                SQLQueryInsert = SQLQueryInsert + "SocialMediaLinkedIn) ";
-                                SQLQueryInsert = SQLQueryInsert + "VALUES(" + data[i].ExhibitorID + ", ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].ClientExhibitorID + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].CompanyName + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].AddressLine1 + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].AddressLine2 + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].City + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].State + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].ZipPostalCode + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Country + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Website + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].PrimaryOnsiteContactName + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].PrimaryOnsiteContactEmail + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].PrimaryOnsiteContactPhone + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].BoothNumber + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].ProductsServices + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].CompanyDescription + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].SearchField + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].SocialMediaFacebook + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].SocialMediaTwitter + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].SocialMediaGooglePlus + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].SocialMediaYouTube + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].SocialMediaLinkedIn + "')";
-                                SQLQueryUpdate = "UPDATE exhibitors ";
-                                SQLQueryUpdate = SQLQueryUpdate + "SET CompanyName = '" + data[i].CompanyName + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "AddressLine1 = '" + data[i].AddressLine1 + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "AddressLine2 = '" + data[i].AddressLine2 + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "City = '" + data[i].City + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "State = '" + data[i].State + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "ZipPostalCode = '" + data[i].ZipPostalCode + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "Country = '" + data[i].Country + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "Website = '" + data[i].Website + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "PrimaryOnsiteContactName = '" + data[i].PrimaryOnsiteContactName + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "PrimaryOnsiteContactEmail = '" + data[i].PrimaryOnsiteContactEmail + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "PrimaryOnsiteContactPhone = '" + data[i].PrimaryOnsiteContactPhone + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "BoothNumber = '" + data[i].BoothNumber + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "ProductsServices = '" + data[i].ProductsServices + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "CompanyDescription = '" + data[i].CompanyDescription + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "SearchField = '" + data[i].SearchField + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "SocialMediaFacebook = '" + data[i].SocialMediaFacebook + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "SocialMediaTwitter = '" + data[i].SocialMediaTwitter + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "SocialMediaGooglePlus = '" + data[i].SocialMediaGooglePlus + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "SocialMediaYouTube = '" + data[i].SocialMediaYouTube + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "SocialMediaLinkedIn = '" + data[i].SocialMediaLinkedIn + "' ";
-                                SQLQueryUpdate = SQLQueryUpdate + "WHERE ExhibitorID = " + data[i].ExhibitorID + " ";
-                                SQLQueryDelete = "NO";
-                                break;
-                            case "attendee_courses":
-                                SQLQuerySelect = "SELECT * FROM attendee_courses ";
-                                SQLQuerySelect = SQLQuerySelect + "WHERE ct_id = '" + data[i].ct_id + "' ";
-                                SQLQuerySelect = SQLQuerySelect + "AND session_id = '" + data[i].session_id + "' ";
-                                SQLQueryInsert = "INSERT INTO attendee_courses(";
-                                SQLQueryInsert = SQLQueryInsert + "ct_id, bt_imis_id, st_imis_id, ";
-                                SQLQueryInsert = SQLQueryInsert + "quantity, subevent_id, session_id, waitlist, test) ";
-                                SQLQueryInsert = SQLQueryInsert + "VALUES('" + data[i].ct_id + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].bt_imis_id + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].st_imis_id + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].quantity + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].subevent_id + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].session_id + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].waitlist + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].test + "')";
-                                SQLQueryUpdate = "UPDATE attendee_courses ";
-                                SQLQueryUpdate = SQLQueryUpdate + "SET bt_imis_id = '" + data[i].bt_imis_id + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "st_imis_id = '" + data[i].st_imis_id + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "quantity = '" + data[i].quantity + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "subevent_id = '" + data[i].subevent_id + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "session_id = '" + data[i].session_id + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "waitlist = '" + data[i].waitlist + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "test = '" + data[i].test + "' ";
-                                SQLQueryUpdate = SQLQueryUpdate + "WHERE ct_id = '" + data[i].ct_id + "' ";
-                                SQLQueryUpdate = SQLQueryUpdate + "AND session_id = '" + data[i].session_id + "' ";
-                                SQLQueryDelete = "NO";
-                                break;
-                            case "attendee_notes":
-                                SQLQuerySelect = "SELECT * FROM attendee_notes ";
-                                SQLQuerySelect = SQLQuerySelect + "WHERE AttendeeID = '" + data[i].AttendeeID + "' ";
-                                SQLQuerySelect = SQLQuerySelect + "AND EventID = '" + data[i].session_id + "' ";
-                                SQLQueryInsert = "INSERT INTO attendee_notes(";
-                                SQLQueryInsert = SQLQueryInsert + "AttendeeID, EventID, Note, ";
-                                SQLQueryInsert = SQLQueryInsert + "LastUpdated, UpdateType) ";
-                                SQLQueryInsert = SQLQueryInsert + "VALUES('" + data[i].AttendeeID + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].EventID + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Note + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].LastUpdated + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].UpdateType + "')";
-                                SQLQueryUpdate = "UPDATE attendee_notes ";
-                                SQLQueryUpdate = SQLQueryUpdate + "SET Note = '" + data[i].Date_Start + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "LastUpdated = '" + data[i].Date_End + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "UpdateType = '" + data[i].Time_Start + "' ";
-                                SQLQueryUpdate = SQLQueryUpdate + "WHERE AttendeeID = '" + data[i].AttendeeID + "' ";
-                                SQLQueryUpdate = SQLQueryUpdate + "AND EventID = '" + data[i].EventID + "' ";
-                                SQLQueryDelete = "NO";
-                                break;
-                            case "evaluations":
-                                SQLQuerySelect = "SELECT * FROM evaluations WHERE AttendeeID = '" + data[i].AttendeeID + "' AND evaluationType = '" + data[i].evaluationType + "' AND session_id = '" + data[i].session_id + "'";
-                                SQLQueryInsert = "INSERT INTO evaluations(";
-                                SQLQueryInsert = SQLQueryInsert + "AttendeeID, evalID, session_id, evaluationType, ";
-                                SQLQueryInsert = SQLQueryInsert + "Q11, Q12, Q21, Q22, Q23, Q24, Q25, Q26, ";
-                                SQLQueryInsert = SQLQueryInsert + "Q31, Q32, Q33, Q41) ";
-                                SQLQueryInsert = SQLQueryInsert + "VALUES(" + data[i].AttendeeID + ", ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].evalID + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].session_id + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].evaluationType + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Q11 + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Q12 + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Q21 + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Q22 + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Q23 + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Q24 + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Q25 + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Q26 + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Q31 + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Q32 + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Q33 + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Q41 + "')";
-                                SQLQueryUpdate = "UPDATE evaluations ";
-                                SQLQueryUpdate = SQLQueryUpdate + "SET Q11 = '" + data[i].Q11 + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "Q12 = '" + data[i].Q12 + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "Q21 = '" + data[i].Q21 + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "Q22 = '" + data[i].Q22 + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "Q23 = '" + data[i].Q23 + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "Q24 = '" + data[i].Q24 + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "Q25 = '" + data[i].Q25 + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "Q26 = '" + data[i].Q26 + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "Q31 = '" + data[i].Q31 + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "Q32 = '" + data[i].Q32 + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "Q33 = '" + data[i].Q33 + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "Q41 = '" + data[i].Q41 + "' ";
-                                SQLQueryUpdate = SQLQueryUpdate + "WHERE AttendeeID = '" + data[i].AttendeeID + "' ";
-                                SQLQueryUpdate = SQLQueryUpdate + "AND session_id = '" + data[i].session_id + "' ";
-                                SQLQueryUpdate = SQLQueryUpdate + "AND evaluationType = '" + data[i].evaluationType + "' ";
-                                SQLQueryDelete = "NO";
-                                break;
-                            case "activities_feed":
-                                SQLQuerySelect = "SELECT afID FROM activities_feed ";
-                                SQLQuerySelect = SQLQuerySelect + "WHERE afID = '" + data[i].afID + "' ";
-                                SQLQueryInsert = "INSERT INTO activities_feed(";
-                                SQLQueryInsert = SQLQueryInsert + "afID, AttendeeID, afDateTime, afChatCounter, ";
-                                SQLQueryInsert = SQLQueryInsert + "afLikesCounter, afMessage, afImageAttachment, DateAdded, UpdateType) ";
-                                SQLQueryInsert = SQLQueryInsert + "VALUES('" + data[i].afID + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].AttendeeID + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].afDateTime + "', ";
-                                SQLQueryInsert = SQLQueryInsert + " " + data[i].afChatCounter + ", ";
-                                SQLQueryInsert = SQLQueryInsert + " " + data[i].afLikesCounter + ", ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].afMessage.replace(/'/g, "''") + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].afImageAttachment + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].DateAdded + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].UpdateType + "')";
-                                SQLQueryUpdate = "UPDATE activities_feed ";
-                                SQLQueryUpdate = SQLQueryUpdate + "SET afChatCounter = " + data[i].afChatCounter + ", ";
-                                SQLQueryUpdate = SQLQueryUpdate + "afLikesCounter = " + data[i].afLikesCounter + ", ";
-                                SQLQueryUpdate = SQLQueryUpdate + "afMessage = '" + data[i].afMessage.replace(/'/g, "''") + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "afImageAttachment = '" + data[i].afImageAttachment + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "DateAdded = '" + data[i].DateAdded + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "UpdateType = '" + data[i].UpdateType + "' ";
-                                SQLQueryUpdate = SQLQueryUpdate + "WHERE afID = '" + data[i].afID + "' ";
-                                SQLQueryDelete = "NO";
-                                break;
-                            case "attendees":
-                                SQLQuerySelect = "SELECT ct_id FROM attendees ";
-                                SQLQuerySelect = SQLQuerySelect + "WHERE ct_id = '" + data[i].AttendeeID + "' ";
-                                SQLQueryInsert = "INSERT INTO attendees(";
-                                SQLQueryInsert = SQLQueryInsert + "ct_id, first_name, last_name, title, ";
-                                SQLQueryInsert = SQLQueryInsert + "company, ActiveYN, ";
-                                SQLQueryInsert = SQLQueryInsert + "smTwitter, showTwitter, smFaceBook, showFacebook, ";
-                                SQLQueryInsert = SQLQueryInsert + "smLinkedIn, showLinkedIn, smInstagram, showInstagram, smPinterest, showPinterest) ";
-                                SQLQueryInsert = SQLQueryInsert + "VALUES('" + data[i].AttendeeID + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].FirstName + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].LastName + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Title + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].Company + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].ActiveYN + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].smTwitter + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].showTwitter + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].smFaceBook + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].showFacebook + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].smLinkedIn + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].showLinkedIn + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].smInstagram + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].showInstagram + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].smPinterest + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].showPinterest + "')";
-                                SQLQueryUpdate = "UPDATE attendees ";
-                                SQLQueryUpdate = SQLQueryUpdate + "SET first_name = '" + data[i].FirstName + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "last_name = '" + data[i].LastName + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "title = '" + data[i].Title + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "company = '" + data[i].Company + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "ActiveYN = '" + data[i].ActiveYN + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "smTwitter = '" + data[i].smTwitter + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "showTwitter = '" + data[i].showTwitter + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "smFaceBook = '" + data[i].smFaceBook + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "showFacebook = '" + data[i].showFacebook + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "smLinkedIn = '" + data[i].smLinkedIn + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "showLinkedIn = '" + data[i].showLinkedIn + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "smInstagram = '" + data[i].smInstagram + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "showInstagram = '" + data[i].showInstagram + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "smPinterest = '" + data[i].smPinterest + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "showPinterest = '" + data[i].showPinterest + "' ";
-                                SQLQueryUpdate = SQLQueryUpdate + "WHERE ct_id = '" + data[i].AttendeeID + "' ";
-                                SQLQueryDelete = "NO";
-                                break;
-                            case "notifications":
-                                SQLQuerySelect = "SELECT * FROM attendee_push_notifications ";
-                                SQLQuerySelect = SQLQuerySelect + "WHERE pushTitle = '" + data[i].pushTitle + "' ";
-                                SQLQuerySelect = SQLQuerySelect + "AND pushMessage = '" + data[i].pushMessage + "' ";
-                                //SQLQuerySelect = SQLQuerySelect + "AND pushDateTimeReceived = '" + data[i].pushDateTimeReceived + "' ";
-                                SQLQueryInsert = "INSERT INTO attendee_push_notifications(";
-                                SQLQueryInsert = SQLQueryInsert + "pnID, pushTitle, pushMessage, pushDateTimeReceived) ";
-                                SQLQueryInsert = SQLQueryInsert + "VALUES('" + data[i].pnID + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].pushTitle + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].pushMessage + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].pushDateTimeReceived + "')";
-                                SQLQueryUpdate = "NO";
-                                SQLQueryDelete = "NO";
-                                console.log('DB, Notifications, SQLQuerySelect: ' + SQLQuerySelect + ', SQLQueryInsert: ' + SQLQueryInsert);
-                                break;
-                            case "attendee_bookmarks":
-                                SQLQuerySelect = "SELECT * FROM attendee_bookmarks ";
-                                SQLQuerySelect = SQLQuerySelect + "WHERE AttendeeID = '" + data[i].AttendeeID + "' ";
-                                SQLQuerySelect = SQLQuerySelect + "AND BookmarkType = '" + data[i].BookmarkType + "' ";
-                                SQLQuerySelect = SQLQuerySelect + "AND BookmarkID = '" + data[i].BookmarkID + "' ";
-                                SQLQueryInsert = "INSERT INTO attendee_bookmarks(";
-                                SQLQueryInsert = SQLQueryInsert + "abID, AttendeeID, BookmarkType, BookmarkID, ";
-                                SQLQueryInsert = SQLQueryInsert + "DateAdded, UpdateType) ";
-                                SQLQueryInsert = SQLQueryInsert + "VALUES(" + data[i].abID + ", ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].AttendeeID + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].BookmarkType + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].BookmarkID + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].DateAdded + "', ";
-                                SQLQueryInsert = SQLQueryInsert + "'" + data[i].UpdateType + "')";
-                                SQLQueryUpdate = "UPDATE attendee_bookmarks ";
-                                SQLQueryUpdate = SQLQueryUpdate + "SET BookmarkType = '" + data[i].BookmarkType + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "BookmarkID = '" + data[i].BookmarkID + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "DateAdded = '" + data[i].DateAdded + "', ";
-                                SQLQueryUpdate = SQLQueryUpdate + "UpdateType = '" + data[i].UpdateType + "' ";
-                                SQLQueryUpdate = SQLQueryUpdate + "WHERE AttendeeID = '" + data[i].AttendeeID + "' ";
-                                SQLQueryUpdate = SQLQueryUpdate + "AND BookmarkType = '" + data[i].BookmarkType + "' ";
-                                SQLQueryUpdate = SQLQueryUpdate + "AND BookmarkID = '" + data[i].BookmarkID + "' ";
-                                SQLQueryDelete = "DELETE FROM attendee_bookmarks ";
-                                SQLQueryDelete = SQLQueryDelete + "WHERE AttendeeID = '" + data[i].AttendeeID + "' ";
-                                SQLQueryDelete = SQLQueryDelete + "AND BookmarkType = '" + data[i].BookmarkType + "' ";
-                                SQLQueryDelete = SQLQueryDelete + "AND BookmarkID = '" + data[i].BookmarkID + "' ";
-                                break;
-                            case "duplicateexhibitors":
-                                SQLQuerySelect = "SELECT COUNT(*) FROM exhibitors";
-                                SQLQueryInsert = "SELECT COUNT(*) FROM exhibitors";
-                                SQLQueryUpdate = "DELETE FROM exhibitors WHERE rowid NOT IN (SELECT max(rowid) FROM exhibitors GROUP BY ExhibitorID)";
-                                SQLQueryDelete = "NO";
-                                break;
-                            case "duplicatecourses":
-                                SQLQuerySelect = "SELECT COUNT(*) FROM courses";
-                                SQLQueryInsert = "SELECT COUNT(*) FROM courses";
-                                SQLQueryUpdate = "DELETE FROM courses WHERE rowid NOT IN (SELECT max(rowid) FROM courses GROUP BY session_id)";
-                                SQLQueryDelete = "NO";
-                                break;
-                            case "duplicatespeakers":
-                                SQLQuerySelect = "SELECT COUNT(*) FROM courses_speakers";
-                                SQLQueryInsert = "SELECT COUNT(*) FROM courses_speakers";
-                                SQLQueryUpdate = "DELETE FROM courses_speakers WHERE rowid NOT IN (SELECT max(rowid) FROM courses_speakers GROUP BY speakerID)";
-                                SQLQueryDelete = "NO";
-                                break;
-                            case "duplicateces":
-                                SQLQuerySelect = "SELECT COUNT(*) FROM attendee_ces";
-                                SQLQueryInsert = "SELECT COUNT(*) FROM attendee_ces";
-                                SQLQueryUpdate = "DELETE FROM attendee_ces WHERE rowid NOT IN (SELECT max(rowid) FROM attendee_ces GROUP BY AttendeeID, session_id)";
-                                SQLQueryDelete = "NO";
-                                break;
-                            case "duplicateattendeecourses":
-                                SQLQuerySelect = "SELECT COUNT(*) FROM attendee_courses";
-                                SQLQueryInsert = "SELECT COUNT(*) FROM attendee_courses";
-                                SQLQueryUpdate = "DELETE FROM attendee_courses WHERE rowid NOT IN (SELECT max(rowid) FROM attendee_courses GROUP BY ct_id, session_id)";
-                                SQLQueryDelete = "NO";
-                                break;
-                        }
-                        // Execute the custom SQL query to insert or update a record in the local database
-                        this.DBCallQuery(SQLQuerySelect, SQLQueryInsert, SQLQueryUpdate, SQLQueryDelete).then(DBCallOutput => {
-                            //console.log('DBCallOutput: ' + DBCallOutput);
-                            //console.log('DBCallQuery output: ' + DBCallOutput);
-                            this.DBCallQuery2(DBCallOutput);
-                        });
-                    }
-                }
-                // Done
-                if (data['length'] > 0) {
-                    // Send event notice to update left hand menu
-                    this.events.publish('user:Status', 'Sync Update');
-                    // Send event notice to update CE Tracker list
-                    //this.events.publish('sync:Status', 'Sync Update');
-                }
-                resolve("Done");
-            }, err => {
-                if (err.status == "412") {
-                    console.log("App and API versions don't match.");
-                    resolve("Error");
-                }
-                else {
-                    console.log(err.status);
-                    console.log("API Error: ", JSON.stringify(err));
-                }
-            });
-        });
-    }
-    // -----------------------------------
-    // Database Sync
-    // 
-    // Updated records: SQLite to MySQL
-    // 
-    // -----------------------------------
-    DBSyncUpdateS2M(LastSync, ThisSync) {
-        var flags = "UpdateS2M|" + LastSync + "|" + ThisSync;
-        var AttendeeID = this.localstorage.getLocalValue('AttendeeID');
-        var SQLQuery = "";
-        var QueryType = "";
-        // Get changed records in SQLite
-        // Sync Itinerary
-        SQLQuery = "SELECT * FROM itinerary ";
-        SQLQuery = SQLQuery + "WHERE AttendeeID = '" + AttendeeID + "' ";
-        SQLQuery = SQLQuery + "AND LastUpdated BETWEEN '" + LastSync + "' AND '" + ThisSync + "'";
-        QueryType = "itinerary";
-        console.log('Sync UpdateS2M: Starting sync');
-        return new Promise(resolve => {
-            console.log('Sync UpdateS2M: Itinerary query: ' + SQLQuery);
-            this.DBGetData(QueryType, SQLQuery).then(data => {
-                if (data['length'] > 0) {
-                    for (var i = 0; i < data['length']; i++) {
-                        flags = "UpdateS2M|" + LastSync + "|" + ThisSync;
-                        flags = flags + "|itinerary";
-                        flags = flags + "|" + data[i].mtgID;
-                        flags = flags + "|" + data[i].Date_Start;
-                        flags = flags + "|" + data[i].Date_End;
-                        flags = flags + "|" + data[i].Time_Start;
-                        flags = flags + "|" + data[i].Time_End;
-                        flags = flags + "|" + data[i].Subject;
-                        flags = flags + "|" + data[i].Location;
-                        flags = flags + "|" + data[i].Description;
-                        flags = flags + "|" + data[i].atID;
-                        flags = flags + "|" + data[i].AttendeeID;
-                        flags = flags + "|" + data[i].EventID;
-                        flags = flags + "|" + data[i].LastUpdated;
-                        flags = flags + "|" + data[i].UpdateType;
-                        var url = SyncURLReference + "action=sync&flags=" + flags + "&AttendeeID=" + AttendeeID;
-                        //return new Promise(resolve => {
-                        console.log('Sync UpdateS2M: Itinerary URL: ' + url);
-                        this.httpCall.get(url).subscribe(data3 => {
-                            console.log('Sync UpdateS2M: Response: ' + JSON.stringify(data3));
-                            //resolve("Done");
-                        }, err => {
-                            console.log('Sync UpdateS2M: Response: ' + JSON.stringify(err));
-                            //resolve("Error");
-                        });
-                        //});
-                    }
-                }
-            });
-            // Sync Evaluations (lectures/workshops)
-            SQLQuery = "SELECT session_id, evaluationType, Q11, Q12, Q21, Q22, Q23, Q24, Q25, Q26, Q31, Q32, Q33, Q41, LastUpdated, UpdateType FROM evaluations ";
-            SQLQuery = SQLQuery + "WHERE AttendeeID = '" + AttendeeID + "' ";
-            //SQLQuery = SQLQuery + "AND LastUpdated BETWEEN '" + LastSync + "' AND '" + ThisSync + "'";
-            QueryType = "evaluations";
-            console.log('Sync UpdateS2M: Evaluations (lectures/workshops) query: ' + SQLQuery);
-            this.DBGetData(QueryType, SQLQuery).then(data => {
-                if (data['length'] > 0) {
-                    for (var i = 0; i < data['length']; i++) {
-                        flags = "UpdateS2M|" + LastSync + "|" + ThisSync;
-                        flags = flags + "|evaluations";
-                        flags = flags + "|" + data[i].AttendeeID;
-                        flags = flags + "|" + data[i].session_id;
-                        flags = flags + "|" + data[i].evaluationType;
-                        flags = flags + "|" + data[i].Q11;
-                        flags = flags + "|" + data[i].Q12;
-                        flags = flags + "|" + data[i].Q21;
-                        flags = flags + "|" + data[i].Q22;
-                        flags = flags + "|" + data[i].Q23;
-                        flags = flags + "|" + data[i].Q24;
-                        flags = flags + "|" + data[i].Q25;
-                        flags = flags + "|" + data[i].Q26;
-                        flags = flags + "|" + data[i].Q31;
-                        flags = flags + "|" + data[i].Q32;
-                        flags = flags + "|" + data[i].Q33;
-                        flags = flags + "|" + data[i].Q41;
-                        flags = flags + "|" + data[i].LastUpdated;
-                        flags = flags + "|" + data[i].UpdateType;
-                        var url = SyncURLReference + "action=sync&flags=" + flags + "&AttendeeID=" + AttendeeID;
-                        //return new Promise(resolve => {
-                        console.log('Sync UpdateS2M: Evaluations (lectures/workshops) URL: ' + url);
-                        this.httpCall.get(url).subscribe(data3 => {
-                            console.log('Sync UpdateS2M: Response: ' + JSON.stringify(data3));
-                            //resolve("Done");
-                        }, err => {
-                            console.log('Sync UpdateS2M: Response: ' + JSON.stringify(err));
-                            //resolve("Error");
-                        });
-                        //});
-                    }
-                }
-            });
-            // Sync Evaluations (conference)
-            SQLQuery = "SELECT * FROM evaluation_conference ";
-            SQLQuery = SQLQuery + "WHERE AttendeeID = '" + AttendeeID + "' ";
-            //SQLQuery = SQLQuery + "AND LastUpdated BETWEEN '" + LastSync + "' AND '" + ThisSync + "'";
-            QueryType = "evaluation_conference";
-            console.log('Sync UpdateS2M: Evaluations (conference) query: ' + SQLQuery);
-            this.DBGetData(QueryType, SQLQuery).then(data => {
-                if (data['length'] > 0) {
-                    for (var i = 0; i < data['length']; i++) {
-                        flags = "UpdateS2M|" + LastSync + "|" + ThisSync;
-                        flags = flags + "|evaluation_conference";
-                        flags = flags + "|" + data[i].AttendeeID;
-                        flags = flags + "|" + data[i].session_id;
-                        flags = flags + "|" + data[i].evaluationType;
-                        flags = flags + "|" + data[i].Q1;
-                        flags = flags + "|" + data[i].Q2;
-                        flags = flags + "|" + data[i].Q3;
-                        flags = flags + "|" + data[i].Q4;
-                        flags = flags + "|" + data[i].Q5;
-                        flags = flags + "|" + data[i].Q5C;
-                        flags = flags + "|" + data[i].Q6;
-                        flags = flags + "|" + data[i].Q7;
-                        flags = flags + "|" + data[i].Q7C;
-                        flags = flags + "|" + data[i].Q8;
-                        flags = flags + "|" + data[i].Q9;
-                        flags = flags + "|" + data[i].Q10;
-                        flags = flags + "|" + data[i].Q10C;
-                        flags = flags + "|" + data[i].Q11;
-                        flags = flags + "|" + data[i].Q11C;
-                        flags = flags + "|" + data[i].LastUpdated;
-                        flags = flags + "|" + data[i].UpdateType;
-                        var url = SyncURLReference + "action=sync&flags=" + flags + "&AttendeeID=" + AttendeeID;
-                        //return new Promise(resolve => {
-                        console.log('Sync UpdateS2M: Evaluations (conference) URL: ' + url);
-                        this.httpCall.get(url).subscribe(data3 => {
-                            console.log('Sync UpdateS2M: Response: ' + JSON.stringify(data3));
-                            //resolve("Done");
-                        }, err => {
-                            console.log('Sync UpdateS2M: Response: ' + JSON.stringify(err));
-                            //resolve("Error");
-                        });
-                        //});
-                    }
-                }
-            });
-            // Sync Notes
-            SQLQuery = "SELECT * FROM attendee_notes ";
-            SQLQuery = SQLQuery + "WHERE AttendeeID = '" + AttendeeID + "' ";
-            SQLQuery = SQLQuery + "AND LastUpdated BETWEEN '" + LastSync + "' AND '" + ThisSync + "'";
-            QueryType = "attendee_notes";
-            console.log('Sync UpdateS2M: Notes query: ' + SQLQuery);
-            this.DBGetData(QueryType, SQLQuery).then(data => {
-                if (data['length'] > 0) {
-                    for (var i = 0; i < data['length']; i++) {
-                        flags = "UpdateS2M|" + LastSync + "|" + ThisSync;
-                        flags = flags + "|attendee_notes";
-                        flags = flags + "|" + data[i].AttendeeID;
-                        flags = flags + "|" + data[i].EventID;
-                        flags = flags + "|" + data[i].Note;
-                        flags = flags + "|" + data[i].LastUpdated;
-                        flags = flags + "|" + data[i].UpdateType;
-                        var url = SyncURLReference + "action=sync&flags=" + flags + "&AttendeeID=" + AttendeeID;
-                        //return new Promise(resolve => {
-                        console.log('Sync UpdateS2M: Notes URL: ' + url);
-                        this.httpCall.get(url).subscribe(data3 => {
-                            console.log('Sync UpdateS2M: Response: ' + JSON.stringify(data3));
-                            //resolve("Done");
-                        }, err => {
-                            console.log('Sync UpdateS2M: Response: ' + JSON.stringify(err));
-                            //resolve("Error");
-                        });
-                        //});
-                    }
-                }
-            });
-        });
-        // Done
-        //resolve("Done");
-    }
-};
-Synchronization = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Injectable"])(),
-    __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["x" /* Platform */],
-        __WEBPACK_IMPORTED_MODULE_2__angular_http__["a" /* Http */],
-        __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["b" /* AlertController */],
-        __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* Events */],
-        __WEBPACK_IMPORTED_MODULE_4__ionic_native_sqlite__["a" /* SQLite */],
-        __WEBPACK_IMPORTED_MODULE_3__providers_localstorage_localstorage__["a" /* Localstorage */]])
-], Synchronization);
-
-//# sourceMappingURL=synchronization.js.map
 
 /***/ })
 
