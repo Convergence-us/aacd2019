@@ -1,48 +1,49 @@
 webpackJsonp([3],{
 
-/***/ 954:
+/***/ 957:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ProfileSocialMediaEntryPageModule", function() { return ProfileSocialMediaEntryPageModule; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__profilesocialmediaentry__ = __webpack_require__(973);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SearchByTopicPageModule", function() { return SearchByTopicPageModule; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_forms__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_core__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_ionic_angular__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__searchbytopic__ = __webpack_require__(978);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
+// Components, functions, plugins
 
 
 
-let ProfileSocialMediaEntryPageModule = class ProfileSocialMediaEntryPageModule {
+// Pages
+
+let SearchByTopicPageModule = class SearchByTopicPageModule {
 };
-ProfileSocialMediaEntryPageModule = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["NgModule"])({
-        declarations: [
-            __WEBPACK_IMPORTED_MODULE_2__profilesocialmediaentry__["a" /* ProfileSocialMediaEntryPage */],
-        ],
+SearchByTopicPageModule = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_1__angular_core__["NgModule"])({
+        declarations: [__WEBPACK_IMPORTED_MODULE_3__searchbytopic__["a" /* SearchByTopicPage */]],
         imports: [
-            __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["p" /* IonicPageModule */].forChild(__WEBPACK_IMPORTED_MODULE_2__profilesocialmediaentry__["a" /* ProfileSocialMediaEntryPage */]),
+            __WEBPACK_IMPORTED_MODULE_0__angular_forms__["a" /* FormsModule */],
+            __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["p" /* IonicPageModule */].forChild(__WEBPACK_IMPORTED_MODULE_3__searchbytopic__["a" /* SearchByTopicPage */])
         ],
-        exports: [
-            __WEBPACK_IMPORTED_MODULE_2__profilesocialmediaentry__["a" /* ProfileSocialMediaEntryPage */]
-        ]
+        exports: [__WEBPACK_IMPORTED_MODULE_3__searchbytopic__["a" /* SearchByTopicPage */]]
     })
-], ProfileSocialMediaEntryPageModule);
+], SearchByTopicPageModule);
 
-//# sourceMappingURL=profilesocialmediaentry.module.js.map
+//# sourceMappingURL=searchbytopic.module.js.map
 
 /***/ }),
 
-/***/ 973:
+/***/ 978:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ProfileSocialMediaEntryPage; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return SearchByTopicPage; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ionic_storage__ = __webpack_require__(25);
@@ -50,6 +51,7 @@ ProfileSocialMediaEntryPageModule = __decorate([
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_rxjs_add_operator_map___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_rxjs_add_operator_map__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__providers_database_database__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__providers_localstorage_localstorage__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__educationdetails_educationdetails__ = __webpack_require__(62);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -66,98 +68,160 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
-let ProfileSocialMediaEntryPage = class ProfileSocialMediaEntryPage {
-    constructor(navParams, storage, cd, databaseprovider, view, localstorage) {
+// Pages
+
+let SearchByTopicPage = class SearchByTopicPage {
+    constructor(navCtrl, navParams, storage, databaseprovider, cd, loadingCtrl, localstorage) {
+        this.navCtrl = navCtrl;
         this.navParams = navParams;
         this.storage = storage;
-        this.cd = cd;
         this.databaseprovider = databaseprovider;
-        this.view = view;
+        this.cd = cd;
+        this.loadingCtrl = loadingCtrl;
         this.localstorage = localstorage;
+        this.sessions = [];
     }
-    clearInput() {
-        this.SocialMediaURLEntry = "";
+    ionViewDidLoad() {
+        console.log('ionViewDidLoad: SearchByTopicPage');
+    }
+    ionViewDidEnter() {
+        console.log('ionViewDidEnter: SearchByTopicPage');
+        // Load / refresh data when coming to this page
+        this.LoadData();
+    }
+    SearchTopics(selectedValue) {
+        //let loading = this.loadingCtrl.create({
+        //	spinner: 'crescent',
+        //	content: 'Please wait...'
+        //});
+        //loading.present();
+        console.log('Selected topic: ' + selectedValue);
         this.cd.markForCheck();
-    }
-    ngOnInit() {
+        var TopicSearchOption = selectedValue;
+        var SQLDate;
+        var DisplayDateTime;
+        var dbEventDateTime;
+        var PrimarySpeakerName;
+        var flags = '';
+        this.sessions = [];
+        this.TopicSearchChoice = TopicSearchOption;
+        this.localstorage.setLocalValue('TopicSearch', TopicSearchOption);
         var AttendeeID = this.localstorage.getLocalValue('AttendeeID');
-        var SocialMediaType = this.localstorage.getLocalValue('SocialMediaType');
-        console.log('SocialMediaType: ' + SocialMediaType);
-        switch (SocialMediaType) {
-            case "statusTwitter":
-                this.typeOfSocialMedia = "Twitter";
-                this.typeOfSampleSocialMedia = "https://twitter.com/johnsmith";
-                break;
-            case "statusLinkedIn":
-                this.typeOfSocialMedia = "LinkedIn";
-                this.typeOfSampleSocialMedia = "https://www.linkedin.com/inJohnSmith";
-                break;
-            case "statusFacebook":
-                this.typeOfSocialMedia = "Facebook";
-                this.typeOfSampleSocialMedia = "https://www.facebook.com/JohnSmith";
-                break;
-            case "statusInstagram":
-                this.typeOfSocialMedia = "Instagram";
-                this.typeOfSampleSocialMedia = "https://instagram.com/johnsmith";
-                break;
-            case "statusPinterest":
-                this.typeOfSocialMedia = "Pinterest";
-                this.typeOfSampleSocialMedia = "https://www.pinterest.com/johnsmith";
-                break;
+        if (TopicSearchOption === null || TopicSearchOption == 'Select a topic...') {
+            this.TopicSearchChoice = "Select a topic...";
+            console.log('TopicSearch: Select a topic...');
         }
-        var flags = 'pg|' + SocialMediaType;
-        this.databaseprovider.getDatabaseStats(flags, AttendeeID).then(data => {
-            console.log("getDatabaseStats: " + JSON.stringify(data));
-            if (data['length'] > 0) {
-                this.SocialMediaURLEntry = data[0].smURL;
-                this.cd.markForCheck();
-            }
-        }).catch(function () {
-            console.log("ProfileSocialMediaEntryPage Promise Rejected");
-        });
-    }
-    closeModal(UserAction) {
-        var AttendeeID = this.localstorage.getLocalValue('AttendeeID');
-        var SocialMediaType = this.localstorage.getLocalValue('SocialMediaType');
-        var SocialMediaURLEntry = this.SocialMediaURLEntry;
-        var ReturnValue = UserAction + "|" + SocialMediaType + "|" + SocialMediaURLEntry;
-        if (UserAction == "Save") {
-            var flags = 'pu|' + SocialMediaType + '|' + SocialMediaURLEntry;
-            this.databaseprovider.getDatabaseStats(flags, AttendeeID).then(data => {
-                console.log("getDatabaseStats, closeModal: " + JSON.stringify(data));
+        else {
+            // Get records
+            this.databaseprovider.getSearchData(TopicSearchOption, AttendeeID).then(data => {
+                console.log('TopicSearch using: ' + TopicSearchOption);
                 if (data['length'] > 0) {
-                    ReturnValue = ReturnValue + "|" + data[0].SocialMediaSetting;
-                    console.log("getDatabaseStats, closeModal, Return status: " + data[0].Status);
-                    if (data[0].Status == 'Saved') {
-                        this.view.dismiss(ReturnValue);
-                    }
-                    else {
-                        // Show alert about failed save
+                    console.log('Records returned');
+                    // Process returned records to display
+                    for (var i = 0; i < data['length']; i++) {
+                        dbEventDateTime = data[i].session_start_time.substring(0, 19);
+                        dbEventDateTime = dbEventDateTime.replace(/-/g, '/');
+                        dbEventDateTime = dbEventDateTime.replace(/T/g, ' ');
+                        SQLDate = new Date(dbEventDateTime);
+                        DisplayDateTime = dateFormat(SQLDate, "mm/dd h:MMtt");
+                        // Display end time
+                        dbEventDateTime = data[i].session_end_time.substring(0, 19);
+                        dbEventDateTime = dbEventDateTime.replace(/-/g, '/');
+                        dbEventDateTime = dbEventDateTime.replace(/T/g, ' ');
+                        SQLDate = new Date(dbEventDateTime);
+                        DisplayDateTime = DisplayDateTime + " to " + dateFormat(SQLDate, "h:MMtt");
+                        this.sessions.push({
+                            DisplayEventName: data[i].session_title,
+                            DisplayEventTimeDateLocation: DisplayDateTime + " in " + data[i].RoomName,
+                            SpeakerDisplayName: PrimarySpeakerName,
+                            EventID: data[i].session_id
+                        });
                     }
                 }
-            }).catch(function (e) {
-                console.log("Profile Social Media Entry Update Error: " + e);
+                this.cd.markForCheck();
+                //loading.dismiss();
+            }).catch(function () {
+                console.log("Promise Rejected");
             });
         }
-        if (UserAction == "Cancel") {
-            this.view.dismiss(ReturnValue);
+    }
+    LoadData() {
+        //let loading = this.loadingCtrl.create({
+        //	spinner: 'crescent',
+        //	content: 'Please wait...'
+        //});
+        //loading.present();
+        this.cd.markForCheck();
+        var SQLDate;
+        var DisplayDateTime;
+        var dbEventDateTime;
+        var PrimarySpeakerName;
+        this.sessions = [];
+        var TopicSearchOption = this.localstorage.getLocalValue('TopicSearch');
+        this.TopicSearchChoice = TopicSearchOption;
+        var AttendeeID = this.localstorage.getLocalValue('AttendeeID');
+        console.log('TopicSearch: ' + TopicSearchOption);
+        if (TopicSearchOption === null || TopicSearchOption == 'Select a topic...') {
+            this.TopicSearchChoice = "Select a topic...";
+            console.log('TopicSearch: Select a topic...');
+        }
+        else {
+            // Get records
+            this.databaseprovider.getSearchData(TopicSearchOption, AttendeeID).then(data => {
+                console.log('TopicSearch using: ' + TopicSearchOption);
+                if (data['length'] > 0) {
+                    console.log('Records returned');
+                    // Process returned records to display
+                    for (var i = 0; i < data['length']; i++) {
+                        dbEventDateTime = data[i].session_start_time.substring(0, 19);
+                        dbEventDateTime = dbEventDateTime.replace(/-/g, '/');
+                        dbEventDateTime = dbEventDateTime.replace(/T/g, ' ');
+                        SQLDate = new Date(dbEventDateTime);
+                        DisplayDateTime = dateFormat(SQLDate, "mm/dd h:MMtt");
+                        // Display end time
+                        dbEventDateTime = data[i].session_end_time.substring(0, 19);
+                        dbEventDateTime = dbEventDateTime.replace(/-/g, '/');
+                        dbEventDateTime = dbEventDateTime.replace(/T/g, ' ');
+                        SQLDate = new Date(dbEventDateTime);
+                        DisplayDateTime = DisplayDateTime + " to " + dateFormat(SQLDate, "h:MMtt");
+                        this.sessions.push({
+                            DisplayEventName: data[i].session_title,
+                            DisplayEventTimeDateLocation: DisplayDateTime + " in " + data[i].RoomName,
+                            SpeakerDisplayName: PrimarySpeakerName,
+                            EventID: data[i].session_id
+                        });
+                    }
+                }
+                this.cd.markForCheck();
+                //loading.dismiss();
+            }).catch(function () {
+                console.log("Promise Rejected");
+            });
         }
     }
+    EventDetails(EventID) {
+        if (EventID != 0) {
+            // Navigate to Exhibitor Details page
+            this.navCtrl.push(__WEBPACK_IMPORTED_MODULE_6__educationdetails_educationdetails__["a" /* EducationDetailsPage */], { EventID: EventID }, { animate: true, direction: 'forward' });
+        }
+    }
+    ;
 };
-ProfileSocialMediaEntryPage = __decorate([
+SearchByTopicPage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
-        selector: 'page-profilesocialmediaentry',template:/*ion-inline-start:"/Users/petervroom/aacd19/src/pages/profilesocialmediaentry/profilesocialmediaentry.html"*/'<ion-header>\n\n	<ion-navbar color="primary">\n		<ion-title>Social Media Link Entry</ion-title>\n	</ion-navbar>\n\n</ion-header>\n\n\n<ion-content padding>\n\n		<ion-label>Enter or update the link to your {{typeOfSocialMedia}} social media profile.  To erase the link, choose Clear then Save:</ion-label>\n		<!--<ion-textarea (input)=\'SocialMediaURLEntry = $event.target.value\' name="SocialMediaURLEntry" [value]="SocialMediaURLEntry" placeholder="i.e. {{typeOfSampleSocialMedia}}"></ion-textarea>-->\n		<ion-item>\n			<ion-input type="text" placeholder="i.e. {{typeOfSampleSocialMedia}}" (input)=\'SocialMediaURLEntry = $event.target.value\' name="SocialMediaURLEntry" [value]="SocialMediaURLEntry" id="SocialMediaURLEntry"></ion-input>\n		</ion-item>\n		\n		<ion-grid>\n			<ion-row>\n				<ion-col col-4 >\n					<button ion-button block color="danger" (click)="closeModal(\'Save\')">\n						Save\n					</button>\n				</ion-col>\n				<ion-col col-4 >\n					<button ion-button block color="danger" (click)="clearInput()">\n						Clear\n					</button>\n				</ion-col>\n				<ion-col col-4 >\n					<button ion-button block color="danger" (click)="closeModal(\'Cancel\')">\n						Cancel\n					</button>\n				</ion-col>\n			</ion-row>\n		</ion-grid>\n\n</ion-content>\n'/*ion-inline-end:"/Users/petervroom/aacd19/src/pages/profilesocialmediaentry/profilesocialmediaentry.html"*/,
+        selector: 'page-searchbytopic',template:/*ion-inline-start:"/Users/petervroom/aacd19/src/pages/searchbytopic/searchbytopic.html"*/'<ion-header>\n	<ion-navbar color="primary">\n		<button ion-button menuToggle>\n			<ion-icon name="menu"></ion-icon>\n		</button>\n		<ion-title>Search by Topic</ion-title>\n	</ion-navbar>\n</ion-header>\n<ion-content>\n\n	<div class="myPaddingLR" style="padding-top:10px!important; padding-bottom:10px!important">\n		<h2>Topic Search</h2>\n		<h6>Find courses tagged by specific topics by choosing one from the dropdown below.</h6>\n	</div>\n\n	<ion-item style="background:#2196f3; color:#fff!important">\n		<label class="item item-select" style="background:#2196f3; color:#fff!important; width:100%!important" id="searchByTopic-select1"></label>\n		\n		<ion-select name="Topics" class="full-width-select" style="background:#2196f3!important; color:#fff!important; width:100%!important"[(ngModel)]="TopicSearchChoice" (ionChange)="SearchTopics($event)">\n\n			<ion-option value=\'Select a topic...\' selected>Select a topic...</ion-option>\n			<ion-option value=\'AACD Student Outreach\'>AACD Student Outreach</ion-option>\n			<ion-option value=\'Accreditation\'>Accreditation</ion-option>\n			<ion-option value=\'Appliances\'>Appliances</ion-option>\n			<ion-option value=\'Biofilm\'>Biofilm</ion-option>\n			<ion-option value=\'Bonding\'>Bonding</ion-option>\n			<ion-option value=\'Botox\'>Botox</ion-option>\n			<ion-option value=\'Communication\'>Communication</ion-option>\n			<ion-option value=\'Composite Bonding\'>Composite Bonding</ion-option>\n			<ion-option value=\'Composites\'>Composites</ion-option>\n			<ion-option value=\'Composite Resin\'>Composite Resin</ion-option>\n			<ion-option value=\'Direct Resin\'>Direct Resin</ion-option>\n			<ion-option value=\'Fellowship\'>Fellowship</ion-option>\n			<ion-option value=\'Implant\'>Implant</ion-option>\n			<ion-option value=\'Leadership\'>Leadership</ion-option>\n			<ion-option value=\'Marketing\'>Marketing</ion-option>\n			<ion-option value=\'Material Selection\'>Material Selection</ion-option>\n			<ion-option value=\'Non-Prep Veneers\'>Non-Prep Veneers</ion-option>\n			<ion-option value=\'Patient Care\'>Patient Care</ion-option>\n			<ion-option value=\'Patient Communication\'>Patient Communication</ion-option>\n			<ion-option value=\'Philanthropy\'>Philanthropy</ion-option>\n			<ion-option value=\'Photography\'>Photography</ion-option>\n			<ion-option value=\'Polishing\'>Polishing</ion-option>\n			<ion-option value=\'Porcelain Veneers\'>Porcelain Veneers</ion-option>\n			<ion-option value=\'Rapid Fire\'>Rapid Fire</ion-option>\n			<ion-option value=\'Shade Selection\'>Shade Selection</ion-option>\n			<ion-option value=\'TMJ\'>TMJ</ion-option>\n			<ion-option value=\'Tooth Movement\'>Tooth Movement</ion-option>\n			<ion-option value=\'Transitions\'>Transitions</ion-option>\n			<ion-option value=\'Treatment Planning\'>Treatment Planning</ion-option>\n			<ion-option value=\'UEF\'>UEF</ion-option>\n			<ion-option value=\'Veneers\'>Veneers</ion-option>\n\n		</ion-select>\n	</ion-item>\n\n	<ion-list class="myLabelBold" style="max-width:100%; color:#fff!important" id="topic-list3">\n		<ion-item (click)="EventDetails(session.EventID)" *ngFor="let session of sessions" id="topics-list-item19">\n			<ion-icon item-right name="arrow-dropright"></ion-icon>\n			<h2>{{session.DisplayEventName}}</h2>\n			<p>{{session.DisplayEventTimeDateLocation}}</p>\n			<p>{{session.SpeakerDisplayName}}</p>\n		</ion-item>\n	</ion-list>\n\n\n\n\n	  \n\n\n</ion-content>\n\n'/*ion-inline-end:"/Users/petervroom/aacd19/src/pages/searchbytopic/searchbytopic.html"*/,
         changeDetection: __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectionStrategy"].OnPush
     }),
-    __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["v" /* NavParams */],
+    __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["u" /* NavController */],
+        __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["v" /* NavParams */],
         __WEBPACK_IMPORTED_MODULE_2__ionic_storage__["b" /* Storage */],
-        __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"],
         __WEBPACK_IMPORTED_MODULE_4__providers_database_database__["a" /* Database */],
-        __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["A" /* ViewController */],
+        __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"],
+        __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["q" /* LoadingController */],
         __WEBPACK_IMPORTED_MODULE_5__providers_localstorage_localstorage__["a" /* Localstorage */]])
-], ProfileSocialMediaEntryPage);
+], SearchByTopicPage);
 
-//# sourceMappingURL=profilesocialmediaentry.js.map
+//# sourceMappingURL=searchbytopic.js.map
 
 /***/ })
 

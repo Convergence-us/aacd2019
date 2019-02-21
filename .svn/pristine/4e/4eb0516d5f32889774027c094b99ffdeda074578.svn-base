@@ -1,0 +1,151 @@
+<ion-header>
+		<ion-navbar color="primary">
+		  <button ion-button menuToggle>
+			<ion-icon name="menu"></ion-icon>
+		  </button>
+		  <ion-title>
+			Leaderboard Top 10
+		  </ion-title>
+		</ion-navbar>
+	  </ion-header>
+
+<ion-content>
+
+<!--    
+
+	<div class="chart-container" style="position: relative; height:100vh; width:100vw">
+		<canvas baseChart #chart
+		 [datasets]='chartData' 
+		 [labels]='chartLabels' 
+		 [chartType]='chartType'
+		 [options] = 'chartOptions'
+		 [legend]="chartLegend">
+		</canvas>
+
+		<ion-grid>
+			<ion-row>
+				<ion-col col-4 >
+				</ion-col>
+				<ion-col col-4 >
+					<button ion-button block color="danger" (click)="closeModal()">
+						Close
+					</button>
+				</ion-col>
+				<ion-col col-4 >
+				</ion-col>
+			</ion-row>
+		</ion-grid>
+<div style="margin-left:20px">
+<p>*Rotate your device to landscape mode for larger view.<br>
+ 	 *Tap any bar to get details.
+</p>
+	</div>
+</div>
+	
+
+
+<!--NEW APPROACH USING PLUGIN
+
+
+
+<ion-list>
+  <ion-item>
+    <ion-avatar item-start>
+			<img src="assets/img/speakers/25798.jpg">
+    </ion-avatar>
+    <h2>Susan Reynolds</h2>
+		<p>Forever Smiles</p>
+		<progress-bar [progress]="91" [color]="'#1A237E'">
+		</progress-bar>
+		<button ion-button clear item-end>91 pts</button>
+	</ion-item>
+	
+	<ion-item>
+	<ion-avatar item-start>
+		<img src="assets/img/speakers/25769.jpg">
+	</ion-avatar>
+	<h2>Jennifer Jones</h2>
+	<p>Dental Fun!</p>
+	<progress-bar [progress]="71" [color]="'#512DA8'">
+	</progress-bar>
+	<button ion-button clear item-end>71 pts</button>
+</ion-item>
+
+<ion-item>
+<ion-avatar item-start>
+	<img src="assets/img/speakers/25764.jpg">
+</ion-avatar>
+<h2>Brian Boulder</h2>
+<p>Teeth be Free</p>
+<progress-bar [progress]="47" [color]="'#880E4F'">
+</progress-bar>
+<button ion-button clear item-end>47 pts</button>
+</ion-item>
+
+<ion-item>
+<ion-avatar item-start>
+	<img src="assets/img/speakers/25765.jpg">
+</ion-avatar>
+<h2>John Jones</h2>
+<p>Dental Magic</p>
+<progress-bar [progress]="23" [color]="'#6A1B9A'">
+</progress-bar>
+<button ion-button clear item-end>23 pts</button>
+</ion-item>
+
+</ion-list>
+
+-->
+
+<!--Using Newly created component-->
+
+
+<ion-list>
+	<ion-item>
+	  <ion-avatar item-start>
+			  <img src="assets/img/speakers/25798.jpg">
+	  </ion-avatar>
+	  <h2>Susan Reynolds</h2>
+		  <p>Forever Smiles</p>
+		  <progress-bar [progress]="loadProgress"></progress-bar>
+		  <button ion-button clear item-end>91 pts</button>
+	  </ion-item>
+	  
+	  <ion-item>
+	  <ion-avatar item-start>
+		  <img src="assets/img/speakers/25769.jpg">
+	  </ion-avatar>
+	  <h2>Jennifer Jones</h2>
+	  <p>Dental Fun!</p>
+	  <progress-bar [progress]="loadProgress"></progress-bar>
+	  <button ion-button clear item-end>71 pts</button>
+  </ion-item>
+  
+  <ion-item>
+  <ion-avatar item-start>
+	  <img src="assets/img/speakers/25764.jpg">
+  </ion-avatar>
+  <h2>Brian Boulder</h2>
+  <p>Teeth be Free</p>
+  <progress-bar [progress]="loadProgress"></progress-bar>
+  <button ion-button clear item-end>47 pts</button>
+  </ion-item>
+  
+  <ion-item>
+  <ion-avatar item-start>
+	  <img src="assets/img/speakers/25765.jpg">
+  </ion-avatar>
+  <h2>John Jones</h2>
+  <p>Dental Magic</p>
+  <progress-bar [progress]="loadProgress"></progress-bar>
+  <button ion-button clear item-end>23 pts</button>
+  </ion-item>
+  
+  </ion-list>
+
+
+
+
+</ion-content>		
+
+

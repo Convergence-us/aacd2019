@@ -53,15 +53,6 @@
     "cordova-plugin-inappbrowser": {
       "PACKAGE_NAME": "com.convergenceus.aacdmobile"
     },
-    "cordova-plugin-ionic": {
-      "APP_ID": "680e18f3",
-      "CHANNEL_NAME": "Production",
-      "WARN_DEBUG": "true",
-      "UPDATE_API": "https://api.ionicjs.com",
-      "UPDATE_METHOD": "auto",
-      "MAX_STORE": "2",
-      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
-    },
     "cordova-plugin-native-spinner": {
       "PACKAGE_NAME": "com.convergenceus.aacdmobile"
     },
@@ -69,9 +60,6 @@
       "PACKAGE_NAME": "com.convergenceus.aacdmobile"
     },
     "cordova-plugin-splashscreen": {
-      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
-    },
-    "cordova-plugin-statusbar": {
       "PACKAGE_NAME": "com.convergenceus.aacdmobile"
     },
     "cordova-plugin-whitelist": {
@@ -89,9 +77,6 @@
     "de.appplant.cordova.plugin.printer": {
       "PACKAGE_NAME": "com.convergenceus.aacdmobile"
     },
-    "ionic-plugin-keyboard": {
-      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
-    },
     "onesignal-cordova-plugin": {
       "PACKAGE_NAME": "com.convergenceus.aacdmobile"
     },
@@ -101,6 +86,18 @@
     "phonegap-plugin-barcodescanner": {
       "CAMERA_USAGE_DESCRIPTION": " ",
       "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "cordova-plugin-statusbar": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "cordova-plugin-ionic-webview": {
+      "PACKAGE_NAME": "com.convergenceus.aacdmobile"
+    },
+    "cordova-plugin-ionic-keyboard": {
+      "PACKAGE_NAME": "com.convergenceus.aacd19"
+    },
+    "cordova-plugin-advanced-http": {
+      "PACKAGE_NAME": "com.convergenceus.aacd19"
     }
   },
   "dependent_plugins": {

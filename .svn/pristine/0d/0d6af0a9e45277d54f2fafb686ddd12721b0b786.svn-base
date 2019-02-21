@@ -1,0 +1,63 @@
+<ion-header>
+
+  <ion-navbar color="primary">
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Speaker Details</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+
+<ion-content>
+
+
+	<ion-grid style="margin:0;padding:0; background:#283593">
+		<ion-row style="margin-top:15px">
+				<ion-col>
+						<img class="avatar" [src]="visualImageURL" onerror="this.src='assets/img/personIcon.png'"
+								src="assets/img/personIcon.png" alt="Image error">
+								</ion-col>
+
+						</ion-row>
+						<ion-row>
+
+								<ion-col style="margin-top:15px; text-align: center!important; color:#fff">
+										<h2>{{visualDisplayName}}</h2>
+										<h4>{{visualAffiliation}}</h4>
+		
+								</ion-col>
+				</ion-row>
+
+</ion-grid>
+
+
+<ion-card>
+	<ion-card-header class="cardHeader" >
+		Biography
+	</ion-card-header>
+	<ion-card-content [innerHTML]="spkrDetails" style="margin-top:5px">
+		{{visualBiography}}
+	</ion-card-content>
+</ion-card>
+
+	<ion-card>
+		<ion-card-header class="cardHeader">
+				Sessions
+		</ion-card-header>
+		<ion-card-content>
+			<ion-list id="speakersessions-list3" style="margin-top:5px">
+				<ion-item class="item-icon-left item-icon-right" (click)="EventDetails(session.EventID)" *ngFor="let session of SessionListing" id="speakersessions-list-item19">
+					<ion-icon item-right name="arrow-dropright"></ion-icon>
+					<ion-icon item-left name="list"></ion-icon>
+					<h2 text-wrap> {{session.DisplayEventName}}</h2>
+					<p>{{session.DisplayEventTimeDateLocation}}</p>
+				</ion-item>
+			</ion-list>
+		</ion-card-content>
+	</ion-card>
+
+</ion-content>
+
+

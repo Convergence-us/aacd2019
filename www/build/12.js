@@ -1,49 +1,49 @@
 webpackJsonp([12],{
 
-/***/ 948:
+/***/ 950:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "CetrackingPageModule", function() { return CetrackingPageModule; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_forms__ = __webpack_require__(30);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_core__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_ionic_angular__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__cetracking__ = __webpack_require__(969);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ConversationsPageModule", function() { return ConversationsPageModule; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__conversations__ = __webpack_require__(973);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_ionic_image_loader__ = __webpack_require__(61);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-// Components, functions, plugins
+
 
 
 
 // Pages
-
-let CetrackingPageModule = class CetrackingPageModule {
+let ConversationsPageModule = class ConversationsPageModule {
 };
-CetrackingPageModule = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_1__angular_core__["NgModule"])({
-        declarations: [__WEBPACK_IMPORTED_MODULE_3__cetracking__["a" /* CetrackingPage */]],
-        imports: [
-            __WEBPACK_IMPORTED_MODULE_0__angular_forms__["a" /* FormsModule */],
-            __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["p" /* IonicPageModule */].forChild(__WEBPACK_IMPORTED_MODULE_3__cetracking__["a" /* CetrackingPage */])
+ConversationsPageModule = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["NgModule"])({
+        declarations: [
+            __WEBPACK_IMPORTED_MODULE_2__conversations__["a" /* ConversationsPage */],
         ],
-        exports: [__WEBPACK_IMPORTED_MODULE_3__cetracking__["a" /* CetrackingPage */]]
+        imports: [
+            __WEBPACK_IMPORTED_MODULE_3_ionic_image_loader__["b" /* IonicImageLoader */],
+            __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["p" /* IonicPageModule */].forChild(__WEBPACK_IMPORTED_MODULE_2__conversations__["a" /* ConversationsPage */]),
+        ],
     })
-], CetrackingPageModule);
+], ConversationsPageModule);
 
-//# sourceMappingURL=cetracking.module.js.map
+//# sourceMappingURL=conversations.module.js.map
 
 /***/ }),
 
-/***/ 969:
+/***/ 973:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return CetrackingPage; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ConversationsPage; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ionic_storage__ = __webpack_require__(25);
@@ -51,6 +51,9 @@ CetrackingPageModule = __decorate([
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_rxjs_add_operator_map___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_rxjs_add_operator_map__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__providers_database_database__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__providers_localstorage_localstorage__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_ionic_image_loader__ = __webpack_require__(61);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__conversation_conversation__ = __webpack_require__(539);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__attendees_attendees__ = __webpack_require__(197);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -67,158 +70,136 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
-let CetrackingPage = class CetrackingPage {
-    constructor(navCtrl, navParams, nav, cd, storage, events, databaseprovider, localstorage) {
+
+// Pages
+
+
+let ConversationsPage = class ConversationsPage {
+    constructor(navCtrl, navParams, storage, databaseprovider, imageLoaderConfig, alertCtrl, cd, loadingCtrl, localstorage) {
         this.navCtrl = navCtrl;
         this.navParams = navParams;
-        this.nav = nav;
-        this.cd = cd;
         this.storage = storage;
-        this.events = events;
         this.databaseprovider = databaseprovider;
+        this.imageLoaderConfig = imageLoaderConfig;
+        this.alertCtrl = alertCtrl;
+        this.cd = cd;
+        this.loadingCtrl = loadingCtrl;
         this.localstorage = localstorage;
-        this.CEListing = [];
-        this.LegendDetails = false;
-        this.LegendDropdownIcon = 'arrow-dropdown-circle';
-        // Listen for sync events and 
-        // refresh side menu dashboard
-        this.events.subscribe('sync:Status', (SyncType) => {
-            console.log('CetrackingPage: Sync has ', SyncType);
-            this.LoadCETrackerData();
-        });
+        this.Conversations = [];
     }
-    ionViewDidEnter() {
-        console.log('ionViewDidEnter: CetrackingPage');
-        this.LoadCETrackerData();
-    }
-    LoadCETrackerData() {
-        this.CEListing = [];
-        this.cd.markForCheck();
-        // Load / refresh data when coming to this page
-        var iconScan = "";
-        // Icons
-        var iconCEScanPendingScan = 'qr-scanner';
-        var iconCEScanNotCompleted = 'close-circle';
-        var iconCEScanTimeInSession = 'timer';
-        var iconCEScanComplete = 'checkmark';
-        var sumCreditsL = 0;
-        var sumCreditsP = 0;
-        /* Determine currently logged in user */
-        var AttendeeID = this.localstorage.getLocalValue('AttendeeID');
-        if (AttendeeID != '' && AttendeeID != null) {
-            console.log('Stored AttendeeID: ' + AttendeeID);
-            this.databaseprovider.getCETrackerData(AttendeeID).then(data => {
-                console.log("getCETrackerData: " + JSON.stringify(data));
-                if (data['length'] > 0) {
-                    for (var i = 0; i < data['length']; i++) {
-                        var EvalType = data[i].ce_credits_type.substring(0, 1);
-                        var iconSet = 0;
-                        if (EvalType == "") { // Evals that don't require an eval are completed
-                            iconScan = iconCEScanComplete;
-                            iconSet = 1;
-                            sumCreditsL = sumCreditsL + parseFloat(data[i].CEcreditsL);
-                            sumCreditsP = sumCreditsP + parseFloat(data[i].CEcreditsP);
-                        }
-                        if (data[i].ceStatusScan == "0" && iconSet == 0) { // No scan (shouldn't happen with AACD)
-                            iconScan = iconCEScanPendingScan;
-                            iconSet = 1;
-                        }
-                        if ((data[i].Evaluated == "0" || data[i].Evaluated === null) && iconSet == 0) { // Eval not completed
-                            iconScan = iconCEScanNotCompleted;
-                            iconSet = 1;
-                        }
-                        if (iconSet == 0) { // Otherwise mark as completed
-                            iconScan = iconCEScanComplete;
-                            sumCreditsL = sumCreditsL + parseFloat(data[i].CEcreditsL);
-                            sumCreditsP = sumCreditsP + parseFloat(data[i].CEcreditsP);
-                        }
-                        console.log("CE Record: " + data[i].session_title + ", Icon: " + iconScan);
-                        this.CEListing.push({
-                            EventID: data[i].session_id,
-                            EvaluationType: EvalType,
-                            DisplayEventName: data[i].session_title,
-                            sessionScanStatusIcon: iconScan,
-                            navigationRightArrow: "arrow-dropright"
-                        });
-                    }
-                    this.creditsTypeL = sumCreditsL.toFixed(2);
-                    this.creditsTypeP = sumCreditsP.toFixed(2);
-                    this.cd.markForCheck();
-                }
-                else {
-                    this.CEListing.push({
-                        EventID: "0",
-                        EvaluationType: "0",
-                        DisplayEventName: "No CE records available",
-                        sessionScanStatusIcon: iconCEScanPendingScan,
-                        navigationRightArrow: ""
-                    });
-                    this.creditsTypeL = '0.00';
-                    this.creditsTypeP = '0.00';
-                    this.cd.markForCheck();
-                }
-            }).catch(function () {
-                console.log("Promise Rejected");
-            });
-        }
-        else {
-            console.log('User not logged in');
-            this.creditsTypeL = '0.00';
-            this.creditsTypeP = '0.00';
-        }
-        this.events.publish('user:Status', 'CE Tracker Update');
-    }
-    toggleLegend() {
-        console.log('Toggle Legend: ' + this.LegendDetails);
-        this.LegendDetails = !this.LegendDetails;
-        switch (this.LegendDetails) {
-            case true:
-                this.LegendDropdownIcon = 'arrow-dropup-circle';
-                break;
-            case false:
-                this.LegendDropdownIcon = 'arrow-dropdown-circle';
-                break;
-        }
-    }
-    ;
-    isLegendShown() {
-        return this.LegendDetails;
-    }
-    ;
     ionViewDidLoad() {
-        console.log('ionViewDidLoad: CetrackingPage');
+        console.log('ionViewDidLoad SpeakersPage');
     }
-    Survey(EventID, EvalType) {
-        console.log("Survey clicked; SurveyID: " + EventID + "; Evaluation Type: " + EvalType);
-        if (EventID != "0") {
-            this.localstorage.setLocalValue('MassEval', "1");
-            this.localstorage.setLocalValue('EventID', EventID);
-            if (EvalType == "L") {
-                // Navigate to Lecture Evaluation page
-                this.navCtrl.push('EvaluationLecture', { EventID: EventID }, { animate: true, direction: 'forward' });
-            }
-            if (EvalType == "P") {
-                // Navigate to Workshop Evaluation page
-                this.navCtrl.push('EvaluationWorkshop', { EventID: EventID }, { animate: true, direction: 'forward' });
-            }
+    NavToPage(PageID) {
+        var AttendeeID = this.localstorage.getLocalValue('AttendeeID');
+        switch (PageID) {
+            case "AttendeesPage":
+                this.navCtrl.push(__WEBPACK_IMPORTED_MODULE_8__attendees_attendees__["a" /* AttendeesPage */], {}, { animate: true, direction: 'forward' });
+                break;
         }
     }
+    ;
+    ionViewDidEnter() {
+        console.log('ionViewDidEnter ConversationsPage');
+        this.LoadData();
+    }
+    LoadData() {
+        // Load initial data set here
+        let loading = this.loadingCtrl.create({
+            spinner: 'crescent',
+            content: 'Please wait...'
+        });
+        loading.present();
+        // Blank and show loading info
+        this.Conversations = [];
+        this.cd.markForCheck();
+        this.imageLoaderConfig.setFallbackUrl('assets/img/personIcon.png');
+        // Temporary use variables
+        var flags = "li|Time|";
+        var DisplayName = "";
+        var visDisplayCompany = "";
+        var AttendeeID = this.localstorage.getLocalValue('AttendeeID');
+        // Get the data
+        this.databaseprovider.getMessagingData(flags, AttendeeID).then(data => {
+            console.log("getMessagingData: " + JSON.stringify(data));
+            if (data['length'] > 0) {
+                for (var i = 0; i < data['length']; i++) {
+                    DisplayName = "";
+                    // Concatenate fields to build displayable name
+                    DisplayName = DisplayName + data[i].LastName + ", " + data[i].FirstName;
+                    // Use Credentials field for Company/Association
+                    visDisplayCompany = "";
+                    if (data[i].Company != "") {
+                        visDisplayCompany = data[i].Company;
+                    }
+                    var imageAvatar = "https://aacdmobile.convergence-us.com/AdminGateway/2019/images/Attendees/" + data[i].ConversationAttendeeID + ".jpg";
+                    console.log('imageAvatar: ' + imageAvatar);
+                    // Add current record to the list
+                    this.Conversations.push({
+                        ConversationAttendeeID: data[i].ConversationAttendeeID,
+                        AttendeeName: DisplayName,
+                        AttendeeOrganization: visDisplayCompany,
+                        AttendeeAvatar: imageAvatar
+                    });
+                }
+            }
+            else {
+                // No records to show
+                this.Conversations.push({
+                    ConversationAttendeeID: 0,
+                    AttendeeName: "No conversations available",
+                    AttendeeOrganization: "",
+                    AttendeeAvatar: ""
+                });
+            }
+            this.cd.markForCheck();
+            loading.dismiss();
+        }).catch(function () {
+            console.log("Promise Rejected");
+        });
+        // Update LastSync date for next run
+        var ThisDirectChatCheck = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
+        this.localstorage.setLocalValue('LastDirectChatCheck', ThisDirectChatCheck);
+    }
+    ContinueConversation(ConversationAttendeeName, ConversationAttendeeID) {
+        console.log(ConversationAttendeeID);
+        //var AttendeeID = this.localstorage.getLocalValue('AttendeeID');
+        //if (AttendeeID != '900000' && AttendeeID != '900001' && AttendeeID != '21' && AttendeeID != '22') {
+        // Alert for successful save
+        //	let savealert = this.alertCtrl.create({
+        //		title: 'Conversations',
+        //		subTitle: 'The direct chat feature is not available at this time.',
+        //		buttons: ['Ok']
+        //	});
+        //	savealert.present();
+        //} else {
+        if (ConversationAttendeeID != 0) {
+            // Navigate to Conversation Details page
+            this.localstorage.setLocalValue('ConversationAttendeeName', ConversationAttendeeName);
+            this.localstorage.setLocalValue('ConversationAttendeeID', ConversationAttendeeID);
+            this.navCtrl.push(__WEBPACK_IMPORTED_MODULE_7__conversation_conversation__["a" /* ConversationPage */], { ConversationAttendeeID: ConversationAttendeeID }, { animate: true, direction: 'forward' });
+        }
+        //}
+    }
+    ;
 };
-CetrackingPage = __decorate([
+ConversationsPage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
-        selector: 'page-cetracking',template:/*ion-inline-start:"/Users/petervroom/aacd19/src/pages/cetracking/cetracking.html"*/'<ion-header>\n\n  <ion-navbar color="primary">\n\n    <button ion-button menuToggle>\n\n      <ion-icon name="menu"></ion-icon>\n\n    </button>\n\n    <ion-title>CE Tracking</ion-title>\n\n  </ion-navbar>\n\n</ion-header>\n\n\n\n<ion-content>\n\n\n\n\n\n\n\n\n\n	<div>\n\n		<p class="myLabelLRMargin" style="text-align:left;font-size:14px">\n\n			Below is your list of CE courses attended and credits earned. Be sure to first tap the "Sync" button at the top right corner of your screen to update your records.\n\n			Note that CE course credits are not given until you complete the evaluation for that course by touching or clicking the session title.\n\n		</p>\n\n	</div>\n\n\n\n	<div style="text-align: center;">\n\n		<div style="display: inline-block; width:100%">\n\n			<ion-list id="icons-list7" class="">\n\n				<ion-item color=primary class="item-icon-right  myTextWhite myMarginZero2" id="icons-list-item11" (click)="toggleLegend()" [ngClass]="{active: this.isLegendShown()}">\n\n					<b style="padding-left:10px">Credits Legend</b>\n\n					<ion-icon style="float:right" [name]="LegendDropdownIcon"></ion-icon>\n\n				</ion-item>\n\n				<ion-item class="item-icon-left myMarginZero2 item-accordion item-text-wrap" id="icons-list-item12" *ngIf="LegendDetails">\n\n					<ion-icon name="close-circle"></ion-icon> Evaluation not Completed\n\n				</ion-item>\n\n				<ion-item class="item-icon-left myMarginZero2 item-accordion item-text-wrap" id="icons-list-item14" *ngIf="LegendDetails">\n\n					<ion-icon name="checkmark"></ion-icon> Credit Complete\n\n				</ion-item>\n\n			</ion-list>\n\n		</div>\n\n	</div>\n\n\n\n	<div>\n\n		<p class="myLabelLRMargin" style="text-align:left; font-size:16px">\n\n			Current completed credits: {{creditsTypeL}}L / {{creditsTypeP}}P\n\n		</p>\n\n	</div>\n\n\n\n	<ion-list id="CEScans-list3">\n\n		<ion-item class="LegendHeader" id="icons-list-item31">\n\n			<b style="padding-left:10px; background:#283593">Scanned Courses</b>\n\n		</ion-item>\n\n	</ion-list>\n\n\n\n			<button ion-item style="margin-top:-10px" (click)="Survey(session.EventID,session.EvaluationType)" *ngFor="let session of CEListing" id="cescans-list-item19">\n\n				<ion-icon item-left name="{{session.sessionScanStatusIcon}}"></ion-icon>\n\n				<ion-icon item-right name="arrow-dropright"></ion-icon>\n\n				<h2>{{session.DisplayEventName}}</h2>\n\n			</button>\n\n		\n\n\n\n</ion-content>\n\n'/*ion-inline-end:"/Users/petervroom/aacd19/src/pages/cetracking/cetracking.html"*/,
+        selector: 'page-conversations',template:/*ion-inline-start:"/Users/petervroom/aacd19/src/pages/conversations/conversations.html"*/'<ion-header>\n    <ion-navbar color="primary">\n		<button ion-button menuToggle>\n			<ion-icon name="menu"></ion-icon>\n		</button>\n		<ion-title>Attendee Conversations</ion-title>\n    </ion-navbar>\n  </ion-header>\n\n\n<ion-content>\n\n<!--\n	\n	<ion-item text-wrap>\n		<h2>Below are your current conversations with attendees at the \n		conference.&nbsp; Tap on one to continue chatting.&nbsp; Your \n		most recent message is at the top.</h2>\n	</ion-item>\n-->\n\n\n\n<ion-grid>\n	<ion-row>\n		<ion-col>\n\n				<button ion-button block color="secondary" style="margin-top:15px" (click)="NavToPage(\'AttendeesPage\')">Start a Conversation!</button>\n\n		</ion-col>\n	</ion-row>\n</ion-grid>\n\n\n\n\n	<ion-list style="margin-top:-10; margin-bottom:-10" *ngFor="let conversation of Conversations" >\n\n		<ion-item no-lines style="margin-top:-10; margin-bottom:-10" (tap)="ContinueConversation(conversation.AttendeeName, conversation.ConversationAttendeeID)">\n			<ion-avatar item-start>\n				<img  [src]="conversation.AttendeeAvatar" src="assets/img/personIcon.png" style="margin-top:0; margin-bottom:0" onerror="this.src=\'assets/img/personIcon.png\'">\n				<!--<img-loader [src]="conversation.AttendeeAvatar" style="margin-top:0; margin-bottom:0" useImg [spinner]=false></img-loader>-->\n			</ion-avatar>\n			<h2>{{conversation.AttendeeName}}</h2>\n			<h3>{{conversation.AttendeeOrganization}}</h3>\n		</ion-item>\n\n	</ion-list>\n\n</ion-content>\n'/*ion-inline-end:"/Users/petervroom/aacd19/src/pages/conversations/conversations.html"*/,
+        changeDetection: __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectionStrategy"].OnPush
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["u" /* NavController */],
         __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["v" /* NavParams */],
-        __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["u" /* NavController */],
-        __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"],
         __WEBPACK_IMPORTED_MODULE_2__ionic_storage__["b" /* Storage */],
-        __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["i" /* Events */],
         __WEBPACK_IMPORTED_MODULE_4__providers_database_database__["a" /* Database */],
+        __WEBPACK_IMPORTED_MODULE_6_ionic_image_loader__["a" /* ImageLoaderConfig */],
+        __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["b" /* AlertController */],
+        __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"],
+        __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["q" /* LoadingController */],
         __WEBPACK_IMPORTED_MODULE_5__providers_localstorage_localstorage__["a" /* Localstorage */]])
-], CetrackingPage);
+], ConversationsPage);
 
-//# sourceMappingURL=cetracking.js.map
+//# sourceMappingURL=conversations.js.map
 
 /***/ })
 

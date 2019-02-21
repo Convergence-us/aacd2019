@@ -1,15 +1,15 @@
 webpackJsonp([1],{
 
-/***/ 965:
+/***/ 959:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SearchResultsPageModule", function() { return SearchResultsPageModule; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "SpeakerDetailsPageModule", function() { return SpeakerDetailsPageModule; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_forms__ = __webpack_require__(30);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_core__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_ionic_angular__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__searchresults__ = __webpack_require__(983);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__speakerdetails__ = __webpack_require__(979);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -22,38 +22,35 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 
 // Pages
 
-let SearchResultsPageModule = class SearchResultsPageModule {
+let SpeakerDetailsPageModule = class SpeakerDetailsPageModule {
 };
-SearchResultsPageModule = __decorate([
+SpeakerDetailsPageModule = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_1__angular_core__["NgModule"])({
-        declarations: [__WEBPACK_IMPORTED_MODULE_3__searchresults__["a" /* SearchResultsPage */]],
+        declarations: [__WEBPACK_IMPORTED_MODULE_3__speakerdetails__["a" /* SpeakerDetailsPage */]],
         imports: [
             __WEBPACK_IMPORTED_MODULE_0__angular_forms__["a" /* FormsModule */],
-            __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["p" /* IonicPageModule */].forChild(__WEBPACK_IMPORTED_MODULE_3__searchresults__["a" /* SearchResultsPage */])
+            __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["p" /* IonicPageModule */].forChild(__WEBPACK_IMPORTED_MODULE_3__speakerdetails__["a" /* SpeakerDetailsPage */])
         ],
-        exports: [
-            __WEBPACK_IMPORTED_MODULE_3__searchresults__["a" /* SearchResultsPage */]
-        ]
+        exports: [__WEBPACK_IMPORTED_MODULE_3__speakerdetails__["a" /* SpeakerDetailsPage */]]
     })
-], SearchResultsPageModule);
+], SpeakerDetailsPageModule);
 
-//# sourceMappingURL=searchresults.module.js.map
+//# sourceMappingURL=speakerdetails.module.js.map
 
 /***/ }),
 
-/***/ 983:
+/***/ 979:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return SearchResultsPage; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return SpeakerDetailsPage; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ionic_storage__ = __webpack_require__(25);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_rxjs_add_operator_map__ = __webpack_require__(22);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_rxjs_add_operator_map___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_rxjs_add_operator_map__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__providers_database_database__ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__providers_localstorage_localstorage__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__educationdetails_educationdetails__ = __webpack_require__(84);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__educationdetails_educationdetails__ = __webpack_require__(62);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -69,415 +66,152 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
-
 // Pages
 
-let SearchResultsPage = class SearchResultsPage {
-    constructor(navCtrl, navParams, storage, databaseprovider, cd, loadingCtrl, localstorage) {
+let SpeakerDetailsPage = class SpeakerDetailsPage {
+    constructor(navCtrl, navParams, storage, databaseprovider, cd, loadingCtrl) {
         this.navCtrl = navCtrl;
         this.navParams = navParams;
         this.storage = storage;
         this.databaseprovider = databaseprovider;
         this.cd = cd;
         this.loadingCtrl = loadingCtrl;
-        this.localstorage = localstorage;
-        this.sessionLW = [];
-        this.sessionPart = [];
-        this.sessionOE = [];
-        this.Speakers = [];
-        this.Exhibitors = [];
-        this.LWShow = false;
-        this.PartShow = false;
-        this.OtherShow = false;
-        this.SpeakerShow = false;
-        this.ExhibitorShow = false;
+        this.SessionListing = [];
     }
     ionViewDidLoad() {
-        console.log('ionViewDidLoad: SearchResultsPage');
+        console.log('ionViewDidLoad SpeakersPage');
     }
-    ionViewDidEnter() {
-        console.log('ionViewDidEnter: SearchResultsPage');
-        // Load / refresh data when coming to this page
-        this.LoadData();
+    EventDetails(EventID) {
+        if (EventID != 0) {
+            // Navigate to Education Details page
+            this.navCtrl.push(__WEBPACK_IMPORTED_MODULE_5__educationdetails_educationdetails__["a" /* EducationDetailsPage */], { EventID: EventID }, { animate: true, direction: 'forward' });
+        }
     }
-    LoadData() {
+    ;
+    ngOnInit() {
         // Load initial data set here
         //let loading = this.loadingCtrl.create({
         //	spinner: 'crescent',
-        //	content: 'Loading results...'
+        //	content: 'Please wait...'
         //});
         //loading.present();
         // Blank and show loading info
-        this.sessionLW = [];
-        this.sessionPart = [];
-        this.sessionOE = [];
-        this.Speakers = [];
-        this.Exhibitors = [];
-        this.LWShow = false;
-        this.PartShow = false;
-        this.OtherShow = false;
-        this.SpeakerShow = false;
-        this.ExhibitorShow = false;
+        this.SessionListing = [];
         this.cd.markForCheck();
-        // Set default labels for headers
-        this.visHeaderLW = "+ Lectures [0]";
-        this.visHeaderPart = "+ Participation [0]";
-        this.visHeaderOE = "+ Other Events [0]";
-        this.visHeaderSpkr = "+ Speakers [0]";
-        this.visHeaderExh = "+ Exhibitors [0]";
         // Temporary use variables
-        var flags;
-        var DisplayLocation = "";
-        var dbEventDateTime;
-        var SQLDate;
-        var DisplayDateTime;
-        var AgendaButtonText;
-        var visEventName;
-        var ButtonStyle = "";
-        var visEventNote = "";
-        var LWCount = 0;
-        var PartCount = 0;
-        var OECount = 0;
-        var SpkrCount = 0;
-        var ExhCount = 0;
-        var whereClause = '';
+        var flags = "dt|Alpha|" + this.navParams.get('SpeakerID');
         var DisplayName = "";
-        // Get search terms
-        var searchtermEntry = this.localstorage.getLocalValue("SearchTerms");
-        var searchTerms = searchtermEntry.split(' ');
-        // ---------
-        // Lectures
-        // ---------
-        flags = "sr|0|0|0|" + searchtermEntry + "|L";
-        console.log('Lecture query: ' + flags);
-        this.databaseprovider.getLectureData(flags, "0").then(data => {
-            console.log("getLectureData: " + JSON.stringify(data));
-            // Process returned records to display
-            this.sessionLW = [];
-            LWCount = data['length'];
-            this.localstorage.setLocalValue('LWCount', LWCount);
-            if (this.LWShow == false) {
-                this.visHeaderLW = "+ Lectures [" + LWCount + "]";
-            }
-            else {
-                this.visHeaderLW = "- Lectures [" + LWCount + "]";
-            }
+        var BioDisplay = "";
+        // Get the data
+        this.databaseprovider.getSpeakerData(flags, "0").then(data => {
+            console.log("getSpeakerDetails: " + JSON.stringify(data));
             if (data['length'] > 0) {
-                for (var i = 0; i < data['length']; i++) {
-                    dbEventDateTime = data[i].session_start_time.substring(0, 19);
-                    dbEventDateTime = dbEventDateTime.replace(/-/g, '/');
-                    dbEventDateTime = dbEventDateTime.replace(/T/g, ' ');
-                    SQLDate = new Date(dbEventDateTime);
-                    DisplayDateTime = dateFormat(SQLDate, "mm/dd h:MMtt");
-                    // Display end time
-                    dbEventDateTime = data[i].session_end_time.substring(0, 19);
-                    dbEventDateTime = dbEventDateTime.replace(/-/g, '/');
-                    dbEventDateTime = dbEventDateTime.replace(/T/g, ' ');
-                    SQLDate = new Date(dbEventDateTime);
-                    DisplayDateTime = DisplayDateTime + " to " + dateFormat(SQLDate, "h:MMtt");
-                    visEventName = data[i].session_title.replace("'", "\\'");
-                    this.sessionLW.push({
-                        EventID: data[i].session_id,
-                        DisplayEventName: visEventName,
-                        DisplayEventTimeDateLocation: DisplayDateTime + " in " + data[i].RoomName,
-                        SpeakerDisplayName: data[i].other_speakers,
-                        navigationRightArrow: "arrow-dropright"
-                    });
+                DisplayName = "";
+                // Concatenate fields to build displayable name
+                //if (data[0].Prefix != "") {
+                //    DisplayName = DisplayName + data[0].Prefix + " ";
+                //}
+                DisplayName = DisplayName + data[0].FirstName;
+                //if (data[0].MiddleInitial != "") {
+                //    DisplayName = DisplayName + " " + data[0].MiddleInitial;
+                //}
+                DisplayName = DisplayName + " " + data[0].LastName;
+                //if (data[0].Suffix != "") {
+                //    DisplayName = DisplayName + " " + data[0].Suffix;
+                //}
+                //if (data[0].imis_designation != "" && data[0].imis_designation != null) {
+                //    DisplayName = DisplayName + ", " + data[0].imis_designation;
+                //}
+                if (data[0].Credentials != "" && data[0].Credentials != null) {
+                    this.visualAffiliation = data[0].Credentials;
                 }
-            }
-            else {
-                this.sessionLW.push({
-                    EventID: "0",
-                    DisplayEventName: "No matching records found",
-                    DisplayEventTimeDateLocation: "",
-                    SpeakerDisplayName: "",
-                    navigationRightArrow: ""
-                });
-            }
-            this.cd.markForCheck();
-            // -------------
-            // Participation
-            // -------------
-            flags = "sr|0|0|0|" + searchtermEntry + "|P";
-            console.log('Particpation query: ' + flags);
-            this.databaseprovider.getLectureData(flags, "0").then(data => {
-                console.log("getLectureData: " + JSON.stringify(data));
-                // Process returned records to display
-                this.sessionPart = [];
-                PartCount = data['length'];
-                this.localstorage.setLocalValue('PartCount', PartCount);
-                if (this.PartShow == false) {
-                    this.visHeaderPart = "+ Participation [" + PartCount + "]";
+                // Thumbnail
+                var imageURL = "https://aacdmobile.convergence-us.com/AdminGateway/2019/images/Speakers/" + data[0].imageFilename;
+                //imageURL = imageURL.substr(0, imageURL.length - 3) + 'png';
+                this.visualImageURL = imageURL;
+                console.log("ImageURL: " + imageURL);
+                this.visualDisplayName = DisplayName;
+                //$scope.visualAffiliation = res.rows.item(0).Affiliation;
+                // Biography
+                if ((data[0].Bio == "") || (data[0].Bio == "&nbsp;") || (data[0].Bio == "TBD")) {
+                    this.spkrDetails = "No biography provided";
                 }
                 else {
-                    this.visHeaderPart = "- Participation [" + PartCount + "]";
+                    BioDisplay = data[0].Bio;
+                    BioDisplay = BioDisplay.replace(/&nbsp;/g, ' ');
+                    BioDisplay = BioDisplay.replace(/\r/g, '');
+                    BioDisplay = BioDisplay.replace(/\n/g, '');
+                    BioDisplay = BioDisplay.replace(/\t/g, '');
+                    BioDisplay = BioDisplay.replace(/<div>/g, '');
+                    BioDisplay = BioDisplay.replace(/<\/div>/g, '');
+                    this.spkrDetails = BioDisplay;
                 }
-                if (data['length'] > 0) {
-                    for (var i = 0; i < data['length']; i++) {
-                        dbEventDateTime = data[i].session_start_time.substring(0, 19);
-                        dbEventDateTime = dbEventDateTime.replace(/-/g, '/');
-                        dbEventDateTime = dbEventDateTime.replace(/T/g, ' ');
-                        SQLDate = new Date(dbEventDateTime);
-                        DisplayDateTime = dateFormat(SQLDate, "mm/dd h:MMtt");
-                        // Display end time
-                        dbEventDateTime = data[i].session_end_time.substring(0, 19);
-                        dbEventDateTime = dbEventDateTime.replace(/-/g, '/');
-                        dbEventDateTime = dbEventDateTime.replace(/T/g, ' ');
-                        SQLDate = new Date(dbEventDateTime);
-                        DisplayDateTime = DisplayDateTime + " to " + dateFormat(SQLDate, "h:MMtt");
-                        visEventName = data[i].session_title.replace("'", "\\'");
-                        this.sessionPart.push({
-                            EventID: data[i].session_id,
-                            DisplayEventName: visEventName,
-                            DisplayEventTimeDateLocation: DisplayDateTime + " in " + data[i].RoomName,
-                            SpeakerDisplayName: data[i].other_speakers,
-                            navigationRightArrow: "arrow-dropright"
-                        });
-                    }
+                // Get session records
+                var coursescat = data[0].Courses;
+                var courses = coursescat.split("|");
+                var text = "('";
+                for (var i = 0; i < courses.length; i++) {
+                    text += courses[i] + "','";
                 }
-                else {
-                    this.sessionPart.push({
-                        EventID: "0",
-                        DisplayEventName: "No matching records found",
-                        DisplayEventTimeDateLocation: "",
-                        SpeakerDisplayName: "",
-                        navigationRightArrow: ""
-                    });
-                }
-                this.cd.markForCheck();
-                // -------------
-                // Other Events
-                // -------------
-                flags = "sr|0|0|0|" + searchtermEntry + "|OE";
-                console.log('Other Events query: ' + flags);
-                this.databaseprovider.getLectureData(flags, "0").then(data => {
-                    //console.log("getLectureData: " + JSON.stringify(data));
-                    // Process returned records to display
-                    this.sessionOE = [];
-                    OECount = data['length'];
-                    this.localstorage.setLocalValue('OECount', OECount);
-                    if (this.OtherShow == false) {
-                        this.visHeaderOE = "+ Other Events [" + OECount + "]";
-                    }
-                    else {
-                        this.visHeaderOE = "- Other Events [" + OECount + "]";
-                    }
-                    if (data['length'] > 0) {
-                        for (var i = 0; i < data['length']; i++) {
-                            dbEventDateTime = data[i].session_start_time.substring(0, 19);
+                var QueryParam = text.substring(0, text.length - 2);
+                QueryParam = QueryParam + ")";
+                console.log("Course listing parameters: " + QueryParam);
+                flags = "cl|Alpha|" + this.navParams.get('SpeakerID') + "|" + QueryParam;
+                var SQLDate;
+                var DisplayDateTime;
+                var dbEventDateTime;
+                // Get the list of courses relevant to this speaker
+                this.databaseprovider.getSpeakerData(flags, "0").then(data2 => {
+                    console.log("getSpeakerData: " + JSON.stringify(data));
+                    if (data2['length'] > 0) {
+                        for (var i = 0; i < data2['length']; i++) {
+                            console.log(data2[i].session_id);
+                            dbEventDateTime = data2[i].session_start_time.substring(0, 19);
                             dbEventDateTime = dbEventDateTime.replace(/-/g, '/');
                             dbEventDateTime = dbEventDateTime.replace(/T/g, ' ');
                             SQLDate = new Date(dbEventDateTime);
                             DisplayDateTime = dateFormat(SQLDate, "mm/dd h:MMtt");
                             // Display end time
-                            dbEventDateTime = data[i].session_end_time.substring(0, 19);
+                            dbEventDateTime = data2[i].session_end_time.substring(0, 19);
                             dbEventDateTime = dbEventDateTime.replace(/-/g, '/');
                             dbEventDateTime = dbEventDateTime.replace(/T/g, ' ');
                             SQLDate = new Date(dbEventDateTime);
                             DisplayDateTime = DisplayDateTime + " to " + dateFormat(SQLDate, "h:MMtt");
-                            visEventName = data[i].session_title.replace("'", "\\'");
-                            this.sessionOE.push({
-                                EventID: data[i].session_id,
-                                DisplayEventName: visEventName,
-                                DisplayEventTimeDateLocation: DisplayDateTime + " in " + data[i].RoomName,
-                                SpeakerDisplayName: data[i].other_speakers,
-                                navigationRightArrow: "arrow-dropright"
+                            this.SessionListing.push({
+                                DisplayEventName: data2[i].session_title,
+                                DisplayEventTimeDateLocation: DisplayDateTime + " in " + data2[i].RoomName,
+                                EventID: data2[i].session_id
                             });
                         }
                     }
                     else {
-                        this.sessionOE.push({
-                            EventID: "0",
-                            DisplayEventName: "No matching records found",
+                        // No records to show
+                        this.SessionListing.push({
+                            DisplayEventName: "No records available",
                             DisplayEventTimeDateLocation: "",
-                            SpeakerDisplayName: "",
-                            navigationRightArrow: ""
+                            EventID: "0"
                         });
                     }
                     this.cd.markForCheck();
-                    // ---------
-                    // Speakers
-                    // ---------
-                    flags = 'sr|0|0|' + searchtermEntry + '|0';
-                    console.log('Speaker query: ' + flags);
-                    this.databaseprovider.getSpeakerData(flags, "0").then(data => {
-                        console.log("getSpeakerData: " + JSON.stringify(data));
-                        // Process returned records to display
-                        this.Speakers = [];
-                        SpkrCount = data['length'];
-                        this.localstorage.setLocalValue('SpkrCount', SpkrCount);
-                        if (this.SpeakerShow == false) {
-                            this.visHeaderSpkr = "+ Speakers [" + SpkrCount + "]";
-                        }
-                        else {
-                            this.visHeaderSpkr = "- Speakers [" + SpkrCount + "]";
-                        }
-                        if (data['length'] > 0) {
-                            for (var i = 0; i < data['length']; i++) {
-                                DisplayName = "";
-                                // Concatenate fields to build displayable name
-                                DisplayName = DisplayName + data[i].LastName + ", " + data[i].FirstName;
-                                //if (res.rows.item(i).MiddleInitial != "") {
-                                //    DisplayName = DisplayName + " " + res.rows.item(i).MiddleInitial;
-                                //}
-                                // Add credentials
-                                //if (data[i].Credentials != "") {
-                                //	DisplayName = DisplayName + " " + data[i].Credentials;
-                                //}
-                                this.Speakers.push({
-                                    SpeakerID: data[i].speakerID,
-                                    DisplayNameLastFirst: DisplayName,
-                                    Affiliation: data[i].Credentials
-                                });
-                            }
-                        }
-                        else {
-                            this.Speakers.push({
-                                SpeakerID: "0",
-                                DisplayNameLastFirst: "No matching speakers found",
-                                Affiliation: ""
-                            });
-                        }
-                        this.cd.markForCheck();
-                        // ----------
-                        // Exhibitors
-                        // ----------
-                        flags = 'sr|0|0|' + searchtermEntry;
-                        console.log('Exhibitor query: ' + flags);
-                        this.databaseprovider.getExhibitorData(flags).then(data => {
-                            //console.log("getExhibitorData: " + JSON.stringify(data));
-                            // Process returned records to display
-                            this.Exhibitors = [];
-                            ExhCount = data['length'];
-                            this.localstorage.setLocalValue('ExhCount', ExhCount);
-                            if (this.ExhibitorShow == false) {
-                                this.visHeaderExh = "+ Exhibitors [" + ExhCount + "]";
-                            }
-                            else {
-                                this.visHeaderExh = "- Exhibitors [" + ExhCount + "]";
-                            }
-                            if (data['length'] > 0) {
-                                for (var i = 0; i < data['length']; i++) {
-                                    this.Exhibitors.push({
-                                        ExhibitorID: data[i].ExhibitorID,
-                                        DisplayCompanyName: data[i].CompanyName,
-                                        BoothNumber: "Booth: " + data[i].BoothNumber,
-                                        navigationRightArrow: "arrow-dropright"
-                                    });
-                                }
-                            }
-                            else {
-                                this.Exhibitors.push({
-                                    ExhibitorID: "0",
-                                    DisplayCompanyName: "No matching exhibitors found",
-                                    BoothNumber: "",
-                                    navigationRightArrow: ""
-                                });
-                            }
-                            this.cd.markForCheck();
-                            //loading.dismiss();
-                        }).catch(function () {
-                            console.log("Promise Rejected");
-                        });
-                    }).catch(function () {
-                        console.log("Promise Rejected");
-                    });
                 }).catch(function () {
                     console.log("Promise Rejected");
                 });
-            }).catch(function () {
-                console.log("Promise Rejected");
-            });
+            }
+            else {
+                // No data to show
+                this.visualDisplayName = "Unable to retrieve record";
+                this.visualAffiliation = "";
+            }
+            this.cd.markForCheck();
+            //loading.dismiss();
         }).catch(function () {
             console.log("Promise Rejected");
         });
     }
-    ShowHideResults(SectionName) {
-        switch (SectionName) {
-            case "Lectures":
-                this.LWShow = !this.LWShow;
-                break;
-            case "Participation":
-                this.PartShow = !this.PartShow;
-                break;
-            case "OtherEvents":
-                this.OtherShow = !this.OtherShow;
-                break;
-            case "Speakers":
-                this.SpeakerShow = !this.SpeakerShow;
-                break;
-            case "Exhibitors":
-                this.ExhibitorShow = !this.ExhibitorShow;
-                break;
-        }
-        // Refresh headers
-        this.RefreshHeaderCounts();
-    }
-    ;
-    SpeakerDetails(SpeakerID) {
-        if (SpeakerID != 0) {
-            // Navigate to Speaker Details page
-            this.navCtrl.push('SpeakerDetailsPage', { SpeakerID: SpeakerID }, { animate: true, direction: 'forward' });
-        }
-    }
-    ;
-    EventDetails(EventID) {
-        if (EventID != 0) {
-            // Navigate to Education Details page
-            this.navCtrl.push(__WEBPACK_IMPORTED_MODULE_6__educationdetails_educationdetails__["a" /* EducationDetailsPage */], { EventID: EventID }, { animate: true, direction: 'forward' });
-        }
-    }
-    ;
-    ExhibitorDetails(ExhibitorID) {
-        if (ExhibitorID != 0) {
-            // Navigate to Exhibitor Details page
-            this.navCtrl.push('ExhibitorDetailsPage', { ExhibitorID: ExhibitorID }, { animate: true, direction: 'forward' });
-        }
-    }
-    ;
-    RefreshHeaderCounts() {
-        // Refresh counters on header bars
-        var LWCount = this.localstorage.getLocalValue('LWCount');
-        var PartCount = this.localstorage.getLocalValue('PartCount');
-        var OECount = this.localstorage.getLocalValue('OECount');
-        var SpkrCount = this.localstorage.getLocalValue('SpkrCount');
-        var ExhCount = this.localstorage.getLocalValue('ExhCount');
-        if (this.LWShow === false) {
-            this.visHeaderLW = "+ Lectures [" + LWCount + "]";
-        }
-        else {
-            this.visHeaderLW = "- Lectures [" + LWCount + "]";
-        }
-        if (this.PartShow === false) {
-            this.visHeaderPart = "+ Participation [" + PartCount + "]";
-        }
-        else {
-            this.visHeaderPart = "- Participation [" + PartCount + "]";
-        }
-        if (this.OtherShow === false) {
-            this.visHeaderOE = "+ Other Events [" + OECount + "]";
-        }
-        else {
-            this.visHeaderOE = "- Other Events [" + OECount + "]";
-        }
-        if (this.SpeakerShow === false) {
-            this.visHeaderSpkr = "+ Speakers [" + SpkrCount + "]";
-        }
-        else {
-            this.visHeaderSpkr = "- Speakers [" + SpkrCount + "]";
-        }
-        if (this.ExhibitorShow === false) {
-            this.visHeaderExh = "+ Exhibitors [" + ExhCount + "]";
-        }
-        else {
-            this.visHeaderExh = "- Exhibitors [" + ExhCount + "]";
-        }
-    }
-    ;
 };
-SearchResultsPage = __decorate([
+SpeakerDetailsPage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
-        selector: 'page-searchresults',template:/*ion-inline-start:"/Users/petervroom/aacd19/src/pages/searchresults/searchresults.html"*/'<ion-header>\n	<ion-navbar color="primary">\n		<button ion-button menuToggle>\n			<ion-icon name="menu"></ion-icon>\n		</button>\n		<ion-title>Search Results</ion-title>\n	</ion-navbar>\n</ion-header>\n\n<ion-content padding>\n\n		<p class="myLabelPadding">\n			Search results are grouped below with number of results in each header.  Expand a group to see details.\n		</p>\n\n\n		<div class="card">\n			<div class="rowSearch item-divider item LegendHeader myMarginZero2" (click)="ShowHideResults(\'Lectures\')">\n				{{visHeaderLW}}\n			</div>\n			<div *ngIf="LWShow">\n				<ion-item (click)="EventDetails(sessionLW.EventID)" *ngFor="let sessionLW of sessionLW" id="lecture-list-item19">\n					<ion-icon item-right name="arrow-dropright"></ion-icon>\n					<h2>{{sessionLW.DisplayEventName}}</h2>\n					<p>{{sessionLW.DisplayEventTimeDateLocation}}</p>\n					<p>{{sessionLW.SpeakerDisplayName}}</p>\n				</ion-item>\n			</div>\n		</div>\n\n		<div class="card">\n			<div class="rowSearch item-divider item LegendHeader myMarginZero2" (click)="ShowHideResults(\'Participation\')">\n				{{visHeaderPart}}\n			</div>\n			<div *ngIf="PartShow">\n				<ion-item (click)="EventDetails(sessionPart.EventID)" *ngFor="let sessionPart of sessionPart" id="participation-list-item19">\n					<ion-icon item-right name="arrow-dropright"></ion-icon>\n					<h2>{{sessionPart.DisplayEventName}}</h2>\n					<p>{{sessionPart.DisplayEventTimeDateLocation}}</p>\n					<p>{{sessionPart.SpeakerDisplayName}}</p>\n				</ion-item>\n			</div>\n		</div>\n\n		<div class="card">\n			<div class="rowSearch item-divider item LegendHeader myMarginZero2" (click)="ShowHideResults(\'OtherEvents\')">\n				{{visHeaderOE}}\n			</div>\n			<div *ngIf="OtherShow">\n				<ion-item (click)="EventDetails(sessionOE.EventID)" *ngFor="let sessionOE of sessionOE" id="other-list-item19">\n					<ion-icon item-right name="arrow-dropright"></ion-icon>\n					<h2>{{sessionOE.DisplayEventName}}</h2>\n					<p>{{sessionOE.DisplayEventTimeDateLocation}}</p>\n					<p>{{sessionOE.SpeakerDisplayName}}</p>\n				</ion-item>\n			</div>\n		</div>\n\n		<div class="card">\n			<div class="rowSearch item-divider item LegendHeader myMarginZero2" (click)="ShowHideResults(\'Speakers\')">\n				{{visHeaderSpkr}}\n			</div>\n			<div *ngIf="SpeakerShow">\n				<ion-item (click)="SpeakerDetails(Speaker.SpeakerID)" *ngFor="let Speaker of Speakers" id="speaker-list-item19">\n					<ion-icon item-right name="arrow-dropright"></ion-icon>\n					<h2>{{Speaker.DisplayNameLastFirst}}</h2>\n					<p>{{Speaker.Affiliation}}</p>\n				</ion-item>\n			</div>\n		</div>\n\n		<div class="card">\n			<div class="rowSearch item-divider item myMarginZero2" (click)="ShowHideResults(\'Exhibitors\')">\n				{{visHeaderExh}}\n			</div>\n			<div *ngIf="ExhibitorShow">\n				<ion-item (click)="ExhibitorDetails(Exhibitor.ExhibitorID)" *ngFor="let Exhibitor of Exhibitors" id="Exhibitor-list-item19">\n					<ion-icon item-right name="arrow-dropright"></ion-icon>\n					<h2>{{Exhibitor.DisplayCompanyName}}</h2>\n					<p>{{Exhibitor.BoothNumber}}</p>\n				</ion-item>\n			</div>\n		</div>\n		\n\n'/*ion-inline-end:"/Users/petervroom/aacd19/src/pages/searchresults/searchresults.html"*/,
+        selector: 'page-speakerdetails',template:/*ion-inline-start:"/Users/petervroom/aacd19/src/pages/speakerdetails/speakerdetails.html"*/'<ion-header>\n\n  <ion-navbar color="primary">\n    <button ion-button menuToggle>\n      <ion-icon color="secondary" name="menu"></ion-icon>\n    </button>\n    <ion-title>Speaker Details</ion-title>\n  </ion-navbar>\n\n</ion-header>\n\n\n<ion-content>\n\n\n	<ion-grid style="margin:0;padding:0; background:#283593">\n		<ion-row style="margin-top:15px">\n				<ion-col>\n						<img class="avatar" [src]="visualImageURL" onerror="this.src=\'assets/img/personIcon.png\'"\n								src="assets/img/personIcon.png" alt="Image error">\n								</ion-col>\n\n						</ion-row>\n						<ion-row>\n\n								<ion-col style="margin-top:15px; text-align: center!important; color:#fff">\n										<h2>{{visualDisplayName}}</h2>\n										<h4>{{visualAffiliation}}</h4>\n		\n								</ion-col>\n				</ion-row>\n\n</ion-grid>\n\n\n<ion-card>\n	<ion-card-header class="cardHeader" >\n		Biography\n	</ion-card-header>\n	<ion-card-content [innerHTML]="spkrDetails" style="margin-top:5px">\n		{{visualBiography}}\n	</ion-card-content>\n</ion-card>\n\n	<ion-card>\n		<ion-card-header class="cardHeader">\n				Sessions\n		</ion-card-header>\n		<ion-card-content>\n			<ion-list id="speakersessions-list3" style="margin-top:5px">\n				<ion-item class="item-icon-left item-icon-right" (click)="EventDetails(session.EventID)" *ngFor="let session of SessionListing" id="speakersessions-list-item19">\n					<ion-icon color="secondary" item-right name="arrow-dropright"></ion-icon>\n					<ion-icon color="secondary" item-left name="list"></ion-icon>\n					<h2 text-wrap> {{session.DisplayEventName}}</h2>\n					<p>{{session.DisplayEventTimeDateLocation}}</p>\n				</ion-item>\n			</ion-list>\n		</ion-card-content>\n	</ion-card>\n\n</ion-content>\n\n\n'/*ion-inline-end:"/Users/petervroom/aacd19/src/pages/speakerdetails/speakerdetails.html"*/,
         changeDetection: __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectionStrategy"].OnPush
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["u" /* NavController */],
@@ -485,11 +219,10 @@ SearchResultsPage = __decorate([
         __WEBPACK_IMPORTED_MODULE_2__ionic_storage__["b" /* Storage */],
         __WEBPACK_IMPORTED_MODULE_4__providers_database_database__["a" /* Database */],
         __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"],
-        __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["q" /* LoadingController */],
-        __WEBPACK_IMPORTED_MODULE_5__providers_localstorage_localstorage__["a" /* Localstorage */]])
-], SearchResultsPage);
+        __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["q" /* LoadingController */]])
+], SpeakerDetailsPage);
 
-//# sourceMappingURL=searchresults.js.map
+//# sourceMappingURL=speakerdetails.js.map
 
 /***/ })
 

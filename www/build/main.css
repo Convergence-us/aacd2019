@@ -26172,7 +26172,7 @@ body.internalPage {
 }
 
 .blue {
-  background: #4A148C !important;
+  background: #2196f3 !important;
   color: #fff;
   margin-right: 10px;
   border-radius: 0;
@@ -26595,7 +26595,9 @@ and for active state:
   height: 25px;
   color: #ffffff !important;
   font-weight: bold !important;
-  padding-left: 10px !important;
+  padding-left: 20px !important;
+  margin-left: 15px !important;
+  margin-right: 15px !important;
   padding-top: 3px;
   -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19) !important;
   box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19) !important;
@@ -27116,6 +27118,26 @@ ion-slides {
   z-index: -1 !important;
 }
 
+progress-bar .progress-outer {
+  width: 96%;
+  margin: 10px 2%;
+  padding: 3px;
+  text-align: center;
+  background-color: #f4f4f4;
+  border: 1px solid #dcdcdc;
+  color: #fff;
+  border-radius: 20px;
+}
+
+progress-bar .progress-inner {
+  min-width: 15%;
+  white-space: nowrap;
+  overflow: hidden;
+  padding: 5px;
+  border-radius: 20px;
+  background-color: #283593;
+}
+
 page-activity {
   /* BUTTONS */
   /* Tweak to allow fab button to have text */
@@ -27212,7 +27234,7 @@ page-activityfeeddetails button[ion-fab] ion-label {
   top: -8px;
   right: 40px;
   color: #fff;
-  background-color: #4a148c;
+  background-color: #2196f3;
   line-height: 24px;
   padding: 4px 8px;
   border-radius: 4px;
@@ -27225,7 +27247,7 @@ page-activityfeeddetails button[ion-fab] button {
   top: -12px;
   right: 40px;
   color: #fff;
-  background-color: #4a148c;
+  background-color: #2196f3;
   line-height: 32px;
   padding: 4px 8px;
   border-radius: 4px;
@@ -27238,7 +27260,7 @@ page-activityfeeddetails button[ion-fab] .fabdivbutton {
   top: 0px;
   right: 45px;
   color: #fff;
-  background-color: #4a148c;
+  background-color: #2196f3;
   line-height: 32px;
   padding: 4px 8px;
   border-radius: 4px;
@@ -27326,11 +27348,11 @@ page-attendeesprofile ion-avatar img {
   max-height: 300px !important;
 }
 
-page-attendeesprofile .avatar {
-  vertical-align: middle;
-  width: 37vw !important;
-  height: 37vw !important;
-  font-size: 3.5em;
+page-attendeesprofile .center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  width: 50%;
 }
 
 page-attendeesprofile ion-icon {
@@ -27359,7 +27381,7 @@ page-conversation {
 }
 
 page-conversation ion-content .scroll-content {
-  background-color: #f5f5f5;
+  background-color: #f7f7f7;
 }
 
 page-conversation ion-footer {
@@ -27531,6 +27553,36 @@ page-educationdetails .SessionStatusRed {
   color: red;
 }
 
+page-educationdetails .cardHeader {
+  background: #283593;
+  color: #fff;
+}
+
+page-educationdetails .myHeader {
+  background-color: #0b172a !important;
+  height: 25px;
+  color: #ffffff !important;
+  font-weight: bold !important;
+  padding-left: 10px !important;
+  padding-top: 3px;
+  -webkit-box-shadow: 0 4px 8px 0 rgba(219, 25, 25, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19) !important;
+  box-shadow: 0 4px 8px 0 rgba(219, 25, 25, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19) !important;
+}
+
+page-educationdetails ul {
+  padding: 0px;
+}
+
+page-educationdetails ul.rating li {
+  padding: 5px 10px !important;
+  background: none;
+  color: #ffb400;
+}
+
+page-educationdetails ul.rating li ion-icon {
+  font-size: 30px;
+}
+
 .lmargin10 {
   margin-left: -10px;
 }
@@ -27552,6 +27604,11 @@ page-exhibitordetails .steel {
   color: #fff;
 }
 
+page-exhibitordetails .cardHeader {
+  background: #0b172a;
+  color: #fff;
+}
+
 page-exhibitors .buttonPadding {
   background: #2196f3;
   height: 43px;
@@ -27560,6 +27617,91 @@ page-exhibitors .buttonPadding {
   /* Firefox 3.5 - 3.6 */
   box-shadow: 2px 2px 2px 2px #ccc;
   /* Opera 10.5, IE 9, Firefox 4+, Chrome 6+, iOS 5 */
+}
+
+page-home {
+  /* BUTTONS */
+  /* Tweak to allow fab button to have text */
+  /* Tweak to allow fab button to have text */
+}
+
+page-home .fab {
+  contain: layout;
+}
+
+page-home button[ion-fab] {
+  overflow: visible;
+  position: relative;
+}
+
+page-home button[ion-fab] ion-label {
+  position: absolute;
+  top: -12px;
+  right: 40px;
+  color: #fff;
+  background-color: #004c94;
+  line-height: 32px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  -webkit-box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
+  box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
+}
+
+page-home button[ion-fab] button {
+  position: absolute;
+  top: -12px;
+  right: 40px;
+  color: #fff;
+  background-color: #004c94;
+  line-height: 32px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  -webkit-box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
+  box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
+}
+
+page-home button[ion-fab] .fabdivbutton {
+  position: absolute;
+  top: 0px;
+  right: 45px;
+  color: #fff;
+  background-color: #004c94;
+  line-height: 32px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  -webkit-box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
+  box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
+}
+
+page-home .avatar {
+  vertical-align: middle;
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50%;
+  font-size: 20px;
+  -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+page-home .style1 {
+  font-family: verdana;
+  font-size: 20px;
+}
+
+page-home .style2 {
+  color: red;
+  text-align: center;
+}
+
+page-home .opacity {
+  background: transparent !important;
+  color: #444;
+}
+
+page-home .myFontSize26 {
+  font-size: 22px !important;
+  font-weight: 400;
+  color: #444;
 }
 
 page-home .style1 {
@@ -28225,6 +28367,38 @@ ui-gmap-google-map .angular-google-map .angular-google-map-container {
   height: 100%;
 }
 
+ui-gmap-google-map .scroll-content {
+  background: #1e1e1e;
+}
+
+ui-gmap-google-map ion-navbar .toolbar-background {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+ui-gmap-google-map ion-content .scroll-content {
+  margin-top: 0px !important;
+}
+
+ui-gmap-google-map .pinch-zoom-container {
+  position: relative;
+  overflow: hidden;
+  height: 100%;
+  width: 100%;
+}
+
+ui-gmap-google-map .pinch-zoom-image {
+  position: absolute;
+  top: 50%;
+  /* position the top  edge of the element at the middle of the parent */
+  left: 50%;
+  /* position the left edge of the element at the middle of the parent */
+  -webkit-transform: translate(-50%, -50%);
+  transform: translate(-50%, -50%);
+  /* This is a shorthand of
+                                               translateX(-50%) and translateY(-50%) */
+  width: 100%;
+}
+
 page-myagenda {
   /* Tweak to allow fab button to have text */
   /* Tweak to allow fab button to have text */
@@ -28250,7 +28424,7 @@ page-myagenda button[ion-fab] ion-label {
   top: -12px;
   right: 40px;
   color: #fff;
-  background-color: #4a148c;
+  background-color: #2196f3;
   line-height: 32px;
   padding: 4px 8px;
   border-radius: 4px;
@@ -28263,7 +28437,7 @@ page-myagenda button[ion-fab] button {
   top: -12px;
   right: 40px;
   color: #fff;
-  background-color: #4a148c;
+  background-color: #2196f3;
   line-height: 32px;
   padding: 4px 8px;
   border-radius: 4px;
@@ -28276,7 +28450,7 @@ page-myagenda button[ion-fab] .fabdivbutton {
   top: 0px;
   right: 45px;
   color: #fff;
-  background: #2196f3;
+  background-color: #2196f3;
   line-height: 32px;
   padding: 4px 8px;
   border-radius: 4px;
@@ -28332,19 +28506,32 @@ page-myagenda button[ion-fab] ion-label {
 }
 
 page-myagenda .myButtonActive {
-  background-color: #2196f3 !important;
+  background-color: #283593 !important;
   color: #fff !important;
+  font-size: 13px;
   border-radius: 0 !important;
   -webkit-box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
   box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
 }
 
+page-myagenda .myButtonActive:Hover {
+  -webkit-transition-duration: 0.4s !important;
+  /* Safari */
+  transition-duration: 0.4s !important;
+  -webkit-box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
+  box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
+  background-color: #004c94 !important;
+  font-weight: bold !important;
+  color: #fff !important;
+}
+
 page-myagenda .myButtonGreyBlue {
-  background-color: #fff !important;
-  color: #444 !important;
+  background-color: #2196f3 !important;
+  color: #fff !important;
   border-radius: 0 !important;
   border-right-style: solid;
   border-width: 1px !important;
+  font-size: 13px;
   border-color: transparent !important;
 }
 
@@ -28353,18 +28540,20 @@ page-myagenda .myButtonGreyBlue:Hover {
   font-weight: bold !important;
   color: #fff !important;
   border-radius: 0 !important;
+  font-size: 13px;
 }
 
 page-myagenda .buttonActive {
   Background: #2196f3 !important;
+  font-size: 13px;
 }
 
 page-myagenda .myButtonGreyBluex:Hover {
   -webkit-transition-duration: 0.4s !important;
   /* Safari */
   transition-duration: 0.4s !important;
-  -webkit-box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
-  box-shadow: 0 12px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
+  -webkit-box-shadow: 0 13px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
+  box-shadow: 0 13px 16px 0 rgba(0, 0, 0, 0.24), 0 17px 50px 0 rgba(0, 0, 0, 0.19);
   background-color: #2196f3 !important;
   font-weight: bold !important;
   color: #fff !important;
@@ -28559,7 +28748,7 @@ page-myagenda .myIconWhite1 {
 }
 
 page-myagenda .myRow {
-  font-size: 12px !important;
+  font-size: 13px !important;
   font-weight: 600;
   display: block;
   display: -webkit-box;
@@ -28576,7 +28765,7 @@ page-myagenda .myRow2 {
 
 page-myagenda .myCard25 {
   position: static;
-  background-color: #5757A0 !important;
+  background-color: rgba(15, 25, 107, 0.706) !important;
   color: #fff !important;
   margin-top: 0px !important;
   margin-left: -20px;
@@ -28595,18 +28784,18 @@ page-myagenda .myCard30 {
   width: 100%;
   display: block;
   position: static;
-  background-color: rgba(18, 30, 70, 0.699) !important;
+  background-color: rgba(15, 25, 107, 0.706) !important;
   color: #fff !important;
-  margin-top: -2px !important;
+  margin-top: 0 !important;
   margin-right: -20px;
-  margin-bottom: 0 !important;
+  margin-bottom: 0px !important;
   margin-left: -20;
-  height: 32px !important;
+  height: 30px !important;
   z-index: 7 !important;
   border-color: #fff;
   border-style: solid;
-  border-width: 1px;
-  padding-top: 0 !important;
+  border-width: 2px;
+  padding-top: 3px !important;
   padding-bottom: 0 !important;
   border-radius: 10px;
   -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -28620,7 +28809,7 @@ page-myagenda .myCard30 {
 page-myagenda .myCard30P {
   width: 100%;
   position: static;
-  background-color: rgba(18, 30, 70, 0.699) !important;
+  background-color: rgba(15, 25, 107, 0.706) !important;
   color: #fff !important;
   margin-top: 3px !important;
   margin-right: -20px;
@@ -28631,7 +28820,7 @@ page-myagenda .myCard30P {
   z-index: 7 !important;
   border-color: #fff;
   border-style: solid;
-  border-width: 1px;
+  border-width: 2px;
   padding-top: 3px !important;
   padding-bottom: 0 !important;
   border-radius: 10px;
@@ -28648,7 +28837,7 @@ page-myagenda .myCard60 {
   overflow: hidden;
   text-overflow: ellipsis;
   position: static;
-  background-color: rgba(18, 30, 70, 0.699) !important;
+  background-color: rgba(15, 25, 107, 0.706) !important;
   color: #fff !important;
   margin-top: 0;
   margin-right: -20px;
@@ -28659,7 +28848,7 @@ page-myagenda .myCard60 {
   z-index: 6 !important;
   border-color: #fff;
   border-style: solid;
-  border-width: 1px;
+  border-width: 2px;
   padding-top: 0px !important;
   border-radius: 10px;
   -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -28669,7 +28858,7 @@ page-myagenda .myCard60 {
 page-myagenda .myCard60P {
   width: 100%;
   position: static;
-  background-color: rgba(18, 30, 70, 0.699) !important;
+  background-color: rgba(15, 26, 107, 0.706) !important;
   color: #fff !important;
   margin-top: 0px;
   margin-right: -20px;
@@ -28680,7 +28869,7 @@ page-myagenda .myCard60P {
   z-index: 6 !important;
   border-color: #fff;
   border-style: solid;
-  border-width: 1px;
+  border-width: 2px;
   padding-top: 3px !important;
   border-radius: 10px;
   -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -28690,7 +28879,7 @@ page-myagenda .myCard60P {
 page-myagenda .myCard90 {
   width: 100%;
   position: static;
-  background-color: rgba(18, 30, 70, 0.699) !important;
+  background-color: rgba(15, 25, 107, 0.706) !important;
   color: #fff !important;
   margin-top: 0px !important;
   margin-right: -20px;
@@ -28701,7 +28890,7 @@ page-myagenda .myCard90 {
   z-index: 5 !important;
   border-color: #fff;
   border-style: solid;
-  border-width: 1px;
+  border-width: 2px;
   padding-top: 3px !important;
   border-radius: 10px;
   -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -28711,7 +28900,7 @@ page-myagenda .myCard90 {
 page-myagenda .myCard90P {
   width: 100%;
   position: static;
-  background-color: rgba(18, 30, 70, 0.699) !important;
+  background-color: rgba(15, 25, 107, 0.706) !important;
   color: #fff !important;
   margin-top: 0px !important;
   margin-right: -20px;
@@ -28722,7 +28911,7 @@ page-myagenda .myCard90P {
   z-index: 5 !important;
   border-color: #fff;
   border-style: solid;
-  border-width: 1px;
+  border-width: 2px;
   padding-top: 3px !important;
   border-radius: 10px;
   -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -28731,7 +28920,7 @@ page-myagenda .myCard90P {
 
 page-myagenda .myCard120 {
   position: static;
-  background-color: rgba(18, 30, 70, 0.699) !important;
+  background-color: rgba(15, 25, 107, 0.706) !important;
   color: #fff !important;
   margin-left: -20px;
   padding-left: 10px;
@@ -28742,7 +28931,7 @@ page-myagenda .myCard120 {
   z-index: 4 !important;
   border-color: #fff;
   border-style: solid;
-  border-width: 1px;
+  border-width: 2px;
   padding-top: 3px;
   border-radius: 10px;
   -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -28751,7 +28940,7 @@ page-myagenda .myCard120 {
 
 page-myagenda .myCard120P {
   position: static;
-  background-color: rgba(18, 30, 70, 0.699) !important;
+  background-color: rgba(15, 25, 107, 0.706) !important;
   color: #fff !important;
   margin-left: -20px;
   padding-left: 10px;
@@ -28762,7 +28951,7 @@ page-myagenda .myCard120P {
   z-index: 4 !important;
   border-color: #fff;
   border-style: solid;
-  border-width: 1px;
+  border-width: 2px;
   padding-top: 3px;
   border-radius: 10px;
   -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -28771,7 +28960,7 @@ page-myagenda .myCard120P {
 
 page-myagenda .myCard150 {
   position: static;
-  background-color: rgba(18, 30, 70, 0.699) !important;
+  background-color: rgba(15, 25, 107, 0.706) !important;
   color: #fff !important;
   margin-top: 0 !important;
   margin-right: -20px;
@@ -28781,7 +28970,7 @@ page-myagenda .myCard150 {
   height: 154px;
   z-index: 3 !important;
   border-color: #fff;
-  border-width: 1px;
+  border-width: 2px;
   border-style: solid;
   padding-top: 3px;
   border-radius: 10px;
@@ -28791,7 +28980,7 @@ page-myagenda .myCard150 {
 
 page-myagenda .myCard150P {
   position: static;
-  background-color: rgba(18, 30, 70, 0.699) !important;
+  background-color: rgba(15, 25, 107, 0.706) !important;
   color: #fff !important;
   margin-top: 0px !important;
   margin-right: -20px;
@@ -28802,7 +28991,7 @@ page-myagenda .myCard150P {
   z-index: 3 !important;
   border-color: #fff;
   border-style: solid;
-  border-width: 1px;
+  border-width: 2px;
   padding-top: 3px;
   border-radius: 10px;
   -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -28810,7 +28999,7 @@ page-myagenda .myCard150P {
 }
 
 page-myagenda .myCard180 {
-  background-color: rgba(18, 30, 70, 0.699) !important;
+  background-color: rgba(15, 25, 107, 0.706) !important;
   color: #fff !important;
   margin-top: 0;
   margin-bottom: 0px;
@@ -28821,7 +29010,7 @@ page-myagenda .myCard180 {
   z-index: 2 !important;
   border-color: #fff;
   border-style: solid;
-  border-width: 1px;
+  border-width: 2px;
   padding-top: 3px;
   border-radius: 10px;
   -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -28829,7 +29018,7 @@ page-myagenda .myCard180 {
 }
 
 page-myagenda .myCard180P {
-  background-color: rgba(18, 30, 70, 0.699) !important;
+  background-color: rgba(15, 25, 107, 0.706) !important;
   color: #fff !important;
   margin-top: 0;
   margin-right: -20px;
@@ -28840,7 +29029,45 @@ page-myagenda .myCard180P {
   z-index: 2 !important;
   border-color: #fff;
   border-style: solid;
-  border-width: 1px;
+  border-width: 2px;
+  padding-top: 3px;
+  border-radius: 10px;
+  -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+page-myagenda .myCard210 {
+  background-color: rgba(15, 25, 107, 0.706) !important;
+  color: #fff !important;
+  margin-top: 0;
+  margin-bottom: 0px;
+  margin-left: -20px;
+  margin-right: -20px;
+  padding-left: 10px;
+  height: 215px;
+  z-index: 2 !important;
+  border-color: #fff;
+  border-style: solid;
+  border-width: 2px;
+  padding-top: 3px;
+  border-radius: 10px;
+  -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+page-myagenda .myCard210P {
+  background-color: rgba(15, 25, 107, 0.706) !important;
+  color: #fff !important;
+  margin-top: 0;
+  margin-right: -20px;
+  margin-bottom: 0;
+  margin-left: -20px;
+  padding-left: 2px;
+  height: 215px;
+  z-index: 2 !important;
+  border-color: #fff;
+  border-style: solid;
+  border-width: 2px;
   padding-top: 3px;
   border-radius: 10px;
   -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -28849,7 +29076,7 @@ page-myagenda .myCard180P {
 
 page-myagenda .myCard240 {
   position: static;
-  background-color: rgba(18, 30, 70, 0.699) !important;
+  background-color: rgba(15, 25, 107, 0.706) !important;
   color: #fff !important;
   margin-left: -20px;
   padding-left: 10px;
@@ -28860,7 +29087,7 @@ page-myagenda .myCard240 {
   z-index: 4 !important;
   border-color: #fff;
   border-style: solid;
-  border-width: 1px;
+  border-width: 2px;
   padding-top: 3px;
   border-radius: 10px;
   -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -28869,7 +29096,7 @@ page-myagenda .myCard240 {
 
 page-myagenda .myCard240P {
   position: static;
-  background-color: rgba(18, 30, 70, 0.699) !important;
+  background-color: rgba(15, 25, 107, 0.706) !important;
   color: #fff !important;
   margin-left: -20px;
   padding-left: 10px;
@@ -28880,7 +29107,7 @@ page-myagenda .myCard240P {
   z-index: 4 !important;
   border-color: #fff;
   border-style: solid;
-  border-width: 1px;
+  border-width: 2px;
   padding-top: 3px;
   border-radius: 10px;
   -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -28888,7 +29115,7 @@ page-myagenda .myCard240P {
 }
 
 page-myagenda .myCard360 {
-  background-color: rgba(18, 30, 70, 0.699) !important;
+  background-color: rgba(15, 25, 107, 0.706) !important;
   color: #fff !important;
   margin-top: 0px;
   margin-right: 0 !important;
@@ -28899,7 +29126,7 @@ page-myagenda .myCard360 {
   height: 370px;
   z-index: 0 !important;
   border-color: #fff;
-  border-width: 1px;
+  border-width: 2px;
   border-style: solid;
   padding-top: 0;
   border-radius: 10px;
@@ -28908,7 +29135,7 @@ page-myagenda .myCard360 {
 }
 
 page-myagenda .myCard360P {
-  background-color: rgba(18, 30, 70, 0.699) !important;
+  background-color: rgba(15, 25, 107, 0.706) !important;
   color: #fff !important;
   margin-top: 0px;
   margin-right: 0 !important;
@@ -28920,7 +29147,7 @@ page-myagenda .myCard360P {
   z-index: 0 !important;
   border-color: #fff;
   border-style: solid;
-  border-width: 1px;
+  border-width: 2px;
   padding-top: 0;
   border-radius: 10px;
   -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -28933,7 +29160,7 @@ page-myagenda .myCard30C2 {
   overflow: hidden;
   text-overflow: ellipsis;
   position: static;
-  background-color: rgba(18, 30, 70, 0.699) !important;
+  background-color: rgba(15, 25, 107, 0.706) !important;
   color: #fff !important;
   margin-top: 0 !important;
   margin-right: 0;
@@ -28943,7 +29170,7 @@ page-myagenda .myCard30C2 {
   z-index: 7 !important;
   border-color: #fff;
   border-style: solid;
-  border-width: 1px;
+  border-width: 2px;
   padding-top: 3px !important;
   padding-bottom: 0 !important;
   border-radius: 10px;
@@ -28961,7 +29188,7 @@ page-myagenda .myCard30PC2 {
   overflow: hidden;
   text-overflow: ellipsis;
   position: static;
-  background-color: rgba(18, 30, 70, 0.699) !important;
+  background-color: rgba(15, 25, 107, 0.706) !important;
   color: #fff !important;
   margin-top: 0 !important;
   margin-right: 0;
@@ -28986,7 +29213,7 @@ page-myagenda .myCard60C2 {
   overflow: hidden;
   text-overflow: ellipsis;
   position: static;
-  background-color: rgba(18, 30, 70, 0.699) !important;
+  background-color: rgba(15, 25, 107, 0.706) !important;
   color: #fff !important;
   margin-top: 0;
   margin-right: 0px;
@@ -28997,7 +29224,7 @@ page-myagenda .myCard60C2 {
   z-index: 6 !important;
   border-color: #fff;
   border-style: solid;
-  border-width: 1px;
+  border-width: 2px;
   padding-top: 3px !important;
   border-radius: 10px;
   -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -29010,7 +29237,7 @@ page-myagenda .myCard60PC2 {
   overflow: hidden;
   text-overflow: ellipsis;
   position: static;
-  background-color: rgba(18, 30, 70, 0.699) !important;
+  background-color: rgba(15, 25, 107, 0.706) !important;
   color: #fff !important;
   margin-top: 0;
   margin-right: 0;
@@ -29021,7 +29248,7 @@ page-myagenda .myCard60PC2 {
   z-index: 6 !important;
   border-color: #fff;
   border-style: solid;
-  border-width: 1px;
+  border-width: 2px;
   padding-top: 3px !important;
   border-radius: 10px;
   -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -29034,7 +29261,7 @@ page-myagenda .myCard90C2 {
   overflow: hidden;
   text-overflow: ellipsis;
   position: static;
-  background-color: rgba(18, 30, 70, 0.699) !important;
+  background-color: rgba(15, 25, 107, 0.706) !important;
   color: #fff !important;
   margin-top: 0px !important;
   margin-right: 0;
@@ -29045,7 +29272,7 @@ page-myagenda .myCard90C2 {
   z-index: 5 !important;
   border-color: #fff;
   border-style: solid;
-  border-width: 1px;
+  border-width: 2px;
   padding-top: 3px !important;
   border-radius: 10px;
   -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -29058,7 +29285,7 @@ page-myagenda .myCard90PC2 {
   overflow: hidden;
   text-overflow: ellipsis;
   position: static;
-  background-color: rgba(18, 30, 70, 0.699) !important;
+  background-color: rgba(15, 25, 107, 0.706) !important;
   color: #fff !important;
   margin-top: 0px !important;
   margin-right: 0;
@@ -29069,7 +29296,7 @@ page-myagenda .myCard90PC2 {
   z-index: 5 !important;
   border-color: #fff;
   border-style: solid;
-  border-width: 1px;
+  border-width: 2px;
   padding-top: 3px !important;
   border-radius: 10px;
   -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -29078,7 +29305,7 @@ page-myagenda .myCard90PC2 {
 
 page-myagenda .myCard120C2 {
   position: static;
-  background-color: rgba(18, 30, 70, 0.699) !important;
+  background-color: rgba(15, 25, 107, 0.706) !important;
   color: #fff !important;
   margin-left: 25px;
   padding-left: 10px;
@@ -29089,7 +29316,7 @@ page-myagenda .myCard120C2 {
   z-index: 4 !important;
   border-color: #fff;
   border-style: solid;
-  border-width: 1px;
+  border-width: 2px;
   padding-top: 3px;
   border-radius: 10px;
   -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -29098,7 +29325,7 @@ page-myagenda .myCard120C2 {
 
 page-myagenda .myCard120PC2 {
   position: static;
-  background-color: rgba(18, 30, 70, 0.699) !important;
+  background-color: rgba(15, 25, 107, 0.706) !important;
   color: #fff !important;
   margin-left: 25px;
   padding-left: -10px;
@@ -29109,7 +29336,7 @@ page-myagenda .myCard120PC2 {
   z-index: 4 !important;
   border-color: #fff;
   border-style: solid;
-  border-width: 1px;
+  border-width: 2px;
   padding-top: 3px;
   border-radius: 10px;
   -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -29118,7 +29345,7 @@ page-myagenda .myCard120PC2 {
 
 page-myagenda .myCard150C2 {
   position: static;
-  background-color: rgba(18, 30, 70, 0.699) !important;
+  background-color: rgba(15, 25, 107, 0.706) !important;
   color: #fff !important;
   margin-top: 0px !important;
   margin-right: 0;
@@ -29129,7 +29356,7 @@ page-myagenda .myCard150C2 {
   z-index: 3 !important;
   border-color: #fff;
   border-style: solid;
-  border-width: 1px;
+  border-width: 2px;
   padding-top: 3px;
   border-radius: 10px;
   -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -29138,7 +29365,7 @@ page-myagenda .myCard150C2 {
 
 page-myagenda .myCard150PC2 {
   position: static;
-  background-color: rgba(18, 30, 70, 0.699) !important;
+  background-color: rgba(15, 25, 107, 0.706) !important;
   color: #fff !important;
   margin-top: 0px !important;
   margin-right: 0;
@@ -29149,7 +29376,7 @@ page-myagenda .myCard150PC2 {
   z-index: 3 !important;
   border-color: #fff;
   border-style: solid;
-  border-width: 1px;
+  border-width: 2px;
   padding-top: 3px;
   border-radius: 10px;
   -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -29157,7 +29384,7 @@ page-myagenda .myCard150PC2 {
 }
 
 page-myagenda .myCard180C2 {
-  background-color: rgba(18, 30, 70, 0.699) !important;
+  background-color: rgba(15, 25, 107, 0.706) !important;
   color: #fff !important;
   margin-top: 0px;
   margin-right: 0 !important;
@@ -29169,7 +29396,7 @@ page-myagenda .myCard180C2 {
   z-index: 2 !important;
   border-color: #fff;
   border-style: solid;
-  border-width: 1px;
+  border-width: 2px;
   padding-top: 0;
   border-radius: 10px;
   -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -29177,7 +29404,7 @@ page-myagenda .myCard180C2 {
 }
 
 page-myagenda .myCard180PC2 {
-  background-color: rgba(18, 30, 70, 0.699) !important;
+  background-color: rgba(15, 25, 107, 0.706) !important;
   color: #fff !important;
   margin-top: 0;
   margin-right: 0px;
@@ -29188,7 +29415,7 @@ page-myagenda .myCard180PC2 {
   z-index: 2 !important;
   border-color: #fff;
   border-style: solid;
-  border-width: 1px;
+  border-width: 2px;
   padding-top: 0;
   border-radius: 10px;
   -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -29197,7 +29424,7 @@ page-myagenda .myCard180PC2 {
 
 page-myagenda .myCard240C2 {
   position: static;
-  background-color: rgba(18, 30, 70, 0.699) !important;
+  background-color: rgba(15, 25, 107, 0.706) !important;
   color: #fff !important;
   margin-left: -20px;
   padding-left: 10px;
@@ -29208,7 +29435,7 @@ page-myagenda .myCard240C2 {
   z-index: 4 !important;
   border-color: #fff;
   border-style: solid;
-  border-width: 1px;
+  border-width: 2px;
   padding-top: 3px;
   border-radius: 10px;
   -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -29217,7 +29444,7 @@ page-myagenda .myCard240C2 {
 
 page-myagenda .myCard240PC2 {
   position: static;
-  background-color: rgba(18, 30, 70, 0.699) !important;
+  background-color: rgba(15, 25, 107, 0.706) !important;
   color: #fff !important;
   margin-left: -20px;
   padding-left: 10px;
@@ -29228,7 +29455,7 @@ page-myagenda .myCard240PC2 {
   z-index: 4 !important;
   border-color: #fff;
   border-style: solid;
-  border-width: 1px;
+  border-width: 2px;
   padding-top: 3px;
   border-radius: 10px;
   -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -29236,7 +29463,7 @@ page-myagenda .myCard240PC2 {
 }
 
 page-myagenda .myCard360C2 {
-  background-color: rgba(18, 30, 70, 0.699) !important;
+  background-color: rgba(15, 25, 107, 0.706) !important;
   color: #fff !important;
   margin-top: 0px;
   margin-right: 0 !important;
@@ -29248,7 +29475,7 @@ page-myagenda .myCard360C2 {
   z-index: 0 !important;
   border-color: #fff;
   border-style: solid;
-  border-width: 1px;
+  border-width: 2px;
   padding-top: 0;
   border-radius: 10px;
   -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -29256,7 +29483,7 @@ page-myagenda .myCard360C2 {
 }
 
 page-myagenda .myCard360PC2 {
-  background-color: rgba(18, 30, 70, 0.699) !important;
+  background-color: rgba(15, 25, 107, 0.706) !important;
   color: #fff !important;
   margin-top: 0px;
   margin-right: 0 !important;
@@ -29268,7 +29495,7 @@ page-myagenda .myCard360PC2 {
   z-index: 0 !important;
   border-color: #fff;
   border-style: solid;
-  border-width: 1px;
+  border-width: 2px;
   padding-top: 0;
   border-radius: 10px;
   -webkit-box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
@@ -29366,7 +29593,7 @@ page-notes .mutedRed {
   font-size: 1.2em;
 }
 
-.iconMed {
+page-notesdetails .iconMed {
   font-size: 30px;
   padding-left: 40px;
 }
@@ -29442,7 +29669,7 @@ page-notes .iconMed {
 }
 
 page-notes .buttonPadding {
-  background: #710080;
+  background: #2196f3;
   height: 43px;
   margin-top: 10px;
   -webkit-box-shadow: 2px 2px 2px 2px #ccc;
@@ -29457,12 +29684,21 @@ page-notes .myLabelBold {
   font-weight: 500;
 }
 
+page-notes .full-width-select {
+  max-width: 100% !important;
+  min-width: 70% !important;
+}
+
+page-notes .item-select .label {
+  width: 70% !important;
+}
+
 page-searchresults .gridbg {
-  background: #510e88;
+  background: #2196f3;
 }
 
 page-searchresults .rowSearch {
-  background: #510e88;
+  background: #2196f3;
   height: 40px !important;
   color: #fff;
   font-size: 16px;
@@ -29477,6 +29713,25 @@ page-searchresults .rowSearch {
 page-searchresults .iconMed {
   font-size: 30px;
   padding-left: 40px;
+}
+
+page-speakerdetails .cardHeader {
+  background: #283593;
+  color: #fff;
+}
+
+page-speakerdetails .invertedRed {
+  color: #e7503c !important;
+  font-size: 2.0em;
+}
+
+page-speakerdetails .avatar {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 page-speakers .buttonPadding {

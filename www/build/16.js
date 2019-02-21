@@ -1,6 +1,6 @@
 webpackJsonp([16],{
 
-/***/ 958:
+/***/ 962:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9,7 +9,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_forms__ = __webpack_require__(30);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_core__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_ionic_angular__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__activityfeeddetails__ = __webpack_require__(976);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__activityfeeddetails__ = __webpack_require__(982);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -39,7 +39,7 @@ ActivityFeedDetailsPageModule = __decorate([
 
 /***/ }),
 
-/***/ 976:
+/***/ 982:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -106,7 +106,11 @@ let ActivityFeedDetailsPage = class ActivityFeedDetailsPage {
     onFocus() {
         this.showEmojiPicker = false;
         this.content.resize();
-        this.scrollToBottom();
+        // Disabled scrollToBottom per Peter Vroom (2019-02-06)
+        // "I don’t think you do a lot of social media. ☺ Most recent 
+        // comments always go at the top. Most commenters aren’t interested 
+        // in seeing what everyone else wrote and don’t have the time."
+        //this.scrollToBottom();
     }
     scrollToBottom() {
         setTimeout(() => {
@@ -120,19 +124,29 @@ let ActivityFeedDetailsPage = class ActivityFeedDetailsPage {
     SaveComment() {
         var AttendeeID = this.localstorage.getLocalValue('AttendeeID');
         var ActivityFeedID = this.localstorage.getLocalValue('ActivityFeedID');
-        var UserComment = this.CommentEntry;
+        var UserComment = this.CommentEntry || '';
         var flags = 'ad|' + ActivityFeedID + '|' + UserComment;
-        this.databaseprovider.getActivityFeedData(flags, AttendeeID).then(data => {
-            console.log("getActivityFeedData: " + JSON.stringify(data));
-            if (data['length'] > 0) {
-                this.CommentEntry = '';
-                // Reload comments
-                console.log("Return status: " + data[0].Status);
-                this.ReloadComments();
-            }
-        }).catch(function () {
-            console.log("Activity Feed Promise Rejected");
-        });
+        if (UserComment != '') {
+            this.databaseprovider.getActivityFeedData(flags, AttendeeID).then(data => {
+                console.log("getActivityFeedData: " + JSON.stringify(data));
+                if (data['length'] > 0) {
+                    this.CommentEntry = '';
+                    // Reload comments
+                    console.log("Return status: " + data[0].Status);
+                    this.ReloadComments();
+                }
+            }).catch(function () {
+                console.log("Activity Feed Promise Rejected");
+            });
+        }
+        else {
+            let alert = this.alertCtrl.create({
+                title: 'Posting Error',
+                subTitle: 'You cannot submit a posting with a blank comment.',
+                buttons: ['OK']
+            });
+            alert.present();
+        }
     }
     timeDifference(laterdate, earlierdate) {
         console.log('Moment timeDifference output: ' + __WEBPACK_IMPORTED_MODULE_6_moment__(earlierdate).fromNow());
@@ -334,7 +348,7 @@ __decorate([
 ], ActivityFeedDetailsPage.prototype, "messageInput", void 0);
 ActivityFeedDetailsPage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
-        selector: 'page-activityfeeddetails',template:/*ion-inline-start:"/Users/petervroom/aacd19/src/pages/activityfeeddetails/activityfeeddetails.html"*/'<ion-header>\n\n	<ion-navbar color="primary">\n		<button ion-button menuToggle>\n			<ion-icon name="menu"></ion-icon>\n		</button>\n		<ion-title>Attendee Posting</ion-title>\n	</ion-navbar>\n\n\n\n</ion-header>\n\n<ion-content class="page-activityfeeddetails">\n\n	<!-- Initial posting by attendee -->\n	<ion-card>\n\n		<!-- Attendee avatar and name -->\n		<ion-item>\n			<ion-avatar item-start (click)="AttendeeDetails(ActivityFeedAttendeeID)">\n				<img src="{{ActivityFeedCommentAvatar}}" onerror="this.src=\'assets/img/personIcon.png\'">\n			</ion-avatar>\n			<h2>{{ActivityFeedCommentBy}}</h2>\n			<p>{{ActivityFeedCommentPosted}}</p>\n		</ion-item>\n\n		<!-- Posting picture attachment -->\n		<img src="{{ActivityFeedAttachment}}">\n\n		<!-- Attendee\'s comment -->\n		<ion-card-content>\n			<p>{{ActivityFeedComment}}</p>\n		</ion-card-content>\n\n		<!-- Linked URL (Only for promoted postings entered via the Admin Gateway) -->\n		<ion-list>\n			<button ion-item *ngIf=showActivityFeedLinkedURL (click)="navToWeb(ActivityFeedLinkedURL)">\n				<ion-icon name="globe" item-start></ion-icon>\n				{{ActivityFeedLinkedURL}}\n			</button>\n		</ion-list>\n\n		<!-- Footer with details -->\n		<ion-row>\n			<ion-col>\n				<button ion-button color="danger" icon-left clear small tappable (click)="UpdateLikes(afID)">\n					<ion-icon name="thumbs-up"></ion-icon>\n					<div>{{ActivityFeedLikesCounter}} Likes</div>\n				</button>\n			</ion-col>\n			<ion-col>\n				<button ion-button color="danger" icon-left clear small>\n					<ion-icon name="text"></ion-icon>\n					<div>{{ActivityFeedCommentsCounter}} Comments</div>\n				</button>\n			</ion-col>\n			<ion-col center text-center>\n				<ion-note>\n					{{ActivityFeedCommentPostedDuration}}\n				</ion-note>\n			</ion-col>\n		</ion-row>\n\n		<ion-row>\n			<ion-col col-12 no-border style="margin:0" [style.height]="showEmojiPicker ? \'255px\' : \'55px\'">\n				<div style="background:#fff; color:#444; margin:0" class="input-wrap">\n					<ion-textarea style="background:#fff;color:#444" #chat_input\n						placeholder="Enter a comment..."\n						[(ngModel)]="CommentEntry"\n						(keyup.enter)="SaveComment()"\n						(focusin)="onFocus()">\n					</ion-textarea>\n					<button ion-button clear icon-only item-right (tap)="SaveComment()">\n						<ion-icon name="ios-send" ios="ios-send" md="md-send"></ion-icon>\n					</button>\n				</div>\n			</ion-col>\n			</ion-row>\n\n\n\n	</ion-card>\n\n\n\n	\n	<!-- Comments to posting by other attendees -->\n    <ion-scroll scrollY="true" style="width: 100%; height: 100%;">\n	\n		<ion-card *ngFor="let comment of afComments">\n\n			<!-- Attendee avatar and name -->\n			<ion-item>\n				<ion-avatar item-start (click)="AttendeeDetails(comment.ActivityFeedCommentByID)">\n					<img src="{{comment.ActivityFeedCommentAvatar}}" onerror="this.src=\'assets/img/personIcon.png\'">\n				</ion-avatar>\n				<h2>{{comment.ActivityFeedCommentBy}}</h2>\n				<p>{{comment.ActivityFeedCommentPosted}}</p>\n			</ion-item>\n			<ion-card-content>\n				<p>{{comment.ActivityFeedComment}}</p>\n\n		\n			</ion-card-content>\n\n		</ion-card>\n\n	</ion-scroll>\n\n	\n	\n\n\n\n	<!-- Floating button menu for adding new comment -->\n	<!-- Disabled 2018-11-01 JOhn Black\n	     Moving to different process for adding comments to activity feed -->\n	<!--\n    <ion-fab bottom right #fab>\n		<button ion-fab color="danger" ion-fab>\n			<ion-icon name="add"></ion-icon>\n		</button>\n		<ion-fab-list side="top">\n			<button ion-fab (click)="AddComment(fab)">\n				<ion-icon name="chatbubbles"></ion-icon>\n				<div class="fabdivbutton">Add a Comment</div>\n			</button>\n		</ion-fab-list>\n    </ion-fab>\n	-->\n\n</ion-content>\n\n\n\n'/*ion-inline-end:"/Users/petervroom/aacd19/src/pages/activityfeeddetails/activityfeeddetails.html"*/,
+        selector: 'page-activityfeeddetails',template:/*ion-inline-start:"/Users/petervroom/aacd19/src/pages/activityfeeddetails/activityfeeddetails.html"*/'<ion-header>\n\n	<ion-navbar color="primary">\n		<button ion-button menuToggle>\n			<ion-icon name="menu"></ion-icon>\n		</button>\n		<ion-title>Attendee Posting</ion-title>\n	</ion-navbar>\n\n</ion-header>\n\n<ion-content class="page-activityfeeddetails">\n\n\n\n	<!-- Initial posting by attendee -->\n	<ion-card>\n\n		<!-- Attendee avatar and name -->\n		<ion-item>\n			<ion-avatar item-start (click)="AttendeeDetails(ActivityFeedAttendeeID)">\n				<img src="{{ActivityFeedCommentAvatar}}" onerror="this.src=\'assets/img/personIcon.png\'">\n			</ion-avatar>\n			<h2>{{ActivityFeedCommentBy}}</h2>\n			<p>{{ActivityFeedCommentPosted}}</p>\n		</ion-item>\n\n		<!-- Posting picture attachment -->\n		<img src="{{ActivityFeedAttachment}}">\n\n		<!-- Attendee\'s comment -->\n		<ion-card-content>\n			<p>{{ActivityFeedComment}}</p>\n		</ion-card-content>\n\n		<!-- Linked URL (Only for promoted postings entered via the Admin Gateway) -->\n		<ion-list>\n			<button ion-item *ngIf=showActivityFeedLinkedURL (click)="navToWeb(ActivityFeedLinkedURL)">\n				<ion-icon name="globe" item-start></ion-icon>\n				{{ActivityFeedLinkedURL}}\n			</button>\n		</ion-list>\n\n	</ion-card>\n\n\n\n\n	<!-- Footer with details \n		<ion-row>\n			<ion-col>\n				<button ion-button color="secondary" icon-left clear small tappable (click)="UpdateLikes(afID)">\n					<ion-icon name="thumbs-up"></ion-icon>\n					<div>{{ActivityFeedLikesCounter}} Likes</div>\n				</button>\n			</ion-col>\n			<ion-col>\n				<button ion-button color="secondary" icon-left clear small>\n					<ion-icon name="text"></ion-icon>\n					<div>{{ActivityFeedCommentsCounter}} Comments</div>\n				</button>\n			</ion-col>\n			<ion-col center text-center>\n				<ion-note>\n					{{ActivityFeedCommentPostedDuration}}\n				</ion-note>\n			</ion-col>\n		</ion-row>\n\n		<ion-row>\n			<ion-col col-12 no-border style="margin:0" [style.height]="showEmojiPicker ? \'255px\' : \'55px\'">\n				<div style="background:#fff; color:#444; margin:0" class="input-wrap">\n					<ion-textarea style="background:#fff;color:#444" #chat_input\n						placeholder="Enter a comment..."\n						[(ngModel)]="CommentEntry"\n						(keyup.enter)="SaveComment()"\n						(focusin)="onFocus()">\n					</ion-textarea>\n					<button ion-button clear icon-only item-right (tap)="SaveComment()">\n						<ion-icon name="ios-send" ios="ios-send" md="md-send"></ion-icon>\n					</button>\n				</div>\n			</ion-col>\n			</ion-row>\n\n\n\n	</ion-card>\n\n-->\n\n	\n	<!-- Comments to posting by other attendees -->\n    <ion-scroll scrollY="true" style="width: 100%; height: 100%;">\n	\n		<ion-card *ngFor="let comment of afComments">\n\n			<!-- Attendee avatar and name -->\n			<ion-item>\n				<ion-avatar item-start (click)="AttendeeDetails(comment.ActivityFeedCommentByID)">\n					<img src="{{comment.ActivityFeedCommentAvatar}}" onerror="this.src=\'assets/img/personIcon.png\'">\n				</ion-avatar>\n				<h2>{{comment.ActivityFeedCommentBy}}</h2>\n				<p>{{comment.ActivityFeedCommentPosted}}</p>\n			</ion-item>\n			<ion-card-content>\n				<p>{{comment.ActivityFeedComment}}</p>\n\n		\n			</ion-card-content>\n\n		</ion-card>\n\n	</ion-scroll>\n\n\n	\n\n	<!-- Floating button menu for adding new comment -->\n	<!-- Disabled 2018-11-01 JOhn Black\n	     Moving to different process for adding comments to activity feed -->\n	<!--\n    <ion-fab bottom right #fab>\n		<button ion-fab color="danger" ion-fab>\n			<ion-icon name="add"></ion-icon>\n		</button>\n		<ion-fab-list side="top">\n			<button ion-fab (click)="AddComment(fab)">\n				<ion-icon name="chatbubbles"></ion-icon>\n				<div class="fabdivbutton">Add a Comment</div>\n			</button>\n		</ion-fab-list>\n    </ion-fab>\n	-->\n\n\n\n<!--footer placement with input-->\n\n\n\n\n\n</ion-content>\n\n<ion-footer>\n<ion-toolbar>\n\n\n\n	<ion-row>\n		<ion-col col-12 no-border style="margin:0" [style.height]="showEmojiPicker ? \'255px\' : \'55px\'">\n			<div style="background:#fff; color:#444; margin:0" class="input-wrap">\n				<ion-textarea style="background:#fff;color:#444" #chat_input\n					placeholder="Enter a comment..."\n					[(ngModel)]="CommentEntry"\n					(keyup.enter)="SaveComment()"\n					(focusin)="onFocus()">\n				</ion-textarea>\n				<button ion-button clear icon-only item-right (tap)="SaveComment()">\n					<ion-icon name="ios-send" ios="ios-send" md="md-send"></ion-icon>\n				</button>\n			</div>\n		</ion-col>\n		</ion-row>\n	\n	\n		<ion-row>\n				<ion-col>\n					<button ion-button color="secondary" icon-left clear small tappable (click)="UpdateLikes(afID)">\n						<ion-icon name="thumbs-up"></ion-icon>\n						<div>{{ActivityFeedLikesCounter}} Likes</div>\n					</button>\n				</ion-col>\n				<ion-col>\n					<button ion-button color="secondary" icon-left clear small>\n						<ion-icon name="text"></ion-icon>\n						<div>{{ActivityFeedCommentsCounter}} Comments</div>\n					</button>\n				</ion-col>\n				<ion-col center text-center>\n					<ion-note>\n						{{ActivityFeedCommentPostedDuration}}\n					</ion-note>\n				</ion-col>\n			</ion-row>\n	\n\n\n\n\n	</ion-toolbar>\n</ion-footer>\n\n\n\n\n\n\n\n'/*ion-inline-end:"/Users/petervroom/aacd19/src/pages/activityfeeddetails/activityfeeddetails.html"*/,
         changeDetection: __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectionStrategy"].OnPush
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["u" /* NavController */],

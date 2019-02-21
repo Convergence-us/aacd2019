@@ -1,14 +1,15 @@
 webpackJsonp([14],{
 
-/***/ 960:
+/***/ 961:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ActivityFeedPostingPageModule", function() { return ActivityFeedPostingPageModule; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AttendeesProfilePageModule", function() { return AttendeesProfilePageModule; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__activityfeedposting__ = __webpack_require__(978);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__attendeesprofile__ = __webpack_require__(981);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_ionic_image_loader__ = __webpack_require__(61);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -18,41 +19,36 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 
 
 
-let ActivityFeedPostingPageModule = class ActivityFeedPostingPageModule {
+
+let AttendeesProfilePageModule = class AttendeesProfilePageModule {
 };
-ActivityFeedPostingPageModule = __decorate([
+AttendeesProfilePageModule = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["NgModule"])({
         declarations: [
-            __WEBPACK_IMPORTED_MODULE_2__activityfeedposting__["a" /* ActivityFeedPostingPage */],
+            __WEBPACK_IMPORTED_MODULE_2__attendeesprofile__["a" /* AttendeesProfilePage */],
         ],
         imports: [
-            __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["p" /* IonicPageModule */].forChild(__WEBPACK_IMPORTED_MODULE_2__activityfeedposting__["a" /* ActivityFeedPostingPage */]),
+            __WEBPACK_IMPORTED_MODULE_3_ionic_image_loader__["b" /* IonicImageLoader */],
+            __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["p" /* IonicPageModule */].forChild(__WEBPACK_IMPORTED_MODULE_2__attendeesprofile__["a" /* AttendeesProfilePage */]),
         ],
-        exports: [
-            __WEBPACK_IMPORTED_MODULE_2__activityfeedposting__["a" /* ActivityFeedPostingPage */]
-        ]
     })
-], ActivityFeedPostingPageModule);
+], AttendeesProfilePageModule);
 
-//# sourceMappingURL=activityfeedposting.module.js.map
+//# sourceMappingURL=attendeesprofile.module.js.map
 
 /***/ }),
 
-/***/ 978:
+/***/ 981:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ActivityFeedPostingPage; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return AttendeesProfilePage; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ionic_storage__ = __webpack_require__(25);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__angular_common_http__ = __webpack_require__(83);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_rxjs_add_operator_map__ = __webpack_require__(22);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4_rxjs_add_operator_map___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4_rxjs_add_operator_map__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__providers_database_database__ = __webpack_require__(21);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__providers_localstorage_localstorage__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__ionic_native_camera__ = __webpack_require__(539);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__angular_platform_browser__ = __webpack_require__(38);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__providers_localstorage_localstorage__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_ionic_image_loader__ = __webpack_require__(61);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__providers_database_database__ = __webpack_require__(21);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__conversation_conversation__ = __webpack_require__(539);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -68,239 +64,226 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
+// Preload Pages
 
-
-
-
-
-let ActivityFeedPostingPage = class ActivityFeedPostingPage {
-    constructor(navCtrl, navParams, storage, databaseprovider, cd, alertCtrl, view, http, loadingCtrl, camera, _DomSanitizer, localstorage) {
+let AttendeesProfilePage = class AttendeesProfilePage {
+    constructor(navCtrl, navParams, databaseprovider, loadingCtrl, alertCtrl, modal, imageLoaderConfig, cd, localstorage) {
         this.navCtrl = navCtrl;
         this.navParams = navParams;
-        this.storage = storage;
         this.databaseprovider = databaseprovider;
-        this.cd = cd;
-        this.alertCtrl = alertCtrl;
-        this.view = view;
-        this.http = http;
         this.loadingCtrl = loadingCtrl;
-        this.camera = camera;
-        this._DomSanitizer = _DomSanitizer;
+        this.alertCtrl = alertCtrl;
+        this.modal = modal;
+        this.imageLoaderConfig = imageLoaderConfig;
+        this.cd = cd;
         this.localstorage = localstorage;
+        this.btnBookmarkManagement = false;
     }
-    addCameraImage() {
-        const options = {
-            destinationType: this.camera.DestinationType.DATA_URL,
-            encodingType: this.camera.EncodingType.JPEG,
-            correctOrientation: true,
-            mediaType: this.camera.MediaType.PICTURE
-        };
-        this.camera.getPicture(options).then((imageData) => {
-            // imageData is either a base64 encoded string or a file URI
-            // If it's base64:
-            console.log('Camera image');
-            /*
-            if (this.platform.is('ios')) {
-                this.base64Image = normalizeURL(imageData);
-                // IF problem only occur in ios and normalizeURL
-                //not work for you then you can also use
-                //this.base64Image= imageData.replace(/^file:\/\//, '');
-            } else {
-                this.base64Image= "data:image/jpeg;base64," + imageData;
-            }, error => {
-                console.log('ERROR -> ' + JSON.stringify(error));
-            });
-            */
-            this.ActivityFeedAttachment = 'data:image/jpeg;base64,' + imageData;
-            //this.ActivityFeedAttachment = base64Image;
-            this.localstorage.setLocalValue('ActivityFeedPostedImage', 'Y');
+    ionViewDidLoad() {
+        console.log('ionViewDidLoad ProfilePage');
+    }
+    ngOnInit() {
+        // Get AttendeeID
+        var AttendeeID = this.localstorage.getLocalValue('AttendeeID');
+        var oAttendeeID = this.localstorage.getLocalValue('oAttendeeID');
+        this.prConversationAttendeeID = oAttendeeID;
+        // Setup defaul tprofile image
+        this.imageLoaderConfig.setFallbackUrl('assets/img/personIcon.png');
+        //this.imageLoaderConfig.enableFallbackAsPlaceholder(true);
+        // Get profile image if available
+        this.visualImageURL = "https://aacdmobile.convergence-us.com/AdminGateway/2019/images/Attendees/" + oAttendeeID + '.jpg';
+        this.cd.markForCheck();
+        // Get profile data
+        var flags = "pr|" + AttendeeID;
+        this.databaseprovider.getDatabaseStats(flags, oAttendeeID).then(data => {
+            if (data['length'] > 0) {
+                console.log('getDatabaseStats: ' + JSON.stringify(data));
+                // Display attendee information
+                this.prAttendeeName = data[0].FirstName + " " + data[0].LastName;
+                this.prAttendeeTitle = data[0].Title;
+                this.prAttendeeOrganization = data[0].Company;
+                // Set color indications for social media icons
+                if (data[0].showTwitter == "Y") {
+                    this.statusTwitter = "green";
+                    this.smURLTwitter = data[0].smTwitter;
+                }
+                else {
+                    this.statusTwitter = "white";
+                    this.smURLTwitter = "";
+                }
+                if (data[0].showFacebook == "Y") {
+                    this.statusFacebook = "green";
+                    this.smURLFacebook = data[0].smFacebook;
+                }
+                else {
+                    this.statusFacebook = "white";
+                    this.smURLFacebook = "";
+                }
+                if (data[0].showLinkedIn == "Y") {
+                    this.statusLinkedIn = "green";
+                    this.smURLLinkedIn = data[0].smLinkedIn;
+                }
+                else {
+                    this.statusLinkedIn = "white";
+                    this.smURLLinkedIn = "";
+                }
+                if (data[0].showInstagram == "Y") {
+                    this.statusInstagram = "green";
+                    this.smURLInstagram = data[0].smInstagram;
+                }
+                else {
+                    this.statusInstagram = "#fff";
+                    this.smURLInstagram = "";
+                }
+                if (data[0].showPinterest == "Y") {
+                    this.statusPinterest = "green";
+                    this.smURLPinterest = data[0].smPinterest;
+                }
+                else {
+                    this.statusPinterest = "white";
+                    this.smURLPinterest = "";
+                }
+                // Values for Bookmark Management
+                this.localstorage.setLocalValue("BookmarkID", oAttendeeID);
+                this.localstorage.setLocalValue("BookmarkType", "Attendees");
+                if (data[0].Bookmarked != "0") {
+                    this.visBookmarkAddRemoveButton = "Remove from Bookmarks";
+                }
+                else {
+                    this.visBookmarkAddRemoveButton = "Add to Bookmarks";
+                }
+            }
             this.cd.markForCheck();
-        }, (err) => {
-            // Handle error
-            console.log('Camera error');
-            console.log('Camera error: ' + JSON.stringify(err));
+        }).catch(function () {
+            console.log("Promise Rejected");
         });
-    }
-    addGalleryImage() {
-        const options = {
-            destinationType: this.camera.DestinationType.DATA_URL,
-            encodingType: this.camera.EncodingType.JPEG,
-            mediaType: this.camera.MediaType.PICTURE,
-            correctOrientation: true,
-            allowEdit: true,
-            sourceType: this.camera.PictureSourceType.PHOTOLIBRARY
-        };
-        this.camera.getPicture(options).then((imageData) => {
-            // imageData is either a base64 encoded string or a file URI
-            // If it's base64:
-            console.log('Camera image');
-            //if (this.platform.is('ios')) {
-            //	imageData = _DomSanitizer.bypassSecurityTrustUrl(imageData);
-            //}
-            this.ActivityFeedAttachment = 'data:image/jpeg;base64,' + imageData;
-            //this.ActivityFeedAttachment = base64Image;
-            this.localstorage.setLocalValue('ActivityFeedPostedImage', 'Y');
-            this.cd.markForCheck();
-        }, (err) => {
-            // Handle error
-            console.log('Camera error');
-            console.log('Camera error: ' + JSON.stringify(err));
-        });
-    }
-    ionViewDidEnter() {
-        this.ActivityFeedAttachment = '';
-        this.localstorage.setLocalValue('ActivityFeedPostedImage', 'N');
-        var CurrentDateTime = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '').replace(/:/g, '').replace(/-/g, '').replace(' ', '');
-        console.log('CurrentDateTime: ' + CurrentDateTime);
-        var DevicePlatform = this.localstorage.getLocalValue('DevicePlatform');
-        // Disable access to camera and gallery buttons when running in a browser
-        // until the ability to pull an image via the browser can be implemented
-        if (DevicePlatform == 'Browser') {
-            console.log('Browser button settings');
-            this.deviceButtons = false;
-            this.browserButtons = true;
+        // -------------------
+        // Get Attendee Status
+        // -------------------
+        console.log('Attendee Button Management, AttendeeID: ' + AttendeeID);
+        if (AttendeeID == '0' || AttendeeID == '') {
+            this.btnBookmarkManagement = false;
         }
         else {
-            console.log('Device button settings');
-            this.deviceButtons = true;
-            this.browserButtons = false;
+            this.btnBookmarkManagement = true;
         }
+    }
+    StartContinueConversation(ConversationAttendeeName, ConversationAttendeeID) {
+        var AttendeeID = this.localstorage.getLocalValue('AttendeeID');
+        //if (AttendeeID != '900000' && AttendeeID != '900001' && AttendeeID != '21' && AttendeeID != '22') {
+        // Alert for successful save
+        //	let savealert = this.alertCtrl.create({
+        //		title: 'Conversations',
+        //		subTitle: 'The direct chat feature is not available at this time.',
+        //		buttons: ['Ok']
+        //	});
+        //	savealert.present();
+        //} else {
+        this.localstorage.setLocalValue('ConversationAttendeeName', ConversationAttendeeName);
+        this.localstorage.setLocalValue('ConversationAttendeeID', ConversationAttendeeID);
+        this.navCtrl.push(__WEBPACK_IMPORTED_MODULE_5__conversation_conversation__["a" /* ConversationPage */], { ConversationAttendeeID: ConversationAttendeeID }, { animate: true, direction: 'forward' });
+        //}
+    }
+    viewSocialMedia(smURL) {
+        if (smURL != "") {
+            console.log('Attendee Profile Details: Navigating to: ' + smURL);
+            window.open(smURL, '_system');
+        }
+    }
+    BookmarkManagement() {
+        console.log("Begin BookmarkManagement process...");
+        var AttendeeID = this.localstorage.getLocalValue('AttendeeID');
+        var BookmarkType = this.localstorage.getLocalValue("BookmarkType");
+        var BookmarkID = this.localstorage.getLocalValue("BookmarkID");
+        var flags = '';
+        // Starting variables
+        console.log("AttendeeID: " + AttendeeID);
+        console.log("BookmarkType: " + BookmarkType);
+        console.log("BookmarkID: " + BookmarkID);
         this.cd.markForCheck();
-    }
-    closeModal(UserAction) {
-        var AttendeeID = this.localstorage.getLocalValue('AttendeeID');
-        if (UserAction == "Save") {
-            // Load initial data set here
-            let loading = this.loadingCtrl.create({
-                spinner: 'crescent',
-                content: 'Saving your posting and image...'
-            });
-            loading.present();
-            var CurrentDateTime = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
-            var PostedDateTime = CurrentDateTime;
-            CurrentDateTime = CurrentDateTime.replace(/T/, ' ').replace(/\..+/, '').replace(/:/g, '').replace(/-/g, '').replace(' ', '');
-            var NewFilename = AttendeeID + '-' + CurrentDateTime;
-            console.log('New filename: ' + NewFilename);
-            var UserComment = this.CommentEntry || '';
-            //console.log('CommentEntry: ' + UserComment);
-            //console.log('Image: ' + this.ActivityFeedAttachment);
-            let url = 'https://naeyc.convergence-us.com/AdminGateway/image_uploader.php';
-            let postData = new FormData();
-            postData.append('file', this.ActivityFeedAttachment);
-            postData.append('location', 'ActivityFeedAttachments');
-            postData.append('filename', NewFilename);
-            postData.append('Comment', UserComment);
-            postData.append('AttendeeID', AttendeeID);
-            let data = this.http.post(url, postData);
-            data.subscribe((result) => {
-                console.log("Image uploaded: " + JSON.stringify(result));
-                console.log('afID: ' + result.afID);
-                loading.dismiss();
-                this.view.dismiss(UserAction);
-                //var flags = 'ad|' + result.afID + '|' + UserComment + '|0|' + NewFilename + '.jpg|' + PostedDateTime;
-                //this.localstorage.setLocalValue('ActivityFeedFlags', flags);
-                //this.databaseprovider.getActivityFeedData(flags, AttendeeID).then(data3 => {
-                //	console.log("getActivityFeedData: " + JSON.stringify(data3));
-                //	if (data3['length']>0) {
-                //		console.log("Return status: " + data3[0].Status);
-                //		loading.dismiss();
-                //		this.view.dismiss(UserAction);
-                //	}
-                //}).catch(function () {
-                //	console.log("Activity Feed Promise Rejected");
-                //	loading.dismiss();
-                //});
+        // Get last update performed by this app
+        var LastUpdateDate = this.localstorage.getLocalValue("LastUpdateDate");
+        if (LastUpdateDate == null) {
+            // If never, then set variable and localStorage item to NA
+            LastUpdateDate = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
+            this.localstorage.setLocalValue("LastUpdateDate", LastUpdateDate);
+        }
+        if (this.visBookmarkAddRemoveButton == "Add to Bookmarks") {
+            // ------------------------
+            // Add item to Bookmarks List
+            // ------------------------
+            flags = 'cb|0|' + BookmarkType + '|' + BookmarkID;
+            console.log("flags: " + flags);
+            this.databaseprovider.getBookmarksData(flags, AttendeeID).then(data => {
+                console.log("getBookmarksData: " + JSON.stringify(data));
+                if (data['length'] > 0) {
+                    console.log("Return status: " + data[0].Status);
+                    if (data[0].Status == "Saved") {
+                        this.visBookmarkAddRemoveButton = "Remove from Bookmarks";
+                        this.cd.markForCheck();
+                    }
+                    else {
+                        console.log("Return query: " + data[0].Query);
+                        let alert = this.alertCtrl.create({
+                            title: 'Bookmarks',
+                            subTitle: 'Unable to add the item to your bookmark list at this time. Please try again shortly.',
+                            buttons: ['OK']
+                        });
+                        alert.present();
+                    }
+                }
+            }).catch(function () {
+                console.log("Promise Rejected");
             });
         }
-        if (UserAction == "Cancel") {
-            this.view.dismiss(UserAction);
-        }
-    }
-    closePage(UserAction) {
-        var AttendeeID = this.localstorage.getLocalValue('AttendeeID');
-        if (UserAction == "Save") {
-            var afpImage = this.localstorage.getLocalValue('ActivityFeedPostedImage');
-            // Load initial data set here
-            let loading = this.loadingCtrl.create({
-                spinner: 'crescent',
-                content: 'Saving your posting and image...'
+        else {
+            // -----------------------
+            // Remove Item from Bookmarks List
+            // -----------------------
+            flags = 'rb|0|' + BookmarkType + '|' + BookmarkID;
+            console.log("flags: " + flags);
+            this.databaseprovider.getBookmarksData(flags, AttendeeID).then(data => {
+                console.log("getBookmarksData: " + JSON.stringify(data));
+                if (data['length'] > 0) {
+                    console.log("Return status: " + data[0].Status);
+                    if (data[0].Status == "Saved") {
+                        this.visBookmarkAddRemoveButton = "Add to Bookmarks";
+                        this.cd.markForCheck();
+                    }
+                    else {
+                        console.log("Return query: " + data[0].Query);
+                        let alert = this.alertCtrl.create({
+                            title: 'Bookmarks',
+                            subTitle: 'Unable to remove the item from your bookmark list at this time. Please try again shortly.',
+                            buttons: ['OK']
+                        });
+                        alert.present();
+                    }
+                }
+            }).catch(function () {
+                console.log("Promise Rejected");
             });
-            loading.present();
-            var CurrentDateTime = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
-            var PostedDateTime = CurrentDateTime;
-            CurrentDateTime = CurrentDateTime.replace(/T/, ' ').replace(/\..+/, '').replace(/:/g, '').replace(/-/g, '').replace(' ', '');
-            var NewFilename = AttendeeID + '-' + CurrentDateTime;
-            console.log('New filename: ' + NewFilename);
-            var UserComment = this.CommentEntry || '';
-            //console.log('CommentEntry: ' + UserComment);
-            //console.log('Image: ' + this.ActivityFeedAttachment);
-            let url = 'https://naeyc.convergence-us.com/AdminGateway/image_uploader.php';
-            let postData = new FormData();
-            postData.append('file', this.ActivityFeedAttachment);
-            postData.append('location', 'ActivityFeedAttachments');
-            postData.append('filename', NewFilename);
-            postData.append('Comment', UserComment);
-            postData.append('afpImage', afpImage);
-            postData.append('AttendeeID', AttendeeID);
-            let data = this.http.post(url, postData);
-            console.log('Activity Feed Posting: Uploading image to URL: ' + url);
-            data.subscribe((result) => {
-                console.log("Image uploaded: " + JSON.stringify(result));
-                console.log('afID: ' + result.afID);
-                loading.dismiss();
-                //this.navCtrl.setRoot(ActivityPage);
-                this.navCtrl.pop();
-                //var flags = 'ad|' + result.afID + '|' + UserComment + '|0|' + NewFilename + '.jpg|' + PostedDateTime;
-                //this.localstorage.setLocalValue('ActivityFeedFlags', flags);
-                //this.databaseprovider.getActivityFeedData(flags, AttendeeID).then(data3 => {
-                //	console.log("getActivityFeedData: " + JSON.stringify(data3));
-                //	if (data3['length']>0) {
-                //		console.log("Return status: " + data3[0].Status);
-                //		loading.dismiss();
-                //		this.view.dismiss(UserAction);
-                //	}
-                //}).catch(function () {
-                //	console.log("Activity Feed Promise Rejected");
-                //	loading.dismiss();
-                //});
-            }, err => {
-                loading.dismiss();
-                let alert = this.alertCtrl.create({
-                    title: 'Image Upload Error',
-                    subTitle: 'Problem receiving feedback from server - check log.',
-                    buttons: ['OK']
-                });
-                alert.present();
-                console.log(err.status);
-                console.log("Image uploader error: ", JSON.stringify(err));
-            });
-        }
-        if (UserAction == "Cancel") {
-            //this.navCtrl.setRoot(ActivityPage);
-            this.navCtrl.pop();
         }
     }
+    ;
 };
-ActivityFeedPostingPage = __decorate([
+AttendeesProfilePage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
-        selector: 'page-activityfeedposting',template:/*ion-inline-start:"/Users/petervroom/aacd19/src/pages/activityfeedposting/activityfeedposting.html"*/'<ion-header>\n\n	<ion-navbar color="primary">\n		<ion-title>Add a Posting</ion-title>\n	</ion-navbar>\n\n</ion-header>\n\n\n<ion-content padding>\n\n		<!-- Posting picture attachment -->\n		<img class="center" [src]="_DomSanitizer.bypassSecurityTrustUrl(ActivityFeedAttachment)" onerror="this.src=\'assets/img/missing-image.png\'">\n\n		<!-- Comment -->\n		<ion-textarea \n			(input)=\'CommentEntry = $event.target.value\' \n			name="CommentEntry" \n			[value]="CommentEntry" \n			placeholder="Enter a comment..."\n			style="height:150px;"></ion-textarea>\n\n		<!-- Button controls -->\n		<ion-grid *ngIf=deviceButtons>\n			<ion-row>\n				<ion-col col-3 >\n					<button color="secondary" ion-button (click)="closePage(\'Cancel\')">\n						Cancel\n					</button>\n				</ion-col>\n				<ion-col col-3 >\n					<button color="secondary" ion-button (click)="addGalleryImage()">\n						Gallery\n					</button>\n				</ion-col>\n				<ion-col col-3 >\n					<button color="secondary" ion-button (click)="addCameraImage()">\n						Camera\n					</button>\n				</ion-col>\n				<ion-col col-3 >\n					<button ion-button (click)="closePage(\'Save\')">\n						Save\n					</button>\n				</ion-col>\n			</ion-row>\n		</ion-grid>\n\n		<ion-grid *ngIf=browserButtons>\n			<ion-row>\n				<ion-col col-3 >\n					<button ion-button color="secondary" (click)="closePage(\'Cancel\')">\n						Cancel\n					</button>\n				</ion-col>\n				<ion-col col-6 >\n					<p style="text-align:center;">Please use the mobile app to upload an image</p>\n				</ion-col>\n				<ion-col col-3 >\n					<button ion-button color="secondary" (click)="closePage(\'Save\')">\n						Save\n					</button>\n				</ion-col>\n			</ion-row>\n		</ion-grid>\n		\n</ion-content>\n'/*ion-inline-end:"/Users/petervroom/aacd19/src/pages/activityfeedposting/activityfeedposting.html"*/,
+        selector: 'page-attendeesprofile',template:/*ion-inline-start:"/Users/petervroom/aacd19/src/pages/attendeesprofile/attendeesprofile.html"*/'<ion-header>\n	<ion-navbar color="primary">\n		<button ion-button menuToggle>\n			<ion-icon name="menu"></ion-icon>\n		</button>\n		<ion-title>Attendee Profile</ion-title>\n	</ion-navbar>\n</ion-header>\n\n<ion-content padding class="bg-style">\n\n    <ion-grid>\n        <ion-row>\n       \n          <ion-col>\n              <ion-item no-lines style="background:transparent">\n                  <ion-avatar class="center">\n					<!--<img-loader [src]="visualImageURL" useImg [spinner]=false [fallbackAsPlaceholder]=true></img-loader>-->\n					<img class="center" [src]="visualImageURL" src="assets/img/personIcon.png" onerror="this.src=\'assets/img/personIcon.png\'">\n                  </ion-avatar>\n                </ion-item>\n          </ion-col>\n		</ion-row>\n\n        <ion-row>\n            <ion-col>\n				<ion-item no-lines style="background:transparent; color:#444">\n					<p style="color:#444;font-size:1.5em; text-align:center; font-weight:500">{{prAttendeeName}}</p>\n					<p text-wrap style="color:#444; font-size:1.25em; text-align:center">{{prAttendeeTitle}}</p>\n					<p text-wrap style="color:#444; font-size:1.25em; text-align:center">{{prAttendeeOrganization}}</p>\n				</ion-item>\n            </ion-col>\n        </ion-row>\n	</ion-grid>\n	\n\n\n\n					<!--\n					<ion-row *ngIf="btnBookmarkManagement == false">\n						<ion-col col-3>\n						</ion-col>\n						<ion-col col-4>\n							<button ion-button block (click)="StartContinueConversation()">\n								Start a Conversation\n							</button>\n						</ion-col>\n						<ion-col col-3>\n						</ion-col>\n					</ion-row>\n					-->\n\n				<ion-grid>\n					<ion-row *ngIf="btnBookmarkManagement">\n						<ion-col>\n							<button ion-button color=secondary full (click)="StartContinueConversation(prAttendeeName, prConversationAttendeeID)">\n								Direct Chat\n							</button>\n						</ion-col>\n				\n						<ion-col>\n							<button ion-button color=secondary full (click)="BookmarkManagement()">\n								{{visBookmarkAddRemoveButton}}\n							</button>\n						</ion-col>\n					</ion-row>\n		<ion-col col-11>\n			<p style="color:#444;text-align:center">Tap a green highlighted icon to view that social media profile</p>\n		</ion-col>\n        <ion-row>\n            <ion-col col-1>\n            </ion-col>\n            <ion-col col-2>\n                <ion-icon [color]=statusTwitter name="logo-twitter" (tap)="viewSocialMedia(smURLTwitter)"></ion-icon>\n            </ion-col>\n            <ion-col col-2>\n                <ion-icon [color]=statusFacebook name="logo-facebook" (tap)="viewSocialMedia(smURLFacebook)"></ion-icon>\n            </ion-col>\n            <ion-col col-2>\n                <ion-icon [color]=statusLinkedIn name="logo-linkedin" (tap)="viewSocialMedia(smURLLinkedIn)"></ion-icon>\n            </ion-col>\n            <ion-col col-2>\n                <ion-icon [color]=statusInstagram name="logo-instagram" (tap)="viewSocialMedia(smURLInstagram)"></ion-icon>\n            </ion-col>\n            <ion-col col-2>\n                <ion-icon [color]=statusPinterest name="logo-pinterest" (tap)="viewSocialMedia(smURLPinterest)"></ion-icon>\n            </ion-col>\n        </ion-row>\n      </ion-grid>\n</ion-content>\n'/*ion-inline-end:"/Users/petervroom/aacd19/src/pages/attendeesprofile/attendeesprofile.html"*/,
         changeDetection: __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectionStrategy"].OnPush
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["u" /* NavController */],
         __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["v" /* NavParams */],
-        __WEBPACK_IMPORTED_MODULE_2__ionic_storage__["b" /* Storage */],
-        __WEBPACK_IMPORTED_MODULE_5__providers_database_database__["a" /* Database */],
-        __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"],
-        __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["b" /* AlertController */],
-        __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["A" /* ViewController */],
-        __WEBPACK_IMPORTED_MODULE_3__angular_common_http__["a" /* HttpClient */],
+        __WEBPACK_IMPORTED_MODULE_4__providers_database_database__["a" /* Database */],
         __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["q" /* LoadingController */],
-        __WEBPACK_IMPORTED_MODULE_7__ionic_native_camera__["a" /* Camera */],
-        __WEBPACK_IMPORTED_MODULE_8__angular_platform_browser__["c" /* DomSanitizer */],
-        __WEBPACK_IMPORTED_MODULE_6__providers_localstorage_localstorage__["a" /* Localstorage */]])
-], ActivityFeedPostingPage);
+        __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["b" /* AlertController */],
+        __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["s" /* ModalController */],
+        __WEBPACK_IMPORTED_MODULE_3_ionic_image_loader__["a" /* ImageLoaderConfig */],
+        __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"],
+        __WEBPACK_IMPORTED_MODULE_2__providers_localstorage_localstorage__["a" /* Localstorage */]])
+], AttendeesProfilePage);
 
-//# sourceMappingURL=activityfeedposting.js.map
+//# sourceMappingURL=attendeesprofile.js.map
 
 /***/ })
 

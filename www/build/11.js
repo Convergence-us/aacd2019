@@ -1,49 +1,49 @@
 webpackJsonp([11],{
 
-/***/ 949:
+/***/ 951:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ConversationsPageModule", function() { return ConversationsPageModule; });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__conversations__ = __webpack_require__(970);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_ionic_image_loader__ = __webpack_require__(60);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EvaluationLectureModule", function() { return EvaluationLectureModule; });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_forms__ = __webpack_require__(30);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_core__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_ionic_angular__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__evaluationlecture__ = __webpack_require__(974);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
     else for (var i = decorators.length - 1; i >= 0; i--) if (d = decorators[i]) r = (c < 3 ? d(r) : c > 3 ? d(target, key, r) : d(target, key)) || r;
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
-
+// Components, functions, plugins
 
 
 
 // Pages
-let ConversationsPageModule = class ConversationsPageModule {
-};
-ConversationsPageModule = __decorate([
-    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["NgModule"])({
-        declarations: [
-            __WEBPACK_IMPORTED_MODULE_2__conversations__["a" /* ConversationsPage */],
-        ],
-        imports: [
-            __WEBPACK_IMPORTED_MODULE_3_ionic_image_loader__["b" /* IonicImageLoader */],
-            __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["p" /* IonicPageModule */].forChild(__WEBPACK_IMPORTED_MODULE_2__conversations__["a" /* ConversationsPage */]),
-        ],
-    })
-], ConversationsPageModule);
 
-//# sourceMappingURL=conversations.module.js.map
+let EvaluationLectureModule = class EvaluationLectureModule {
+};
+EvaluationLectureModule = __decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_1__angular_core__["NgModule"])({
+        declarations: [__WEBPACK_IMPORTED_MODULE_3__evaluationlecture__["a" /* EvaluationLecture */]],
+        imports: [
+            __WEBPACK_IMPORTED_MODULE_0__angular_forms__["a" /* FormsModule */],
+            __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["p" /* IonicPageModule */].forChild(__WEBPACK_IMPORTED_MODULE_3__evaluationlecture__["a" /* EvaluationLecture */])
+        ],
+        exports: [__WEBPACK_IMPORTED_MODULE_3__evaluationlecture__["a" /* EvaluationLecture */]]
+    })
+], EvaluationLectureModule);
+
+//# sourceMappingURL=evaluationlecture.module.js.map
 
 /***/ }),
 
-/***/ 970:
+/***/ 974:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ConversationsPage; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return EvaluationLecture; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ionic_storage__ = __webpack_require__(25);
@@ -51,9 +51,6 @@ ConversationsPageModule = __decorate([
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_rxjs_add_operator_map___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_rxjs_add_operator_map__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__providers_database_database__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__providers_localstorage_localstorage__ = __webpack_require__(15);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_ionic_image_loader__ = __webpack_require__(60);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_7__conversation_conversation__ = __webpack_require__(538);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_8__attendees_attendees__ = __webpack_require__(196);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -70,132 +67,192 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
-
-// Pages
-
-
-let ConversationsPage = class ConversationsPage {
-    constructor(navCtrl, navParams, storage, databaseprovider, imageLoaderConfig, alertCtrl, cd, loadingCtrl, localstorage) {
+let EvaluationLecture = class EvaluationLecture {
+    constructor(navCtrl, navParams, nav, cd, storage, loadingCtrl, alertCtrl, databaseprovider, localstorage) {
         this.navCtrl = navCtrl;
         this.navParams = navParams;
-        this.storage = storage;
-        this.databaseprovider = databaseprovider;
-        this.imageLoaderConfig = imageLoaderConfig;
-        this.alertCtrl = alertCtrl;
+        this.nav = nav;
         this.cd = cd;
+        this.storage = storage;
         this.loadingCtrl = loadingCtrl;
+        this.alertCtrl = alertCtrl;
+        this.databaseprovider = databaseprovider;
         this.localstorage = localstorage;
-        this.Conversations = [];
     }
-    ionViewDidLoad() {
-        console.log('ionViewDidLoad SpeakersPage');
+    mcqAnswer(value) {
+        console.log('EvaluationLecture, mcqAnswer: ' + value);
     }
-    NavToPage(PageID) {
-        var AttendeeID = this.localstorage.getLocalValue('AttendeeID');
-        switch (PageID) {
-            case "AttendeesPage":
-                this.navCtrl.push(__WEBPACK_IMPORTED_MODULE_8__attendees_attendees__["a" /* AttendeesPage */], {}, { animate: true, direction: 'forward' });
-                break;
-        }
-    }
-    ;
     ngOnInit() {
-        // Load initial data set here
-        let loading = this.loadingCtrl.create({
-            spinner: 'crescent',
-            content: 'Please wait...'
-        });
-        loading.present();
-        // Blank and show loading info
-        this.Conversations = [];
-        this.cd.markForCheck();
-        this.imageLoaderConfig.setFallbackUrl('assets/img/personIcon.png');
-        // Temporary use variables
-        var flags = "li|Time|";
-        var DisplayName = "";
-        var visDisplayCompany = "";
+        console.log('ngOnInit: EvaluationLecture');
         var AttendeeID = this.localstorage.getLocalValue('AttendeeID');
-        // Get the data
-        this.databaseprovider.getMessagingData(flags, AttendeeID).then(data => {
-            console.log("getMessagingData: " + JSON.stringify(data));
+        var EventID = this.localstorage.getLocalValue('EventID');
+        var dbEventDateTime;
+        var SQLDate;
+        var DisplayDateTime;
+        var flags;
+        flags = "ei|" + EventID + "|Lecture|0|0|0|0|0|0|0|0|0|0|0|0|0|0";
+        console.log("EvaluationLecture: flags: " + flags);
+        this.databaseprovider.getEvaluationData(flags, AttendeeID).then(data => {
+            console.log("EvaluationLecture: getEvaluationData: " + JSON.stringify(data));
             if (data['length'] > 0) {
-                for (var i = 0; i < data['length']; i++) {
-                    DisplayName = "";
-                    // Concatenate fields to build displayable name
-                    DisplayName = DisplayName + data[i].LastName + ", " + data[i].FirstName;
-                    // Use Credentials field for Company/Association
-                    visDisplayCompany = "";
-                    if (data[i].Company != "") {
-                        visDisplayCompany = data[i].Company;
-                    }
-                    var imageAvatar = "https://naeyc.convergence-us.com/AdminGateway/images/Attendees/" + data[i].ConversationAttendeeID + ".jpg";
-                    console.log('imageAvatar: ' + imageAvatar);
-                    // Add current record to the list
-                    this.Conversations.push({
-                        ConversationAttendeeID: data[i].ConversationAttendeeID,
-                        AttendeeName: DisplayName,
-                        AttendeeOrganization: visDisplayCompany,
-                        AttendeeAvatar: imageAvatar
-                    });
-                }
+                console.log("EvaluationLecture: Parsing data");
+                dbEventDateTime = data[0].session_start_time.substring(0, 19);
+                dbEventDateTime = dbEventDateTime.replace(/-/g, '/');
+                dbEventDateTime = dbEventDateTime.replace(/T/g, ' ');
+                SQLDate = new Date(dbEventDateTime);
+                DisplayDateTime = dateFormat(SQLDate, "mm/dd h:MMtt");
+                // Display end time
+                dbEventDateTime = data[0].session_end_time.substring(0, 19);
+                dbEventDateTime = dbEventDateTime.replace(/-/g, '/');
+                dbEventDateTime = dbEventDateTime.replace(/T/g, ' ');
+                SQLDate = new Date(dbEventDateTime);
+                DisplayDateTime = DisplayDateTime + " to " + dateFormat(SQLDate, "h:MMtt");
+                this.DisplayEventName = data[0].session_title;
+                this.DisplayEventTimeDateLocation = DisplayDateTime + " in " + data[0].RoomName;
+                console.log("EvaluationLecture: DisplayEventName: " + data[0].session_title);
+                this.CEEvaluationQ11 = data[0].Q11;
+                this.CEEvaluationQ12 = data[0].Q12;
+                this.CEEvaluationQ21 = data[0].Q21;
+                this.CEEvaluationQ22 = data[0].Q22;
+                this.CEEvaluationQ23 = data[0].Q23;
+                this.CEEvaluationQ24 = data[0].Q24;
+                this.CEEvaluationQ25 = data[0].Q25;
+                this.CEEvaluationQ26 = data[0].Q26;
+                this.CEEvaluationQ31 = data[0].Q31 || '';
+                this.CEEvaluationQ32 = data[0].Q32 || '';
+                this.cd.markForCheck();
             }
-            else {
-                // No records to show
-                this.Conversations.push({
-                    ConversationAttendeeID: 0,
-                    AttendeeName: "No conversations available",
-                    AttendeeOrganization: "",
-                    AttendeeAvatar: ""
-                });
-            }
-            this.cd.markForCheck();
-            loading.dismiss();
         }).catch(function () {
-            console.log("Promise Rejected");
+            console.log("EvaluationLecture: Load Promise Rejected");
         });
-        // Update LastSync date for next run
-        var ThisDirectChatCheck = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
-        this.localstorage.setLocalValue('LastDirectChatCheck', ThisDirectChatCheck);
     }
-    ContinueConversation(ConversationAttendeeName, ConversationAttendeeID) {
-        console.log(ConversationAttendeeID);
-        //var AttendeeID = this.localstorage.getLocalValue('AttendeeID');
-        //if (AttendeeID != '900000' && AttendeeID != '900001' && AttendeeID != '21' && AttendeeID != '22') {
+    SubmitEvaluation() {
+        console.log('EvaluationLecture: Save evaluation (Lecture)...');
+        // Saving progress
+        let saving = this.loadingCtrl.create({
+            spinner: 'crescent',
+            content: 'Saving...'
+        });
         // Alert for successful save
-        //	let savealert = this.alertCtrl.create({
-        //		title: 'Conversations',
-        //		subTitle: 'The direct chat feature is not available at this time.',
-        //		buttons: ['Ok']
-        //	});
-        //	savealert.present();
-        //} else {
-        if (ConversationAttendeeID != 0) {
-            // Navigate to Conversation Details page
-            this.localstorage.setLocalValue('ConversationAttendeeName', ConversationAttendeeName);
-            this.localstorage.setLocalValue('ConversationAttendeeID', ConversationAttendeeID);
-            this.navCtrl.push(__WEBPACK_IMPORTED_MODULE_7__conversation_conversation__["a" /* ConversationPage */], { ConversationAttendeeID: ConversationAttendeeID }, { animate: true, direction: 'forward' });
+        let savealert = this.alertCtrl.create({
+            title: 'Evaluation',
+            subTitle: 'Evaluation has been saved.',
+            buttons: ['Ok']
+        });
+        // Alert for failed save
+        let failalert = this.alertCtrl.create({
+            title: 'Evaluation Entry',
+            subTitle: 'Unable to save your evaluation at this time - please try again in a little bit.',
+            buttons: ['Ok']
+        });
+        // Alert for required fields
+        let requiredalert = this.alertCtrl.create({
+            title: 'Evaluation Entry',
+            subTitle: 'All questions in blocks 1 and 2 are required to be completed before saving.',
+            buttons: ['Ok']
+        });
+        // Show saving progress
+        saving.present();
+        var Q11 = this.CEEvaluationQ11;
+        var Q12 = this.CEEvaluationQ12;
+        var Q21 = this.CEEvaluationQ21;
+        var Q22 = this.CEEvaluationQ22;
+        var Q23 = this.CEEvaluationQ23;
+        var Q24 = this.CEEvaluationQ24;
+        var Q25 = this.CEEvaluationQ25;
+        var Q26 = this.CEEvaluationQ26;
+        var Q31 = this.CEEvaluationQ31 || '';
+        var Q32 = this.CEEvaluationQ32 || '';
+        var EventID = this.localstorage.getLocalValue('EventID');
+        var AttendeeID = this.localstorage.getLocalValue('AttendeeID');
+        var flags;
+        // Validation checks
+        var ValidationPass = true;
+        if (this.CEEvaluationQ11 == null || this.CEEvaluationQ11 == "") {
+            ValidationPass = false;
         }
+        if (this.CEEvaluationQ12 == null || this.CEEvaluationQ12 == "") {
+            ValidationPass = false;
+        }
+        if (this.CEEvaluationQ21 == null || this.CEEvaluationQ21 == "") {
+            ValidationPass = false;
+        }
+        if (this.CEEvaluationQ22 == null || this.CEEvaluationQ22 == "") {
+            ValidationPass = false;
+        }
+        if (this.CEEvaluationQ23 == null || this.CEEvaluationQ23 == "") {
+            ValidationPass = false;
+        }
+        if (this.CEEvaluationQ24 == null || this.CEEvaluationQ24 == "") {
+            ValidationPass = false;
+        }
+        if (this.CEEvaluationQ25 == null || this.CEEvaluationQ25 == "") {
+            ValidationPass = false;
+        }
+        if (this.CEEvaluationQ26 == null || this.CEEvaluationQ26 == "") {
+            ValidationPass = false;
+        }
+        //if (this.CEEvaluationQ31 == null || this.CEEvaluationQ31 == "") {
+        //    ValidationPass = false;
         //}
+        //if (this.CEEvaluationQ32 == null || this.CEEvaluationQ32 == "") {
+        //    ValidationPass = false;
+        //}
+        if (ValidationPass == false) {
+            saving.dismiss();
+            requiredalert.present();
+        }
+        else {
+            // Get last update performed by this app
+            var ThisSync2 = new Date().toUTCString();
+            var ThisSync = dateFormat(ThisSync2, "UTC:yyyy-mm-dd' 'HH:MM:ss");
+            flags = "es|" + EventID + "|Lecture|" + Q11 + "|" + Q12 + "|" + Q21 + "|" + Q22 + "|" + Q23 + "|" + Q24 + "|" + Q25 + "|" + Q26 + "|" + Q31 + "|" + Q32 + "|||" + ThisSync;
+            console.log('EvaluationLecture: Save Evaluation (Lecture) flags: ' + flags);
+            this.databaseprovider.getEvaluationData(flags, AttendeeID).then(data => {
+                console.log("EvaluationLecture: getEvaluationData: " + JSON.stringify(data));
+                if (data['length'] > 0) {
+                    if (data[0].EVStatus == "Success") {
+                        // Saved
+                        saving.dismiss();
+                        savealert.present();
+                        this.navCtrl.pop();
+                    }
+                    else {
+                        // Not saved
+                        console.log("Query: " + data[0].EVQuery);
+                        saving.dismiss();
+                        failalert.present();
+                    }
+                }
+                else {
+                    // Not saved
+                    console.log("EvaluationLecture: No query to show");
+                    saving.dismiss();
+                    failalert.present();
+                }
+            }).catch(function () {
+                console.log("EvaluationLecture: Save Promise Rejected");
+            });
+        }
     }
-    ;
 };
-ConversationsPage = __decorate([
+EvaluationLecture = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
-        selector: 'page-conversations',template:/*ion-inline-start:"/Users/petervroom/aacd19/src/pages/conversations/conversations.html"*/'<ion-header>\n    <ion-navbar color="primary">\n		<button ion-button menuToggle>\n			<ion-icon name="menu"></ion-icon>\n		</button>\n		<ion-title>Attendee Conversations</ion-title>\n    </ion-navbar>\n  </ion-header>\n\n\n<ion-content>\n\n<!--\n	\n	<ion-item text-wrap>\n		<h2>Below are your current conversations with attendees at the \n		conference.&nbsp; Tap on one to continue chatting.&nbsp; Your \n		most recent message is at the top.</h2>\n	</ion-item>\n-->\n\n\n\n<ion-grid>\n	<ion-row>\n		<ion-col>\n\n				<button ion-button block color="secondary" style="margin-top:15px" (click)="NavToPage(\'AttendeesPage\')">Start a Conversation!</button>\n\n		</ion-col>\n	</ion-row>\n</ion-grid>\n\n\n\n\n	<ion-list style="margin-top:-10; margin-bottom:-10" *ngFor="let conversation of Conversations" >\n\n		<ion-item no-lines style="margin-top:-10; margin-bottom:-10" (tap)="ContinueConversation(conversation.AttendeeName, conversation.ConversationAttendeeID)">\n			<ion-avatar item-start>\n				<img  [src]="conversation.AttendeeAvatar" src="assets/img/personIcon.png" style="margin-top:0; margin-bottom:0" onerror="this.src=\'assets/img/personIcon.png\'">\n				<!--<img-loader [src]="conversation.AttendeeAvatar" style="margin-top:0; margin-bottom:0" useImg [spinner]=false></img-loader>-->\n			</ion-avatar>\n			<h2>{{conversation.AttendeeName}}</h2>\n			<h3>{{conversation.AttendeeOrganization}}</h3>\n		</ion-item>\n\n	</ion-list>\n\n</ion-content>\n'/*ion-inline-end:"/Users/petervroom/aacd19/src/pages/conversations/conversations.html"*/,
+        selector: 'page-evaluationlecture',template:/*ion-inline-start:"/Users/petervroom/aacd19/src/pages/evaluationlecture/evaluationlecture.html"*/'<ion-header>\n\n  <ion-navbar color="primary">\n\n    <button ion-button menuToggle>\n\n      <ion-icon name="menu"></ion-icon>\n\n    </button>\n\n    <ion-title>Evaluation</ion-title>\n\n  </ion-navbar>\n\n</ion-header>\n\n\n\n<ion-content>\n\n\n\n	<ion-item text-wrap style="background:#283593; color:#fff; font-weight:bold" >\n\n		<h2>Course Name</h2>\n\n		<h4 style="color:#fff">{{DisplayEventName}}</h4>\n\n		<h4 style="color:#fff">{{DisplayEventTimeDateLocation}}</h4>\n\n	</ion-item>\n\n\n\n		\n\n	<ion-card>\n\n		<ion-card-header style="background:#283593">	\n\n		   <h2 style="color:#fff">1. About yourself</h2>\n\n		</ion-card-header>\n\n		<ion-card-content>\n\n		</ion-card-content>\n\n	</ion-card>\n\n\n\n	<ion-card>\n\n		<ion-card-header style="background:#283593">\n\n		   <h2 text-wrap style="color:#fff">1.1)  Is this the first time you have attended a scientific session?</h2>\n\n		</ion-card-header>\n\n\n\n		<ion-card-content>\n\n			<ion-list radio-group [(ngModel)]="CEEvaluationQ11" name="CEEvaluationQ11" (ionChange)="mcqAnswer($event)">\n\n				<ion-item>\n\n					<ion-label>Yes</ion-label>\n\n					<ion-radio value="Yes"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>No</ion-label>\n\n					<ion-radio value="No"></ion-radio>\n\n				</ion-item>\n\n			</ion-list>\n\n		</ion-card-content>\n\n	</ion-card>\n\n\n\n\n\n	<ion-card>\n\n		<ion-card-header style="background:#283593">	\n\n		   <h2 style="color:#fff">1.2)  I am a...</h2>\n\n		</ion-card-header>\n\n\n\n		<ion-card-content>\n\n				<ion-list radio-group [(ngModel)]="CEEvaluationQ12" name="CEEvaluationQ12">\n\n						<ion-item>\n\n							<ion-label>Doctor</ion-label>\n\n							<ion-radio value="Doctor"></ion-radio>\n\n						</ion-item>\n\n						<ion-item>\n\n							<ion-label>Laboratory Technician</ion-label>\n\n							<ion-radio value="LabTech"></ion-radio>\n\n						</ion-item>\n\n						<ion-item>\n\n							<ion-label>Team</ion-label>\n\n							<ion-radio value="Team"></ion-radio>\n\n						</ion-item>\n\n					</ion-list>\n\n		</ion-card-content>\n\n	</ion-card>\n\n\n\n	<ion-card>\n\n		<ion-card-header style="background:#283593">	\n\n		   <h2 style="color:#fff">2. Course Rating</h2>\n\n		</ion-card-header>\n\n	</ion-card>\n\n\n\n	<ion-card>\n\n		<ion-card-header style="background:#283593">	\n\n		   <h2 style="color:#fff">2.1 The synopsis/learning objectives were delivered effectively.</h2>\n\n		</ion-card-header>\n\n\n\n		<ion-card-content>\n\n			<ion-list radio-group [(ngModel)]="CEEvaluationQ21" name="CEEvaluationQ21">\n\n				<ion-item>\n\n					<ion-label>5 - Strongly Agree</ion-label>\n\n					<ion-radio value="5"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>4</ion-label>\n\n					<ion-radio value="4"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>3</ion-label>\n\n					<ion-radio value="3"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>2</ion-label>\n\n					<ion-radio value="2"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>1 - Strong Disagree</ion-label>\n\n					<ion-radio value="1"></ion-radio>\n\n				</ion-item>\n\n			</ion-list>\n\n		</ion-card-content>\n\n	</ion-card>\n\n\n\n	<ion-card>\n\n		<ion-card-header style="background:#283593">	\n\n		   <h2 text-wrap style="color:#fff">2.2 The course met my professional/personal objectives.</h2>\n\n		</ion-card-header>\n\n\n\n		<ion-card-content>\n\n			<ion-list radio-group [(ngModel)]="CEEvaluationQ22" name="CEEvaluationQ22">\n\n				<ion-item>\n\n					<ion-label>5 - Strongly Agree</ion-label>\n\n					<ion-radio value="5"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>4</ion-label>\n\n					<ion-radio value="4"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>3</ion-label>\n\n					<ion-radio value="3"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>2</ion-label>\n\n					<ion-radio value="2"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>1 - Strongly Disagree</ion-label>\n\n					<ion-radio value="1"></ion-radio>\n\n				</ion-item>\n\n			</ion-list>\n\n		</ion-card-content>\n\n	</ion-card>\n\n\n\n	<ion-card>\n\n		<ion-card-header style="background:#283593">	\n\n		   <h2 text-wrap style="color:#fff">2.3 The presentation style and organization was appropriate.</h2>\n\n		</ion-card-header>\n\n\n\n		<ion-card-content>\n\n			<ion-list radio-group [(ngModel)]="CEEvaluationQ23" name="CEEvaluationQ23">\n\n				<ion-item>\n\n					<ion-label>5 - Strongly Agree</ion-label>\n\n					<ion-radio value="5"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>4</ion-label>\n\n					<ion-radio value="4"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>3</ion-label>\n\n					<ion-radio value="3"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>2</ion-label>\n\n					<ion-radio value="2"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>1 - Strongly Disagree</ion-label>\n\n					<ion-radio value="1"></ion-radio>\n\n				</ion-item>\n\n			</ion-list>\n\n		</ion-card-content>\n\n	</ion-card>\n\n\n\n	<ion-card>\n\n		<ion-card-header style="background:#283593">	\n\n		   <h2 text-wrap style="color:#fff">2.4 The presenter demonstrated comprehensive knowledge of the subject.</h2>\n\n		</ion-card-header>\n\n\n\n		<ion-card-content>\n\n			<ion-list radio-group [(ngModel)]="CEEvaluationQ24" name="CEEvaluationQ24">\n\n				<ion-item>\n\n					<ion-label>5 - Strongly Agree</ion-label>\n\n					<ion-radio value="5"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>4</ion-label>\n\n					<ion-radio value="4"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>3</ion-label>\n\n					<ion-radio value="3"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>2</ion-label>\n\n					<ion-radio value="2"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>1 - Strongly Disagree</ion-label>\n\n					<ion-radio value="1"></ion-radio>\n\n				</ion-item>\n\n			</ion-list>\n\n		</ion-card-content>\n\n	</ion-card>\n\n\n\n	<ion-card>\n\n		<ion-card-header style="background:#283593">	\n\n		   <h2 text-wrap style="color:#fff">2.5 The presenter provided valuable examples.</h2>\n\n		</ion-card-header>\n\n\n\n		<ion-card-content>\n\n			<ion-list radio-group [(ngModel)]="CEEvaluationQ25" name="CEEvaluationQ25">\n\n				<ion-item>\n\n					<ion-label>5 - Strongly Agree</ion-label>\n\n					<ion-radio value="5"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>4</ion-label>\n\n					<ion-radio value="4"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>3</ion-label>\n\n					<ion-radio value="3"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>2</ion-label>\n\n					<ion-radio value="2"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>1 - Strongly Disagree</ion-label>\n\n					<ion-radio value="1"></ion-radio>\n\n				</ion-item>\n\n			</ion-list>\n\n		</ion-card-content>\n\n	</ion-card>\n\n\n\n	<ion-card>\n\n		<ion-card-header style="background:#283593">	\n\n		   <h2 text-wrap text-wrap style="color:#fff">2.6 I would attend another course by this presenter.</h2>\n\n		</ion-card-header>\n\n\n\n		<ion-card-content>\n\n			<ion-list radio-group [(ngModel)]="CEEvaluationQ26" name="CEEvaluationQ26">\n\n				<ion-item>\n\n					<ion-label>5 - Strongly Agree</ion-label>\n\n					<ion-radio value="5"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>4</ion-label>\n\n					<ion-radio value="4"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>3</ion-label>\n\n					<ion-radio value="3"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>2</ion-label>\n\n					<ion-radio value="2"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>1 - Strongly Disagree</ion-label>\n\n					<ion-radio value="1"></ion-radio>\n\n				</ion-item>\n\n			</ion-list>\n\n		</ion-card-content>\n\n	</ion-card>\n\n\n\n	<ion-card>\n\n		<ion-card-header style="background:#283593">	\n\n		   <h2 text-wrap style="color:#fff">3. Feedback</h2>\n\n		</ion-card-header>\n\n		<ion-card-content>\n\n		</ion-card-content>\n\n	</ion-card>\n\n\n\n	<ion-card>\n\n		<ion-card-header style="background:#283593">	\n\n		   <h2 text-wrap style="color:#fff">3.1 Please contribute your additional comments or suggestions about this course below.</h2>\n\n		</ion-card-header>\n\n\n\n		<ion-card-content>\n\n			<ion-textarea (input)=\'CEEvaluationQ31 = $event.target.value\'\n\n				name="CEEvaluationQ31" \n\n				[value]="CEEvaluationQ31" \n\n				id="CEEvaluationQ31"\n\n				placeholder="Enter text" rows="4"></ion-textarea>\n\n		</ion-card-content>\n\n	</ion-card>\n\n\n\n\n\n	<ion-card>\n\n		<ion-card-header style="background:#283593">	\n\n			<h2 text-wrap style="color:#fff">3.2 What educational content would you like to see in future AACD educational opportunities?</h2>\n\n		</ion-card-header>\n\n\n\n		<ion-card-content>\n\n			<ion-textarea (input)=\'CEEvaluationQ32 = $event.target.value\'\n\n				name="CEEvaluationQ32" \n\n				[value]="CEEvaluationQ32" \n\n				id="CEEvaluationQ32"\n\n				placeholder="Enter text" rows="4"></ion-textarea>\n\n		</ion-card-content>\n\n	</ion-card>\n\n\n\n	<div>\n\n        <button ion-button style="background:#2196f3; width:50%; margin-right:25%; margin-left:25%" (click)="SubmitEvaluation()">\n\n            SUBMIT\n\n		</button>\n\n	</div>\n\n	<br/><br/><br/>\n\n			\n\n\n\n</ion-content>\n\n\n\n'/*ion-inline-end:"/Users/petervroom/aacd19/src/pages/evaluationlecture/evaluationlecture.html"*/,
         changeDetection: __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectionStrategy"].OnPush
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["u" /* NavController */],
         __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["v" /* NavParams */],
-        __WEBPACK_IMPORTED_MODULE_2__ionic_storage__["b" /* Storage */],
-        __WEBPACK_IMPORTED_MODULE_4__providers_database_database__["a" /* Database */],
-        __WEBPACK_IMPORTED_MODULE_6_ionic_image_loader__["a" /* ImageLoaderConfig */],
-        __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["b" /* AlertController */],
+        __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["u" /* NavController */],
         __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"],
+        __WEBPACK_IMPORTED_MODULE_2__ionic_storage__["b" /* Storage */],
         __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["q" /* LoadingController */],
+        __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["b" /* AlertController */],
+        __WEBPACK_IMPORTED_MODULE_4__providers_database_database__["a" /* Database */],
         __WEBPACK_IMPORTED_MODULE_5__providers_localstorage_localstorage__["a" /* Localstorage */]])
-], ConversationsPage);
+], EvaluationLecture);
 
-//# sourceMappingURL=conversations.js.map
+//# sourceMappingURL=evaluationlecture.js.map
 
 /***/ })
 

@@ -1,15 +1,15 @@
 webpackJsonp([10],{
 
-/***/ 961:
+/***/ 963:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EvaluationLectureModule", function() { return EvaluationLectureModule; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EvaluationWorkshopModule", function() { return EvaluationWorkshopModule; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_forms__ = __webpack_require__(30);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_core__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_ionic_angular__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__evaluationlecture__ = __webpack_require__(979);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__evaluationworkshop__ = __webpack_require__(983);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -22,28 +22,28 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 
 // Pages
 
-let EvaluationLectureModule = class EvaluationLectureModule {
+let EvaluationWorkshopModule = class EvaluationWorkshopModule {
 };
-EvaluationLectureModule = __decorate([
+EvaluationWorkshopModule = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_1__angular_core__["NgModule"])({
-        declarations: [__WEBPACK_IMPORTED_MODULE_3__evaluationlecture__["a" /* EvaluationLecture */]],
+        declarations: [__WEBPACK_IMPORTED_MODULE_3__evaluationworkshop__["a" /* EvaluationWorkshop */]],
         imports: [
             __WEBPACK_IMPORTED_MODULE_0__angular_forms__["a" /* FormsModule */],
-            __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["p" /* IonicPageModule */].forChild(__WEBPACK_IMPORTED_MODULE_3__evaluationlecture__["a" /* EvaluationLecture */])
+            __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["p" /* IonicPageModule */].forChild(__WEBPACK_IMPORTED_MODULE_3__evaluationworkshop__["a" /* EvaluationWorkshop */])
         ],
-        exports: [__WEBPACK_IMPORTED_MODULE_3__evaluationlecture__["a" /* EvaluationLecture */]]
+        exports: [__WEBPACK_IMPORTED_MODULE_3__evaluationworkshop__["a" /* EvaluationWorkshop */]]
     })
-], EvaluationLectureModule);
+], EvaluationWorkshopModule);
 
-//# sourceMappingURL=evaluationlecture.module.js.map
+//# sourceMappingURL=evaluationworkshop.module.js.map
 
 /***/ }),
 
-/***/ 979:
+/***/ 983:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return EvaluationLecture; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return EvaluationWorkshop; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ionic_storage__ = __webpack_require__(25);
@@ -67,7 +67,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
-let EvaluationLecture = class EvaluationLecture {
+let EvaluationWorkshop = class EvaluationWorkshop {
     constructor(navCtrl, navParams, nav, cd, storage, loadingCtrl, alertCtrl, databaseprovider, localstorage) {
         this.navCtrl = navCtrl;
         this.navParams = navParams;
@@ -80,22 +80,32 @@ let EvaluationLecture = class EvaluationLecture {
         this.localstorage = localstorage;
     }
     mcqAnswer(value) {
-        console.log('EvaluationLecture, mcqAnswer: ' + value);
+        console.log(value);
     }
-    ngOnInit() {
-        console.log('ngOnInit: EvaluationLecture');
+    ionViewDidLoad() {
+        console.log('ionViewDidLoad: EvaluationWorkshop');
         var AttendeeID = this.localstorage.getLocalValue('AttendeeID');
         var EventID = this.localstorage.getLocalValue('EventID');
         var dbEventDateTime;
         var SQLDate;
         var DisplayDateTime;
         var flags;
-        flags = "ei|" + EventID + "|Lecture|0|0|0|0|0|0|0|0|0|0|0|0|0|0";
-        console.log("EvaluationLecture: flags: " + flags);
+        this.CEEvaluationQ11 = "";
+        this.CEEvaluationQ12 = "";
+        this.CEEvaluationQ21 = "";
+        this.CEEvaluationQ22 = "";
+        this.CEEvaluationQ23 = "";
+        this.CEEvaluationQ24 = "";
+        this.CEEvaluationQ25 = "";
+        this.CEEvaluationQ26 = "";
+        this.CEEvaluationQ31 = "";
+        this.CEEvaluationQ32 = "";
+        this.CEEvaluationQ33 = "";
+        this.CEEvaluationQ41 = "";
+        flags = "ei|" + EventID + "|Workshop|0|0|0|0|0|0|0|0|0|0|0|0|0|0";
         this.databaseprovider.getEvaluationData(flags, AttendeeID).then(data => {
-            console.log("EvaluationLecture: getEvaluationData: " + JSON.stringify(data));
+            console.log("getEvaluationData: " + JSON.stringify(data));
             if (data['length'] > 0) {
-                console.log("EvaluationLecture: Parsing data");
                 dbEventDateTime = data[0].session_start_time.substring(0, 19);
                 dbEventDateTime = dbEventDateTime.replace(/-/g, '/');
                 dbEventDateTime = dbEventDateTime.replace(/T/g, ' ');
@@ -109,7 +119,6 @@ let EvaluationLecture = class EvaluationLecture {
                 DisplayDateTime = DisplayDateTime + " to " + dateFormat(SQLDate, "h:MMtt");
                 this.DisplayEventName = data[0].session_title;
                 this.DisplayEventTimeDateLocation = DisplayDateTime + " in " + data[0].RoomName;
-                console.log("EvaluationLecture: DisplayEventName: " + data[0].session_title);
                 this.CEEvaluationQ11 = data[0].Q11;
                 this.CEEvaluationQ12 = data[0].Q12;
                 this.CEEvaluationQ21 = data[0].Q21;
@@ -118,16 +127,18 @@ let EvaluationLecture = class EvaluationLecture {
                 this.CEEvaluationQ24 = data[0].Q24;
                 this.CEEvaluationQ25 = data[0].Q25;
                 this.CEEvaluationQ26 = data[0].Q26;
-                this.CEEvaluationQ31 = data[0].Q31 || '';
-                this.CEEvaluationQ32 = data[0].Q32 || '';
+                this.CEEvaluationQ31 = data[0].Q31;
+                this.CEEvaluationQ32 = data[0].Q32;
+                this.CEEvaluationQ33 = data[0].Q33;
+                this.CEEvaluationQ41 = data[0].Q41 || '';
                 this.cd.markForCheck();
             }
         }).catch(function () {
-            console.log("EvaluationLecture: Load Promise Rejected");
+            console.log("Promise Rejected");
         });
     }
     SubmitEvaluation() {
-        console.log('EvaluationLecture: Save evaluation (Lecture)...');
+        console.log('Save evaluation (Workshop)...');
         // Saving progress
         let saving = this.loadingCtrl.create({
             spinner: 'crescent',
@@ -148,7 +159,7 @@ let EvaluationLecture = class EvaluationLecture {
         // Alert for required fields
         let requiredalert = this.alertCtrl.create({
             title: 'Evaluation Entry',
-            subTitle: 'All questions in blocks 1 and 2 are required to be completed before saving.',
+            subTitle: 'All questions in blocks 1, 2 and 3 are required to be completed before saving.',
             buttons: ['Ok']
         });
         // Show saving progress
@@ -161,8 +172,10 @@ let EvaluationLecture = class EvaluationLecture {
         var Q24 = this.CEEvaluationQ24;
         var Q25 = this.CEEvaluationQ25;
         var Q26 = this.CEEvaluationQ26;
-        var Q31 = this.CEEvaluationQ31 || '';
-        var Q32 = this.CEEvaluationQ32 || '';
+        var Q31 = this.CEEvaluationQ31;
+        var Q32 = this.CEEvaluationQ32;
+        var Q33 = this.CEEvaluationQ33;
+        var Q41 = this.CEEvaluationQ41 || '';
         var EventID = this.localstorage.getLocalValue('EventID');
         var AttendeeID = this.localstorage.getLocalValue('AttendeeID');
         var flags;
@@ -192,10 +205,16 @@ let EvaluationLecture = class EvaluationLecture {
         if (this.CEEvaluationQ26 == null || this.CEEvaluationQ26 == "") {
             ValidationPass = false;
         }
-        //if (this.CEEvaluationQ31 == null || this.CEEvaluationQ31 == "") {
-        //    ValidationPass = false;
-        //}
-        //if (this.CEEvaluationQ32 == null || this.CEEvaluationQ32 == "") {
+        if (this.CEEvaluationQ31 == null || this.CEEvaluationQ31 == "") {
+            ValidationPass = false;
+        }
+        if (this.CEEvaluationQ32 == null || this.CEEvaluationQ32 == "") {
+            ValidationPass = false;
+        }
+        if (this.CEEvaluationQ33 == null || this.CEEvaluationQ33 == "") {
+            ValidationPass = false;
+        }
+        //if (this.CEEvaluationQ41 == null || this.CEEvaluationQ41 == "") {
         //    ValidationPass = false;
         //}
         if (ValidationPass == false) {
@@ -204,16 +223,12 @@ let EvaluationLecture = class EvaluationLecture {
         }
         else {
             // Get last update performed by this app
-            var LastUpdateDate = this.localstorage.getLocalValue("LastUpdateDate");
-            if (LastUpdateDate == null) {
-                // If never, then set variable and localStorage item to NA
-                LastUpdateDate = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
-                this.localstorage.setLocalValue("LastUpdateDate", LastUpdateDate);
-            }
-            flags = "es|" + EventID + "|Lecture|" + Q11 + "|" + Q12 + "|" + Q21 + "|" + Q22 + "|" + Q23 + "|" + Q24 + "|" + Q25 + "|" + Q26 + "|" + Q31 + "|" + Q32 + "|0|0|" + LastUpdateDate;
-            console.log('EvaluationLecture: Save Evaluation (Lecture) flags: ' + flags);
+            var ThisSync2 = new Date().toUTCString();
+            var ThisSync = dateFormat(ThisSync2, "UTC:yyyy-mm-dd' 'HH:MM:ss");
+            flags = "es|" + EventID + "|Workshop|" + Q11 + "|" + Q12 + "|" + Q21 + "|" + Q22 + "|" + Q23 + "|" + Q24 + "|" + Q25 + "|" + Q26 + "|" + Q31 + "|" + Q32 + "|" + Q33 + "|" + Q41 + "|" + ThisSync;
+            console.log('Save Evaluation (Workshop) flags: ' + flags);
             this.databaseprovider.getEvaluationData(flags, AttendeeID).then(data => {
-                console.log("EvaluationLecture: getEvaluationData: " + JSON.stringify(data));
+                console.log("getEvaluationData: " + JSON.stringify(data));
                 if (data['length'] > 0) {
                     if (data[0].EVStatus == "Success") {
                         // Saved
@@ -230,19 +245,19 @@ let EvaluationLecture = class EvaluationLecture {
                 }
                 else {
                     // Not saved
-                    console.log("EvaluationLecture: No query to show");
+                    console.log("No query to show");
                     saving.dismiss();
                     failalert.present();
                 }
             }).catch(function () {
-                console.log("EvaluationLecture: Save Promise Rejected");
+                console.log("Promise Rejected");
             });
         }
     }
 };
-EvaluationLecture = __decorate([
+EvaluationWorkshop = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
-        selector: 'page-evaluationlecture',template:/*ion-inline-start:"/Users/petervroom/aacd19/src/pages/evaluationlecture/evaluationlecture.html"*/'<ion-header>\n\n  <ion-navbar color="primary">\n\n    <button ion-button menuToggle>\n\n      <ion-icon name="menu"></ion-icon>\n\n    </button>\n\n    <ion-title>Evaluation</ion-title>\n\n  </ion-navbar>\n\n</ion-header>\n\n\n\n<ion-content>\n\n\n\n	<ion-item text-wrap style="background:#710080; color:#fff; font-weight:bold" >\n\n		<h2>Course Name</h2>\n\n		<h4 style="color:#fff">{{DisplayEventName}}</h4>\n\n		<h4 style="color:#fff">{{DisplayEventTimeDateLocation}}</h4>\n\n	</ion-item>\n\n\n\n		\n\n	<ion-card>\n\n		<ion-card-header style="background:#510e88">	\n\n		   <h2 style="color:#fff">1 About yourself</h2>\n\n		</ion-card-header>\n\n		<ion-card-content>\n\n		</ion-card-content>\n\n	</ion-card>\n\n\n\n	<ion-card>\n\n		<ion-card-header style="background:#510e88">\n\n		   <h2 style="color:#fff">1.1)  Is this the first time you have attended a scientific session?</h2>\n\n		</ion-card-header>\n\n\n\n		<ion-card-content>\n\n			<ion-list radio-group [(ngModel)]="CEEvaluationQ11" name="CEEvaluationQ11" (ionChange)="mcqAnswer($event)">\n\n				<ion-item>\n\n					<ion-label>Yes</ion-label>\n\n					<ion-radio value="Yes"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>No</ion-label>\n\n					<ion-radio value="No"></ion-radio>\n\n				</ion-item>\n\n			</ion-list>\n\n		</ion-card-content>\n\n	</ion-card>\n\n\n\n\n\n	<ion-card>\n\n		<ion-card-header style="background:#510e88">	\n\n		   <h2 style="color:#fff">1.2)  I am a...</h2>\n\n		</ion-card-header>\n\n\n\n		<ion-card-content>\n\n				<ion-list radio-group [(ngModel)]="CEEvaluationQ12" name="CEEvaluationQ12">\n\n						<ion-item>\n\n							<ion-label>Doctor</ion-label>\n\n							<ion-radio value="Doctor"></ion-radio>\n\n						</ion-item>\n\n						<ion-item>\n\n							<ion-label>Laboratory Technician</ion-label>\n\n							<ion-radio value="LabTech"></ion-radio>\n\n						</ion-item>\n\n						<ion-item>\n\n							<ion-label>Team</ion-label>\n\n							<ion-radio value="Team"></ion-radio>\n\n						</ion-item>\n\n					</ion-list>\n\n		</ion-card-content>\n\n	</ion-card>\n\n\n\n	<ion-card>\n\n		<ion-card-header style="background:#510e88">	\n\n		   <h2 style="color:#fff">2 Course Rating</h2>\n\n		</ion-card-header>\n\n	</ion-card>\n\n\n\n	<ion-card>\n\n		<ion-card-header style="background:#510e88">	\n\n		   <h2 style="color:#fff">2.1 The synopsis/learning objectives were delivered effectively.</h2>\n\n		</ion-card-header>\n\n\n\n		<ion-card-content>\n\n			<ion-list radio-group [(ngModel)]="CEEvaluationQ21" name="CEEvaluationQ21">\n\n				<ion-item>\n\n					<ion-label>5 - Strongly Agree</ion-label>\n\n					<ion-radio value="5"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>4</ion-label>\n\n					<ion-radio value="4"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>3</ion-label>\n\n					<ion-radio value="3"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>2</ion-label>\n\n					<ion-radio value="2"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>1 - Strong Disagree</ion-label>\n\n					<ion-radio value="1"></ion-radio>\n\n				</ion-item>\n\n			</ion-list>\n\n		</ion-card-content>\n\n	</ion-card>\n\n\n\n	<ion-card>\n\n		<ion-card-header style="background:#510e88">	\n\n		   <h2 style="color:#fff">2.2 The course met my professional/personal objectives.</h2>\n\n		</ion-card-header>\n\n\n\n		<ion-card-content>\n\n			<ion-list radio-group [(ngModel)]="CEEvaluationQ22" name="CEEvaluationQ22">\n\n				<ion-item>\n\n					<ion-label>5 - Strongly Agree</ion-label>\n\n					<ion-radio value="5"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>4</ion-label>\n\n					<ion-radio value="4"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>3</ion-label>\n\n					<ion-radio value="3"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>2</ion-label>\n\n					<ion-radio value="2"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>1 - Strongly Disagree</ion-label>\n\n					<ion-radio value="1"></ion-radio>\n\n				</ion-item>\n\n			</ion-list>\n\n		</ion-card-content>\n\n	</ion-card>\n\n\n\n	<ion-card>\n\n		<ion-card-header style="background:#510e88">	\n\n		   <h2 style="color:#fff">2.3 The presentation style and organization was appropriate.</h2>\n\n		</ion-card-header>\n\n\n\n		<ion-card-content>\n\n			<ion-list radio-group [(ngModel)]="CEEvaluationQ23" name="CEEvaluationQ23">\n\n				<ion-item>\n\n					<ion-label>5 - Strongly Agree</ion-label>\n\n					<ion-radio value="5"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>4</ion-label>\n\n					<ion-radio value="4"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>3</ion-label>\n\n					<ion-radio value="3"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>2</ion-label>\n\n					<ion-radio value="2"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>1 - Strongly Disagree</ion-label>\n\n					<ion-radio value="1"></ion-radio>\n\n				</ion-item>\n\n			</ion-list>\n\n		</ion-card-content>\n\n	</ion-card>\n\n\n\n	<ion-card>\n\n		<ion-card-header style="background:#510e88">	\n\n		   <h2 style="color:#fff">2.4 The presenter demonstrated comprehensive knowledge of the subject.</h2>\n\n		</ion-card-header>\n\n\n\n		<ion-card-content>\n\n			<ion-list radio-group [(ngModel)]="CEEvaluationQ24" name="CEEvaluationQ24">\n\n				<ion-item>\n\n					<ion-label>5 - Strongly Agree</ion-label>\n\n					<ion-radio value="5"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>4</ion-label>\n\n					<ion-radio value="4"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>3</ion-label>\n\n					<ion-radio value="3"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>2</ion-label>\n\n					<ion-radio value="2"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>1 - Strongly Disagree</ion-label>\n\n					<ion-radio value="1"></ion-radio>\n\n				</ion-item>\n\n			</ion-list>\n\n		</ion-card-content>\n\n	</ion-card>\n\n\n\n	<ion-card>\n\n		<ion-card-header style="background:#510e88">	\n\n		   <h2 style="color:#fff">2.5 The presenter provided valuable examples.</h2>\n\n		</ion-card-header>\n\n\n\n		<ion-card-content>\n\n			<ion-list radio-group [(ngModel)]="CEEvaluationQ25" name="CEEvaluationQ25">\n\n				<ion-item>\n\n					<ion-label>5 - Strongly Agree</ion-label>\n\n					<ion-radio value="5"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>4</ion-label>\n\n					<ion-radio value="4"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>3</ion-label>\n\n					<ion-radio value="3"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>2</ion-label>\n\n					<ion-radio value="2"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>1 - Strongly Disagree</ion-label>\n\n					<ion-radio value="1"></ion-radio>\n\n				</ion-item>\n\n			</ion-list>\n\n		</ion-card-content>\n\n	</ion-card>\n\n\n\n	<ion-card>\n\n		<ion-card-header style="background:#510e88">	\n\n		   <h2 style="color:#fff">2.6 I would attend another course by this presenter.</h2>\n\n		</ion-card-header>\n\n\n\n		<ion-card-content>\n\n			<ion-list radio-group [(ngModel)]="CEEvaluationQ26" name="CEEvaluationQ26">\n\n				<ion-item>\n\n					<ion-label>5 - Strongly Agree</ion-label>\n\n					<ion-radio value="5"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>4</ion-label>\n\n					<ion-radio value="4"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>3</ion-label>\n\n					<ion-radio value="3"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>2</ion-label>\n\n					<ion-radio value="2"></ion-radio>\n\n				</ion-item>\n\n				<ion-item>\n\n					<ion-label>1 - Strongly Disagree</ion-label>\n\n					<ion-radio value="1"></ion-radio>\n\n				</ion-item>\n\n			</ion-list>\n\n		</ion-card-content>\n\n	</ion-card>\n\n\n\n	<ion-card>\n\n		<ion-card-header style="background:#510e88">	\n\n		   <h2 style="color:#fff">3 Feedback</h2>\n\n		</ion-card-header>\n\n		<ion-card-content>\n\n		</ion-card-content>\n\n	</ion-card>\n\n\n\n	<ion-card>\n\n		<ion-card-header style="background:#510e88">	\n\n		   <h2 style="color:#fff">3.1 Please contribute your additional comments or suggestions about this course below.</h2>\n\n		</ion-card-header>\n\n\n\n		<ion-card-content>\n\n			<ion-textarea (input)=\'CEEvaluationQ31 = $event.target.value\'\n\n				name="CEEvaluationQ31" \n\n				[value]="CEEvaluationQ31" \n\n				id="CEEvaluationQ31"\n\n				placeholder="Enter text" rows="4"></ion-textarea>\n\n		</ion-card-content>\n\n	</ion-card>\n\n\n\n\n\n	<ion-card>\n\n		<ion-card-header style="background:#510e88">	\n\n			<h2 style="color:#fff">3.2 What educational content would you like to see in future AACD educational opportunities?</h2>\n\n		</ion-card-header>\n\n\n\n		<ion-card-content>\n\n			<ion-textarea (input)=\'CEEvaluationQ32 = $event.target.value\'\n\n				name="CEEvaluationQ32" \n\n				[value]="CEEvaluationQ32" \n\n				id="CEEvaluationQ32"\n\n				placeholder="Enter text" rows="4"></ion-textarea>\n\n		</ion-card-content>\n\n	</ion-card>\n\n\n\n	<div>\n\n        <button ion-button style="background:#710080; width:50%; margin-right:25%; margin-left:25%" (click)="SubmitEvaluation()">\n\n            SUBMIT\n\n		</button>\n\n	</div>\n\n	<br/><br/><br/>\n\n			\n\n\n\n</ion-content>\n\n\n\n'/*ion-inline-end:"/Users/petervroom/aacd19/src/pages/evaluationlecture/evaluationlecture.html"*/,
+        selector: 'page-evaluationworkshop',template:/*ion-inline-start:"/Users/petervroom/aacd19/src/pages/evaluationworkshop/evaluationworkshop.html"*/'<ion-header>\n\n  <ion-navbar color="primary">\n\n    <button ion-button menuToggle>\n\n      <ion-icon name="menu"></ion-icon>\n\n    </button>\n\n    <ion-title>Evaluation</ion-title>\n\n  </ion-navbar>\n\n</ion-header>\n\n\n\n\n\n<ion-content>\n\n	\n\n	<ion-list>\n\n		<ion-list-header text-wrap style="background:#283593; color:#fff">\n\n\n\n			<h2 style="color:#fff; font-weight:bold">Course Name</h2>\n\n			<h4 style="color:#fff">{{DisplayEventName}}</h4>\n\n			<h4 style="color:#fff">{{DisplayEventTimeDateLocation}}</h4>\n\n\n\n		</ion-list-header>\n\n\n\n\n\n		<ion-list-header text-wrap style="background:#283593">\n\n			<h2 text-wrap style="color:#fff">1.1)  Is this the first time you have attended a scientific session?</h2>\n\n		</ion-list-header>\n\n\n\n		<ion-list radio-group [(ngModel)]="CEEvaluationQ11" name="CEEvaluationQ11" (ionChange)="mcqAnswer($event)">\n\n			<ion-item>\n\n				<ion-label>Yes</ion-label>\n\n				<ion-radio value="Yes"></ion-radio>\n\n			</ion-item>\n\n			<ion-item>\n\n				<ion-label>No</ion-label>\n\n				<ion-radio value="No"></ion-radio>\n\n			</ion-item>\n\n		</ion-list>\n\n\n\n\n\n\n\n		<ion-card>\n\n			<ion-card-header text-wrap style="background:#283593">	\n\n				<h2 style="color:#fff">1.2)  I am a...</h2>\n\n			</ion-card-header>\n\n			<ion-card-content>\n\n				<ion-list radio-group [(ngModel)]="CEEvaluationQ12" name="CEEvaluationQ12">\n\n					<ion-item>\n\n						<ion-label>Doctor</ion-label>\n\n						<ion-radio value="Doctor"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>Laboratory Technician</ion-label>\n\n						<ion-radio value="LabTech"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>Team</ion-label>\n\n						<ion-radio value="Team"></ion-radio>\n\n					</ion-item>\n\n				</ion-list>\n\n			</ion-card-content>\n\n		</ion-card>\n\n\n\n\n\n\n\n		<ion-card>\n\n			<ion-card-header text-wrap style="background:#283593">	\n\n				<h2 text-wrap style="color:#fff">2.1) The learning objectives were delivered effectively.</h2>\n\n			</ion-card-header>\n\n		\n\n			<ion-card-content>\n\n				<ion-list radio-group [(ngModel)]="CEEvaluationQ21" name="CEEvaluationQ21">\n\n					<ion-item>\n\n						<ion-label>5 - Strongly Agree</ion-label>\n\n						<ion-radio value="5"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>4</ion-label>\n\n						<ion-radio value="4"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>3</ion-label>\n\n						<ion-radio value="3"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>2</ion-label>\n\n						<ion-radio value="2"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>1 - Strong Disagree</ion-label>\n\n						<ion-radio value="1"></ion-radio>\n\n					</ion-item>\n\n				</ion-list>\n\n			</ion-card-content>		\n\n		</ion-card>\n\n	\n\n\n\n\n\n\n\n		<ion-card>\n\n			<ion-card-header text-wrap style="background:#283593">	\n\n				<h2 text-wrap style="color:#fff">2.2) The synopsis was an accurate reflection of the course as presented.</h2>\n\n			</ion-card-header>\n\n\n\n			<ion-card-content>\n\n				<ion-list radio-group [(ngModel)]="CEEvaluationQ22" name="CEEvaluationQ22">\n\n					<ion-item>\n\n						<ion-label>5 - Strongly Agree</ion-label>\n\n						<ion-radio value="5"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>4</ion-label>\n\n						<ion-radio value="4"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>3</ion-label>\n\n						<ion-radio value="3"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>2</ion-label>\n\n						<ion-radio value="2"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>1 - Strongly Disagree</ion-label>\n\n						<ion-radio value="1"></ion-radio>\n\n					</ion-item>\n\n				</ion-list>\n\n			</ion-card-content>\n\n		</ion-card>\n\n\n\n\n\n\n\n		<ion-card>\n\n			<ion-card-header text-wrap style="background:#283593">	\n\n				<h2 text-wrap style="color:#fff"> 2.3) The presentation style and organization contributed positively to the course.</h2>\n\n			</ion-card-header>\n\n\n\n			<ion-card-content>\n\n				<ion-list radio-group [(ngModel)]="CEEvaluationQ23" name="CEEvaluationQ23">\n\n					<ion-item>\n\n						<ion-label>5 - Strongly Agree</ion-label>\n\n						<ion-radio value="5"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>4</ion-label>\n\n						<ion-radio value="4"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>3</ion-label>\n\n						<ion-radio value="3"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>2</ion-label>\n\n						<ion-radio value="2"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>1 - Strongly Disagree</ion-label>\n\n						<ion-radio value="1"></ion-radio>\n\n					</ion-item>\n\n				</ion-list>\n\n			</ion-card-content>\n\n		</ion-card>\n\n\n\n		\n\n\n\n		<ion-card>\n\n			<ion-card-header text-wrap style="background:#283593">	\n\n				<h2 text-wrap style="color:#fff"> 2.4) The material will be useful to me and my practice.</h2>\n\n			</ion-card-header>\n\n\n\n			<ion-card-content>\n\n				<ion-list radio-group [(ngModel)]="CEEvaluationQ24" name="CEEvaluationQ24">\n\n					<ion-item>\n\n						<ion-label>5 - Strongly Agree</ion-label>\n\n						<ion-radio value="5"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>4</ion-label>\n\n						<ion-radio value="4"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>3</ion-label>\n\n						<ion-radio value="3"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>2</ion-label>\n\n						<ion-radio value="2"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>1 - Strongly Disagree</ion-label>\n\n						<ion-radio value="1"></ion-radio>\n\n					</ion-item>\n\n				</ion-list>\n\n			</ion-card-content>\n\n		</ion-card>\n\n\n\n\n\n	   \n\n		<ion-card>\n\n			<ion-card-header text-wrap style="background:#283593">	\n\n				<h2 text-wrap style="color:#fff">2.5) The session provided opportunities for active learning.</h2>\n\n			</ion-card-header>\n\n\n\n			<ion-card-content>\n\n				<ion-list radio-group [(ngModel)]="CEEvaluationQ25" name="CEEvaluationQ25">\n\n					<ion-item>\n\n						<ion-label>5 - Strongly Agree</ion-label>\n\n						<ion-radio value="5"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>4</ion-label>\n\n						<ion-radio value="4"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>3</ion-label>\n\n						<ion-radio value="3"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>2</ion-label>\n\n						<ion-radio value="2"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>1 - Strongly Disagree</ion-label>\n\n						<ion-radio value="1"></ion-radio>\n\n					</ion-item>\n\n				</ion-list>\n\n			</ion-card-content>\n\n		</ion-card>\n\n\n\n\n\n		<ion-card>\n\n			<ion-card-header text-wrap style="background:#283593">	\n\n				<h2 text-wrap style="color:#fff">2.6) I would attend another course by this presenter.</h2>\n\n			</ion-card-header>\n\n\n\n			<ion-card-content>\n\n				<ion-list radio-group [(ngModel)]="CEEvaluationQ26" name="CEEvaluationQ26">\n\n					<ion-item>\n\n						<ion-label>5 - Strongly Agree</ion-label>\n\n						<ion-radio value="5"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>4</ion-label>\n\n						<ion-radio value="4"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>3</ion-label>\n\n						<ion-radio value="3"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>2</ion-label>\n\n						<ion-radio value="2"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>1 - Strongly Disagree</ion-label>\n\n						<ion-radio value="1"></ion-radio>\n\n					</ion-item>\n\n				</ion-list>\n\n			</ion-card-content>\n\n		</ion-card>\n\n\n\n\n\n\n\n		<ion-card>\n\n			<ion-card-header text-wrap style="background:#283593">	\n\n				<h2 text-wrap style="color:#fff">3.1) The presentation was not skewed toward the manufacture but balanced with regard to materials and equipment.</h2>\n\n			</ion-card-header>\n\n\n\n			<ion-card-content>\n\n				<ion-list radio-group [(ngModel)]="CEEvaluationQ31" name="CEEvaluationQ31">\n\n					<ion-item>\n\n						<ion-label>5 - Strongly Agree</ion-label>\n\n						<ion-radio value="5"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>4</ion-label>\n\n						<ion-radio value="4"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>3</ion-label>\n\n						<ion-radio value="3"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>2</ion-label>\n\n						<ion-radio value="2"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>1 - Strongly Disagree</ion-label>\n\n						<ion-radio value="1"></ion-radio>\n\n					</ion-item>\n\n				</ion-list>\n\n			</ion-card-content>\n\n		</ion-card>\n\n\n\n\n\n		<ion-card>\n\n\n\n			<ion-card-header text-wrap style="background:#283593">	\n\n				<h2 text-wrap style="color:#fff">3.2) The presenter allotted sufficient time for questions and answers.</h2>\n\n			</ion-card-header>\n\n\n\n			<ion-card-content>\n\n				<ion-list radio-group [(ngModel)]="CEEvaluationQ32" name="CEEvaluationQ32">\n\n					<ion-item>\n\n						<ion-label>5 - Strongly Agree</ion-label>\n\n						<ion-radio value="5"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>4</ion-label>\n\n						<ion-radio value="4"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>3</ion-label>\n\n						<ion-radio value="3"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>2</ion-label>\n\n						<ion-radio value="2"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>1 - Strongly Disagree</ion-label>\n\n						<ion-radio value="1"></ion-radio>\n\n					</ion-item>\n\n				</ion-list>\n\n			</ion-card-content>\n\n		</ion-card>\n\n\n\n\n\n\n\n\n\n		<ion-card>\n\n\n\n			<ion-card-header text-wrap style="background:#283593">	\n\n				<h2 style="color:#fff">3.3) The balance of heavy emphasis on hands-on and minimal emphasis on lecture was good.</h2>\n\n			</ion-card-header>\n\n\n\n			<ion-card-content>\n\n				<ion-list radio-group [(ngModel)]="CEEvaluationQ33" name="CEEvaluationQ33">\n\n					<ion-item>\n\n						<ion-label>5 - Strongly Agree</ion-label>\n\n						<ion-radio value="5"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>4</ion-label>\n\n						<ion-radio value="4"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>3</ion-label>\n\n						<ion-radio value="3"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>2</ion-label>\n\n						<ion-radio value="2"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>1 - Strongly Disagree</ion-label>\n\n						<ion-radio value="1"></ion-radio>\n\n					</ion-item>\n\n				</ion-list>\n\n			</ion-card-content>\n\n		</ion-card>\n\n\n\n\n\n		<ion-card>\n\n			<ion-card-header text-wrap style="background:#283593">	\n\n				<h2 text-wrap style="color:#fff">4.1) Please contribute your additional comments or suggestions about this course below.</h2>\n\n			</ion-card-header>\n\n		\n\n			<ion-card-content>\n\n				<ion-textarea (input)=\'CEEvaluationQ41 = $event.target.value\' \n\n					name="CEEvaluationQ41"\n\n					[value]="CEEvaluationQ41" \n\n					id="CEEvaluationQ41"\n\n					placeholder="Enter text" rows="4"></ion-textarea>\n\n			</ion-card-content>\n\n		</ion-card>\n\n	</ion-list>\n\n\n\n	<div>\n\n		<button ion-button style="background:#2196f3; width:50%; margin-right:25%; margin-left:25%" (click)="SubmitEvaluation()">\n\n			SUBMIT\n\n		</button>\n\n	</div>\n\n	<br/><br/><br/>\n\n\n\n</ion-content>\n\n\n\n\n\n\n\n'/*ion-inline-end:"/Users/petervroom/aacd19/src/pages/evaluationworkshop/evaluationworkshop.html"*/,
         changeDetection: __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectionStrategy"].OnPush
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["u" /* NavController */],
@@ -254,9 +269,9 @@ EvaluationLecture = __decorate([
         __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["b" /* AlertController */],
         __WEBPACK_IMPORTED_MODULE_4__providers_database_database__["a" /* Database */],
         __WEBPACK_IMPORTED_MODULE_5__providers_localstorage_localstorage__["a" /* Localstorage */]])
-], EvaluationLecture);
+], EvaluationWorkshop);
 
-//# sourceMappingURL=evaluationlecture.js.map
+//# sourceMappingURL=evaluationworkshop.js.map
 
 /***/ })
 

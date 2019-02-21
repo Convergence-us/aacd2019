@@ -1,15 +1,15 @@
 webpackJsonp([9],{
 
-/***/ 962:
+/***/ 964:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "EvaluationWorkshopModule", function() { return EvaluationWorkshopModule; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ExhibitorDetailsPageModule", function() { return ExhibitorDetailsPageModule; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_forms__ = __webpack_require__(30);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__angular_core__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_ionic_angular__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__evaluationworkshop__ = __webpack_require__(980);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3__exhibitordetails__ = __webpack_require__(984);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -22,28 +22,28 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
 
 // Pages
 
-let EvaluationWorkshopModule = class EvaluationWorkshopModule {
+let ExhibitorDetailsPageModule = class ExhibitorDetailsPageModule {
 };
-EvaluationWorkshopModule = __decorate([
+ExhibitorDetailsPageModule = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_1__angular_core__["NgModule"])({
-        declarations: [__WEBPACK_IMPORTED_MODULE_3__evaluationworkshop__["a" /* EvaluationWorkshop */]],
+        declarations: [__WEBPACK_IMPORTED_MODULE_3__exhibitordetails__["a" /* ExhibitorDetailsPage */]],
         imports: [
             __WEBPACK_IMPORTED_MODULE_0__angular_forms__["a" /* FormsModule */],
-            __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["p" /* IonicPageModule */].forChild(__WEBPACK_IMPORTED_MODULE_3__evaluationworkshop__["a" /* EvaluationWorkshop */])
+            __WEBPACK_IMPORTED_MODULE_2_ionic_angular__["p" /* IonicPageModule */].forChild(__WEBPACK_IMPORTED_MODULE_3__exhibitordetails__["a" /* ExhibitorDetailsPage */])
         ],
-        exports: [__WEBPACK_IMPORTED_MODULE_3__evaluationworkshop__["a" /* EvaluationWorkshop */]]
+        exports: [__WEBPACK_IMPORTED_MODULE_3__exhibitordetails__["a" /* ExhibitorDetailsPage */]]
     })
-], EvaluationWorkshopModule);
+], ExhibitorDetailsPageModule);
 
-//# sourceMappingURL=evaluationworkshop.module.js.map
+//# sourceMappingURL=exhibitordetails.module.js.map
 
 /***/ }),
 
-/***/ 980:
+/***/ 984:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return EvaluationWorkshop; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ExhibitorDetailsPage; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(6);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__ionic_storage__ = __webpack_require__(25);
@@ -51,6 +51,8 @@ EvaluationWorkshopModule = __decorate([
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_rxjs_add_operator_map___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_3_rxjs_add_operator_map__);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__providers_database_database__ = __webpack_require__(21);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__providers_localstorage_localstorage__ = __webpack_require__(15);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_leaflet__ = __webpack_require__(199);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6_leaflet___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6_leaflet__);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -67,215 +69,304 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 
-let EvaluationWorkshop = class EvaluationWorkshop {
-    constructor(navCtrl, navParams, nav, cd, storage, loadingCtrl, alertCtrl, databaseprovider, localstorage) {
+
+let ExhibitorDetailsPage = class ExhibitorDetailsPage {
+    constructor(navCtrl, navParams, storage, databaseprovider, cd, loadingCtrl, localstorage) {
         this.navCtrl = navCtrl;
         this.navParams = navParams;
-        this.nav = nav;
-        this.cd = cd;
         this.storage = storage;
-        this.loadingCtrl = loadingCtrl;
-        this.alertCtrl = alertCtrl;
         this.databaseprovider = databaseprovider;
+        this.cd = cd;
+        this.loadingCtrl = loadingCtrl;
         this.localstorage = localstorage;
-    }
-    mcqAnswer(value) {
-        console.log(value);
+        // Sopcial Media Icons
+        this.visSocialMediaFacebookVisible = false;
+        this.visSocialMediaTwitterVisible = false;
+        this.visSocialMediaLinkedInVisible = false;
+        this.visSocialMediaYouTubeVisible = false;
+        this.visSocialMediaRSSVisible = false;
+        this.visSocialMediaGooglePlusVisible = false;
+        this.visSocialMediaHeader = false;
     }
     ionViewDidLoad() {
-        console.log('ionViewDidLoad: EvaluationWorkshop');
-        var AttendeeID = this.localstorage.getLocalValue('AttendeeID');
-        var EventID = this.localstorage.getLocalValue('EventID');
-        var dbEventDateTime;
-        var SQLDate;
-        var DisplayDateTime;
-        var flags;
-        this.CEEvaluationQ11 = "";
-        this.CEEvaluationQ12 = "";
-        this.CEEvaluationQ21 = "";
-        this.CEEvaluationQ22 = "";
-        this.CEEvaluationQ23 = "";
-        this.CEEvaluationQ24 = "";
-        this.CEEvaluationQ25 = "";
-        this.CEEvaluationQ26 = "";
-        this.CEEvaluationQ31 = "";
-        this.CEEvaluationQ32 = "";
-        this.CEEvaluationQ33 = "";
-        this.CEEvaluationQ41 = "";
-        flags = "ei|" + EventID + "|Workshop|0|0|0|0|0|0|0|0|0|0|0|0|0|0";
-        this.databaseprovider.getEvaluationData(flags, AttendeeID).then(data => {
-            console.log("getEvaluationData: " + JSON.stringify(data));
+        console.log('ionViewDidLoad ExhibitorDetailsPage');
+    }
+    ngOnInit() {
+        // Load initial data set here
+        //let loading = this.loadingCtrl.create({
+        //	spinner: 'crescent',
+        //	content: 'Please wait...'
+        //});
+        //loading.present();
+        // Blank and show loading info
+        this.cd.markForCheck();
+        // Temporary use variables
+        var flags = "dt|Alpha|" + this.navParams.get('ExhibitorID');
+        var DisplayName = "";
+        var DisplayCityState = "";
+        var DevicePlatform = this.localstorage.getLocalValue('DevicePlatform');
+        // Get the data
+        this.databaseprovider.getExhibitorData(flags).then(data => {
+            console.log("getExhibitorData: " + JSON.stringify(data));
             if (data['length'] > 0) {
-                dbEventDateTime = data[0].session_start_time.substring(0, 19);
-                dbEventDateTime = dbEventDateTime.replace(/-/g, '/');
-                dbEventDateTime = dbEventDateTime.replace(/T/g, ' ');
-                SQLDate = new Date(dbEventDateTime);
-                DisplayDateTime = dateFormat(SQLDate, "mm/dd h:MMtt");
-                // Display end time
-                dbEventDateTime = data[0].session_end_time.substring(0, 19);
-                dbEventDateTime = dbEventDateTime.replace(/-/g, '/');
-                dbEventDateTime = dbEventDateTime.replace(/T/g, ' ');
-                SQLDate = new Date(dbEventDateTime);
-                DisplayDateTime = DisplayDateTime + " to " + dateFormat(SQLDate, "h:MMtt");
-                this.DisplayEventName = data[0].session_title;
-                this.DisplayEventTimeDateLocation = DisplayDateTime + " in " + data[0].RoomName;
-                this.CEEvaluationQ11 = data[0].Q11;
-                this.CEEvaluationQ12 = data[0].Q12;
-                this.CEEvaluationQ21 = data[0].Q21;
-                this.CEEvaluationQ22 = data[0].Q22;
-                this.CEEvaluationQ23 = data[0].Q23;
-                this.CEEvaluationQ24 = data[0].Q24;
-                this.CEEvaluationQ25 = data[0].Q25;
-                this.CEEvaluationQ26 = data[0].Q26;
-                this.CEEvaluationQ31 = data[0].Q31;
-                this.CEEvaluationQ32 = data[0].Q32;
-                this.CEEvaluationQ33 = data[0].Q33;
-                this.CEEvaluationQ41 = data[0].Q41 || '';
-                this.cd.markForCheck();
+                console.log('ExhibitorDetails: Line 99');
+                if (data[0].Country != "United States" && data[0].Country != "" && data[0].Country != null) {
+                    DisplayCityState = data[0].City + ", " + data[0].Country;
+                }
+                else {
+                    DisplayCityState = data[0].City + ", " + data[0].State + "  " + data[0].ZipPostalCode;
+                }
+                console.log('ExhibitorDetails: Line 105');
+                this.ExhibitorCompanyName = data[0].CompanyName;
+                this.ExhibitorAddressLine1 = data[0].AddressLine1;
+                this.ExhibitorDisplayCityState = DisplayCityState;
+                this.ExhibitorZipPostalCode = data[0].ZipPostalCode;
+                this.ExhibitorBoothNumber = "Booth: " + data[0].BoothNumber;
+                console.log('ExhibitorDetails: Line 112');
+                this.ExhibitorCompanyLogoFilename = "https://aacdmobile.convergence-us.com/AdminGateway/2019/images/ExhibitorLogos/" + data[0].imageFilename;
+                console.log('ExhibitorDetails: Line 115');
+                this.btnEmail = "primary";
+                this.btnWebsite = "primary";
+                this.btnCall = "primary";
+                // Button bar
+                console.log('Primary contact email button');
+                if ((data[0].PrimaryOnsiteContactEmail == "") || (data[0].PrimaryOnsiteContactEmail == null) || (data[0].PrimaryOnsiteContactEmail === undefined)) {
+                    this.btnEmail = "light";
+                    console.log('Button btnEmail greyed out');
+                }
+                else {
+                    this.ExhibitorPrimaryOnsiteContactEmailURL = data[0].PrimaryOnsiteContactEmail;
+                }
+                console.log('Primary contact website button');
+                if ((data[0].Website == "") || (data[0].Website == null) || (data[0].Website === undefined)) {
+                    this.btnWebsite = "light";
+                    console.log('Button btnWebsite greyed out');
+                }
+                else {
+                    this.ExhibitorWebsite = data[0].Website;
+                }
+                console.log('Primary contact phone button');
+                if (DevicePlatform == 'Browser') {
+                    this.btnCall = "light";
+                    console.log('Button btnCall greyed out');
+                }
+                else {
+                    if ((data[0].PrimaryOnsiteContactPhone == "") || (data[0].PrimaryOnsiteContactPhone == null) || (data[0].PrimaryOnsiteContactPhone === undefined)) {
+                        this.btnCall = "light";
+                        console.log('Button btnCall greyed out');
+                    }
+                    else {
+                        this.ExhibitorPrimaryOnsiteContactPhone = data[0].PrimaryOnsiteContactPhone;
+                        console.log('Primary contact');
+                    }
+                }
+                // Primary contact
+                console.log('Primary contact name');
+                this.ExhibitorPrimaryOnsiteContactName = data[0].PrimaryOnsiteContactName;
+                this.ExhibitorPrimaryOnsiteContactEmailDisplay = data[0].PrimaryOnsiteContactEmail;
+                if (data[0].PrimaryOnsiteContactPhone != null) {
+                    if ((data[0].PrimaryOnsiteContactPhone.length > 0) && (data[0].PrimaryOnsiteContactPhone != "") && (typeof data[0].PrimaryOnsiteContactPhone !== "undefined")) {
+                        this.ExhibitorPrimaryOnsiteContactPhone = data[0].PrimaryOnsiteContactPhone;
+                    }
+                    else {
+                        this.ExhibitorPrimaryOnsiteContactPhone = "";
+                    }
+                }
+                else {
+                    this.ExhibitorPrimaryOnsiteContactPhone = "";
+                }
+                // Company Details
+                console.log('Company Details');
+                if ((data[0].CompanyDescription == "") || (data[0].CompanyDescription == null) || (data[0].CompanyDescription === undefined)) {
+                    this.ExhibitorCompanyDescription = "Not available";
+                    this.exDetails = "Not available";
+                }
+                else {
+                    this.ExhibitorCompanyDescription = data[0].CompanyDescription;
+                    this.exDetails = data[0].CompanyDescription;
+                }
+                // Social media tags
+                console.log('Social media tags');
+                var SocialMediaCheck = 0;
+                this.visSocialMediaFacebookVisible = false;
+                this.visSocialMediaTwitterVisible = false;
+                this.visSocialMediaLinkedInVisible = false;
+                this.visSocialMediaYouTubeVisible = false;
+                this.visSocialMediaRSSVisible = false;
+                this.visSocialMediaGooglePlusVisible = false;
+                this.visSocialMediaHeader = false;
+                //  Visual status
+                console.log('Visual status');
+                if (data[0].SocialMediaFacebook != null) {
+                    if ((data[0].SocialMediaFacebook.length > 0) && (data[0].SocialMediaFacebook != "") && (data[0].SocialMediaFacebook !== undefined)) {
+                        this.visSocialMediaFacebookVisible = true;
+                        SocialMediaCheck = 1;
+                    }
+                }
+                if (data[0].SocialMediaTwitter != null) {
+                    if ((data[0].SocialMediaTwitter.length > 0) && (data[0].SocialMediaTwitter != "") && (data[0].SocialMediaTwitter !== undefined)) {
+                        this.visSocialMediaTwitterVisible = true;
+                        SocialMediaCheck = 1;
+                    }
+                }
+                if (data[0].SocialMediaLinkedIn != null) {
+                    if ((data[0].SocialMediaLinkedIn.length > 0) && (data[0].SocialMediaLinkedIn != "") && (data[0].SocialMediaLinkedIn !== undefined)) {
+                        this.visSocialMediaLinkedInVisible = true;
+                        SocialMediaCheck = 1;
+                    }
+                }
+                if (data[0].SocialMediaYouTube != null) {
+                    if ((data[0].SocialMediaYouTube.length > 0) && (data[0].SocialMediaYouTube != "") && (data[0].SocialMediaYouTube !== undefined)) {
+                        this.visSocialMediaYouTubeVisible = true;
+                        SocialMediaCheck = 1;
+                    }
+                }
+                if (data[0].SocialMediaRSS != null) {
+                    if ((data[0].SocialMediaRSS.length > 0) && (data[0].SocialMediaRSS != "") && (data[0].SocialMediaRSS !== undefined)) {
+                        this.visSocialMediaRSSVisible = true;
+                        SocialMediaCheck = 1;
+                    }
+                }
+                if (data[0].SocialMediaGooglePlus != null) {
+                    if ((data[0].SocialMediaGooglePlus.length > 0) && (data[0].SocialMediaGooglePlus != "") && (data[0].SocialMediaGooglePlus !== undefined)) {
+                        this.visSocialMediaGooglePlusVisible = true;
+                        SocialMediaCheck = 1;
+                    }
+                }
+                if (SocialMediaCheck == 1) {
+                    this.visSocialMediaHeader = true;
+                }
+                // Social Media Links
+                console.log('Social Media Links');
+                this.ExhibitorSocialMediaFacebook = data[0].SocialMediaFacebook;
+                this.ExhibitorSocialMediaTwitter = data[0].SocialMediaTwitter;
+                this.ExhibitorSocialMediaLinkedIn = data[0].SocialMediaLinkedIn;
+                this.ExhibitorSocialMediaYouTube = data[0].SocialMediaYouTube;
+                this.ExhibitorSocialMediaRSS = data[0].SocialMediaRSSVisible;
+                this.ExhibitorSocialMediaGooglePlus = data[0].SocialMediaGooglePlus;
+                // Booth mapping
+                console.log('Booth mapping');
+                var y = 0;
+                var x = 0;
+                var ExhibitorName = "";
+                if (data[0].BoothY != null) {
+                    y = data[0].BoothY;
+                    x = data[0].BoothX;
+                }
+                ExhibitorName = data[0].CompanyName;
+                console.log("Booth mapping (x,y): " + x + ", " + y);
+                if ((x === undefined) || (y === undefined)) {
+                    // Show empty map
+                    console.log('Show empty map');
+                    this.myMap = __WEBPACK_IMPORTED_MODULE_6_leaflet__["map"]('map2', {
+                        crs: __WEBPACK_IMPORTED_MODULE_6_leaflet__["CRS"].Simple,
+                        minZoom: -2,
+                        maxZoom: 2,
+                        zoomControl: false
+                    });
+                    var bounds = __WEBPACK_IMPORTED_MODULE_6_leaflet__["latLngBounds"]([0, 0], [2000, 1000]); // Normally 1000, 1000; stretched to 2000,1000 for AACD 2017
+                    var image = __WEBPACK_IMPORTED_MODULE_6_leaflet__["imageOverlay"]('assets/img/Floorplan2019.png', bounds, {
+                        attribution: 'Convergence'
+                    }).addTo(this.myMap);
+                    this.myMap.fitBounds(bounds);
+                    this.myMap.setMaxBounds(bounds);
+                }
+                else {
+                    // Simple coordinate system mapping
+                    console.log('Simple coordinate system mapping');
+                    this.myMap = __WEBPACK_IMPORTED_MODULE_6_leaflet__["map"]('map2', {
+                        crs: __WEBPACK_IMPORTED_MODULE_6_leaflet__["CRS"].Simple,
+                        minZoom: -2,
+                        maxZoom: 2,
+                        zoomControl: false
+                    });
+                    var bounds = __WEBPACK_IMPORTED_MODULE_6_leaflet__["latLngBounds"]([0, 0], [1500, 2000]); // Normally 1000, 1000; stretched to 2000,1000 for AACD 2017
+                    var image = __WEBPACK_IMPORTED_MODULE_6_leaflet__["imageOverlay"]('assets/img/Floorplan2019.png', bounds, {
+                        attribution: 'Convergence'
+                    }).addTo(this.myMap);
+                    this.myMap.fitBounds(bounds);
+                    this.myMap.setMaxBounds(bounds);
+                    var Exhibitor = __WEBPACK_IMPORTED_MODULE_6_leaflet__["latLng"]([y, x]);
+                    __WEBPACK_IMPORTED_MODULE_6_leaflet__["marker"](Exhibitor).addTo(this.myMap)
+                        .bindPopup(ExhibitorName)
+                        .openPopup();
+                    this.myMap.setView([y, x], 1);
+                }
             }
+            else {
+                // No data to show
+            }
+            this.cd.markForCheck();
+            //loading.dismiss();
         }).catch(function () {
             console.log("Promise Rejected");
         });
     }
-    SubmitEvaluation() {
-        console.log('Save evaluation (Workshop)...');
-        // Saving progress
-        let saving = this.loadingCtrl.create({
-            spinner: 'crescent',
-            content: 'Saving...'
-        });
-        // Alert for successful save
-        let savealert = this.alertCtrl.create({
-            title: 'Evaluation',
-            subTitle: 'Evaluation has been saved.',
-            buttons: ['Ok']
-        });
-        // Alert for failed save
-        let failalert = this.alertCtrl.create({
-            title: 'Evaluation Entry',
-            subTitle: 'Unable to save your evaluation at this time - please try again in a little bit.',
-            buttons: ['Ok']
-        });
-        // Alert for required fields
-        let requiredalert = this.alertCtrl.create({
-            title: 'Evaluation Entry',
-            subTitle: 'All questions in blocks 1, 2 and 3 are required to be completed before saving.',
-            buttons: ['Ok']
-        });
-        // Show saving progress
-        saving.present();
-        var Q11 = this.CEEvaluationQ11;
-        var Q12 = this.CEEvaluationQ12;
-        var Q21 = this.CEEvaluationQ21;
-        var Q22 = this.CEEvaluationQ22;
-        var Q23 = this.CEEvaluationQ23;
-        var Q24 = this.CEEvaluationQ24;
-        var Q25 = this.CEEvaluationQ25;
-        var Q26 = this.CEEvaluationQ26;
-        var Q31 = this.CEEvaluationQ31;
-        var Q32 = this.CEEvaluationQ32;
-        var Q33 = this.CEEvaluationQ33;
-        var Q41 = this.CEEvaluationQ41 || '';
-        var EventID = this.localstorage.getLocalValue('EventID');
-        var AttendeeID = this.localstorage.getLocalValue('AttendeeID');
-        var flags;
-        // Validation checks
-        var ValidationPass = true;
-        if (this.CEEvaluationQ11 == null || this.CEEvaluationQ11 == "") {
-            ValidationPass = false;
-        }
-        if (this.CEEvaluationQ12 == null || this.CEEvaluationQ12 == "") {
-            ValidationPass = false;
-        }
-        if (this.CEEvaluationQ21 == null || this.CEEvaluationQ21 == "") {
-            ValidationPass = false;
-        }
-        if (this.CEEvaluationQ22 == null || this.CEEvaluationQ22 == "") {
-            ValidationPass = false;
-        }
-        if (this.CEEvaluationQ23 == null || this.CEEvaluationQ23 == "") {
-            ValidationPass = false;
-        }
-        if (this.CEEvaluationQ24 == null || this.CEEvaluationQ24 == "") {
-            ValidationPass = false;
-        }
-        if (this.CEEvaluationQ25 == null || this.CEEvaluationQ25 == "") {
-            ValidationPass = false;
-        }
-        if (this.CEEvaluationQ26 == null || this.CEEvaluationQ26 == "") {
-            ValidationPass = false;
-        }
-        if (this.CEEvaluationQ31 == null || this.CEEvaluationQ31 == "") {
-            ValidationPass = false;
-        }
-        if (this.CEEvaluationQ32 == null || this.CEEvaluationQ32 == "") {
-            ValidationPass = false;
-        }
-        if (this.CEEvaluationQ33 == null || this.CEEvaluationQ33 == "") {
-            ValidationPass = false;
-        }
-        //if (this.CEEvaluationQ41 == null || this.CEEvaluationQ41 == "") {
-        //    ValidationPass = false;
-        //}
-        if (ValidationPass == false) {
-            saving.dismiss();
-            requiredalert.present();
+    navToWebsite(WebsiteURL) {
+        if (WebsiteURL === undefined) {
+            // Do nothing
         }
         else {
-            // Get last update performed by this app
-            var LastUpdateDate = this.localstorage.getLocalValue("LastUpdateDate");
-            if (LastUpdateDate == null) {
-                // If never, then set variable and localStorage item to NA
-                LastUpdateDate = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
-                this.localstorage.setLocalValue("LastUpdateDate", LastUpdateDate);
+            // Initiate web browser
+            if ((WebsiteURL.substring(0, 7) != "http://") && (WebsiteURL.substring(0, 8) != "https://")) {
+                WebsiteURL = "http://" + WebsiteURL;
             }
-            flags = "es|" + EventID + "|Workshop|" + Q11 + "|" + Q12 + "|" + Q21 + "|" + Q22 + "|" + Q23 + "|" + Q24 + "|" + Q25 + "|" + Q26 + "|" + Q31 + "|" + Q32 + "|" + Q33 + "|" + Q41 + "|" + LastUpdateDate;
-            console.log('Save Evaluation (Workshop) flags: ' + flags);
-            this.databaseprovider.getEvaluationData(flags, AttendeeID).then(data => {
-                console.log("getEvaluationData: " + JSON.stringify(data));
-                if (data['length'] > 0) {
-                    if (data[0].EVStatus == "Success") {
-                        // Saved
-                        saving.dismiss();
-                        savealert.present();
-                        this.navCtrl.pop();
-                    }
-                    else {
-                        // Not saved
-                        console.log("Query: " + data[0].EVQuery);
-                        saving.dismiss();
-                        failalert.present();
-                    }
-                }
-                else {
-                    // Not saved
-                    console.log("No query to show");
-                    saving.dismiss();
-                    failalert.present();
-                }
-            }).catch(function () {
-                console.log("Promise Rejected");
-            });
+            console.log('Exhibitor Details: Navigating to: ' + WebsiteURL);
+            window.open(WebsiteURL, '_system');
+        }
+    }
+    ;
+    navToEmail(EmailAddress) {
+        if (EmailAddress === undefined) {
+            // Do nothing
+        }
+        else {
+            // Initiate mail program
+            window.open('mailto:' + EmailAddress + '?subject=AACD San Diego', 'target=_blank');
+        }
+    }
+    ;
+    callPhone2(phoneNumber) {
+        console.log("Dialer version 2");
+        var DevicePlatform = this.localstorage.getLocalValue('DevicePlatform');
+        if (DevicePlatform != 'Browser') {
+            if ((phoneNumber === undefined) || (phoneNumber == '')) {
+                console.log('No phone number defined');
+                // Do nothing
+            }
+            else {
+                // remove all other characters from phone number string
+                // phoneNumber = phoneNumber.replace(/-/g, '');
+                phoneNumber = phoneNumber.replace('(', '');
+                phoneNumber = phoneNumber.replace(')', '');
+                phoneNumber = phoneNumber.replace(' ', '-');
+                console.log('Dialer: tel:' + phoneNumber);
+                window.open(`tel:${phoneNumber}`, '_system');
+                //window['plugins'].CallNumber.callNumber(function onSuccess(result){
+                //	console.log("Dialer Success:" + JSON.stringify(result));
+                //},
+                //function onError(result) {
+                //	console.log("Dialer Error:" + JSON.stringify(result));
+                //}, phoneNumber, false);
+            }
         }
     }
 };
-EvaluationWorkshop = __decorate([
+ExhibitorDetailsPage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
-        selector: 'page-evaluationworkshop',template:/*ion-inline-start:"/Users/petervroom/aacd19/src/pages/evaluationworkshop/evaluationworkshop.html"*/'<ion-header>\n\n  <ion-navbar color="primary">\n\n    <button ion-button menuToggle>\n\n      <ion-icon name="menu"></ion-icon>\n\n    </button>\n\n    <ion-title>Evaluation</ion-title>\n\n  </ion-navbar>\n\n</ion-header>\n\n\n\n\n\n<ion-content>\n\n	\n\n	<ion-list>\n\n		<ion-list-header text-wrap style="background:#510e88; color:#fff">\n\n\n\n			<h2 style="color:#fff; font-weight:bold">Course Name</h2>\n\n			<h4 style="color:#fff">{{DisplayEventName}}</h4>\n\n			<h4 style="color:#fff">{{DisplayEventTimeDateLocation}}</h4>\n\n\n\n		</ion-list-header>\n\n\n\n\n\n		<ion-list-header text-wrap style="background:#510e88">\n\n			<h2 style="color:#fff">1.1)  Is this the first time you have attended a scientific session?</h2>\n\n		</ion-list-header>\n\n\n\n		<ion-list radio-group [(ngModel)]="CEEvaluationQ11" name="CEEvaluationQ11" (ionChange)="mcqAnswer($event)">\n\n			<ion-item>\n\n				<ion-label>Yes</ion-label>\n\n				<ion-radio value="Yes"></ion-radio>\n\n			</ion-item>\n\n			<ion-item>\n\n				<ion-label>No</ion-label>\n\n				<ion-radio value="No"></ion-radio>\n\n			</ion-item>\n\n		</ion-list>\n\n\n\n\n\n\n\n		<ion-card>\n\n			<ion-card-header text-wrap style="background:#510e88">	\n\n				<h2 style="color:#fff">1.2)  I am a...</h2>\n\n			</ion-card-header>\n\n			<ion-card-content>\n\n				<ion-list radio-group [(ngModel)]="CEEvaluationQ12" name="CEEvaluationQ12">\n\n					<ion-item>\n\n						<ion-label>Doctor</ion-label>\n\n						<ion-radio value="Doctor"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>Laboratory Technician</ion-label>\n\n						<ion-radio value="LabTech"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>Team</ion-label>\n\n						<ion-radio value="Team"></ion-radio>\n\n					</ion-item>\n\n				</ion-list>\n\n			</ion-card-content>\n\n		</ion-card>\n\n\n\n\n\n\n\n		<ion-card>\n\n			<ion-card-header text-wrap style="background:#510e88">	\n\n				<h2 style="color:#fff">2.1) The learning objectives were delivered effectively.</h2>\n\n			</ion-card-header>\n\n		\n\n			<ion-card-content>\n\n				<ion-list radio-group [(ngModel)]="CEEvaluationQ21" name="CEEvaluationQ21">\n\n					<ion-item>\n\n						<ion-label>5 - Strongly Agree</ion-label>\n\n						<ion-radio value="5"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>4</ion-label>\n\n						<ion-radio value="4"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>3</ion-label>\n\n						<ion-radio value="3"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>2</ion-label>\n\n						<ion-radio value="2"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>1 - Strong Disagree</ion-label>\n\n						<ion-radio value="1"></ion-radio>\n\n					</ion-item>\n\n				</ion-list>\n\n			</ion-card-content>		\n\n		</ion-card>\n\n	\n\n\n\n\n\n\n\n		<ion-card>\n\n			<ion-card-header text-wrap style="background:#510e88">	\n\n				<h2 style="color:#fff">2.2) The synopsis was an accurate reflection of the course as presented.</h2>\n\n			</ion-card-header>\n\n\n\n			<ion-card-content>\n\n				<ion-list radio-group [(ngModel)]="CEEvaluationQ22" name="CEEvaluationQ22">\n\n					<ion-item>\n\n						<ion-label>5 - Strongly Agree</ion-label>\n\n						<ion-radio value="5"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>4</ion-label>\n\n						<ion-radio value="4"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>3</ion-label>\n\n						<ion-radio value="3"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>2</ion-label>\n\n						<ion-radio value="2"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>1 - Strongly Disagree</ion-label>\n\n						<ion-radio value="1"></ion-radio>\n\n					</ion-item>\n\n				</ion-list>\n\n			</ion-card-content>\n\n		</ion-card>\n\n\n\n\n\n\n\n		<ion-card>\n\n			<ion-card-header text-wrap style="background:#510e88">	\n\n				<h2 style="color:#fff"> 2.3) The presentation style and organization contributed positively to the course.</h2>\n\n			</ion-card-header>\n\n\n\n			<ion-card-content>\n\n				<ion-list radio-group [(ngModel)]="CEEvaluationQ23" name="CEEvaluationQ23">\n\n					<ion-item>\n\n						<ion-label>5 - Strongly Agree</ion-label>\n\n						<ion-radio value="5"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>4</ion-label>\n\n						<ion-radio value="4"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>3</ion-label>\n\n						<ion-radio value="3"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>2</ion-label>\n\n						<ion-radio value="2"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>1 - Strongly Disagree</ion-label>\n\n						<ion-radio value="1"></ion-radio>\n\n					</ion-item>\n\n				</ion-list>\n\n			</ion-card-content>\n\n		</ion-card>\n\n\n\n		\n\n\n\n		<ion-card>\n\n			<ion-card-header text-wrap style="background:#510e88">	\n\n				<h2 style="color:#fff"> 2.4) The material will be useful to me and my practice.</h2>\n\n			</ion-card-header>\n\n\n\n			<ion-card-content>\n\n				<ion-list radio-group [(ngModel)]="CEEvaluationQ24" name="CEEvaluationQ24">\n\n					<ion-item>\n\n						<ion-label>5 - Strongly Agree</ion-label>\n\n						<ion-radio value="5"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>4</ion-label>\n\n						<ion-radio value="4"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>3</ion-label>\n\n						<ion-radio value="3"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>2</ion-label>\n\n						<ion-radio value="2"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>1 - Strongly Disagree</ion-label>\n\n						<ion-radio value="1"></ion-radio>\n\n					</ion-item>\n\n				</ion-list>\n\n			</ion-card-content>\n\n		</ion-card>\n\n\n\n\n\n	   \n\n		<ion-card>\n\n			<ion-card-header text-wrap style="background:#510e88">	\n\n				<h2 style="color:#fff">2.5) The session provided opportunities for active learning.</h2>\n\n			</ion-card-header>\n\n\n\n			<ion-card-content>\n\n				<ion-list radio-group [(ngModel)]="CEEvaluationQ25" name="CEEvaluationQ25">\n\n					<ion-item>\n\n						<ion-label>5 - Strongly Agree</ion-label>\n\n						<ion-radio value="5"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>4</ion-label>\n\n						<ion-radio value="4"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>3</ion-label>\n\n						<ion-radio value="3"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>2</ion-label>\n\n						<ion-radio value="2"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>1 - Strongly Disagree</ion-label>\n\n						<ion-radio value="1"></ion-radio>\n\n					</ion-item>\n\n				</ion-list>\n\n			</ion-card-content>\n\n		</ion-card>\n\n\n\n\n\n		<ion-card>\n\n			<ion-card-header text-wrap style="background:#510e88">	\n\n				<h2 style="color:#fff">2.6) I would attend another course by this presenter.</h2>\n\n			</ion-card-header>\n\n\n\n			<ion-card-content>\n\n				<ion-list radio-group [(ngModel)]="CEEvaluationQ26" name="CEEvaluationQ26">\n\n					<ion-item>\n\n						<ion-label>5 - Strongly Agree</ion-label>\n\n						<ion-radio value="5"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>4</ion-label>\n\n						<ion-radio value="4"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>3</ion-label>\n\n						<ion-radio value="3"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>2</ion-label>\n\n						<ion-radio value="2"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>1 - Strongly Disagree</ion-label>\n\n						<ion-radio value="1"></ion-radio>\n\n					</ion-item>\n\n				</ion-list>\n\n			</ion-card-content>\n\n		</ion-card>\n\n\n\n\n\n\n\n		<ion-card>\n\n			<ion-card-header text-wrap style="background:#510e88">	\n\n				<h2 style="color:#fff">3.1) The presentation was not skewed toward the manufacture but balanced with regard to materials and equipment.</h2>\n\n			</ion-card-header>\n\n\n\n			<ion-card-content>\n\n				<ion-list radio-group [(ngModel)]="CEEvaluationQ31" name="CEEvaluationQ31">\n\n					<ion-item>\n\n						<ion-label>5 - Strongly Agree</ion-label>\n\n						<ion-radio value="5"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>4</ion-label>\n\n						<ion-radio value="4"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>3</ion-label>\n\n						<ion-radio value="3"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>2</ion-label>\n\n						<ion-radio value="2"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>1 - Strongly Disagree</ion-label>\n\n						<ion-radio value="1"></ion-radio>\n\n					</ion-item>\n\n				</ion-list>\n\n			</ion-card-content>\n\n		</ion-card>\n\n\n\n\n\n		<ion-card>\n\n\n\n			<ion-card-header text-wrap style="background:#510e88">	\n\n				<h2 style="color:#fff">3.2) The presenter allotted sufficient time for questions and answers.</h2>\n\n			</ion-card-header>\n\n\n\n			<ion-card-content>\n\n				<ion-list radio-group [(ngModel)]="CEEvaluationQ32" name="CEEvaluationQ32">\n\n					<ion-item>\n\n						<ion-label>5 - Strongly Agree</ion-label>\n\n						<ion-radio value="5"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>4</ion-label>\n\n						<ion-radio value="4"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>3</ion-label>\n\n						<ion-radio value="3"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>2</ion-label>\n\n						<ion-radio value="2"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>1 - Strongly Disagree</ion-label>\n\n						<ion-radio value="1"></ion-radio>\n\n					</ion-item>\n\n				</ion-list>\n\n			</ion-card-content>\n\n		</ion-card>\n\n\n\n\n\n\n\n\n\n		<ion-card>\n\n\n\n			<ion-card-header text-wrap style="background:#510e88">	\n\n				<h2 style="color:#fff">3.3) The balance of heavy emphasis on hands-on and minimal emphasis on lecture was good.</h2>\n\n			</ion-card-header>\n\n\n\n			<ion-card-content>\n\n				<ion-list radio-group [(ngModel)]="CEEvaluationQ33" name="CEEvaluationQ33">\n\n					<ion-item>\n\n						<ion-label>5 - Strongly Agree</ion-label>\n\n						<ion-radio value="5"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>4</ion-label>\n\n						<ion-radio value="4"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>3</ion-label>\n\n						<ion-radio value="3"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>2</ion-label>\n\n						<ion-radio value="2"></ion-radio>\n\n					</ion-item>\n\n					<ion-item>\n\n						<ion-label>1 - Strongly Disagree</ion-label>\n\n						<ion-radio value="1"></ion-radio>\n\n					</ion-item>\n\n				</ion-list>\n\n			</ion-card-content>\n\n		</ion-card>\n\n\n\n\n\n		<ion-card>\n\n			<ion-card-header text-wrap style="background:#510e88">	\n\n				<h2 style="color:#fff">4.1) Please contribute your additional comments or suggestions about this course below.</h2>\n\n			</ion-card-header>\n\n		\n\n			<ion-card-content>\n\n				<ion-textarea (input)=\'CEEvaluationQ41 = $event.target.value\' \n\n					name="CEEvaluationQ41"\n\n					[value]="CEEvaluationQ41" \n\n					id="CEEvaluationQ41"\n\n					placeholder="Enter text" rows="4"></ion-textarea>\n\n			</ion-card-content>\n\n		</ion-card>\n\n	</ion-list>\n\n\n\n	<div>\n\n		<button ion-button style="background:#710080; width:50%; margin-right:25%; margin-left:25%" (click)="SubmitEvaluation()">\n\n			SUBMIT\n\n		</button>\n\n	</div>\n\n	<br/><br/><br/>\n\n\n\n</ion-content>\n\n\n\n\n\n\n\n'/*ion-inline-end:"/Users/petervroom/aacd19/src/pages/evaluationworkshop/evaluationworkshop.html"*/,
+        selector: 'page-exhibitordetails',template:/*ion-inline-start:"/Users/petervroom/aacd19/src/pages/exhibitordetails/exhibitordetails.html"*/'<ion-header>\n\n  <ion-navbar color="primary">\n    <button ion-button menuToggle>\n      <ion-icon name="menu"></ion-icon>\n    </button>\n    <ion-title>Exhibitor Details</ion-title>\n  </ion-navbar>\n\n</ion-header>\n\n<ion-content padding>\n\n\n\n\n\n      <ion-grid>\n        <ion-row>\n          <ion-col><img [src]="ExhibitorCompanyLogoFilename" onerror="this.src=\'assets/img/a_00_3920t.png\'"\n            width="50%" height=""\n            src="assets/img/a_00_3920t.png"\n            class="img-default img-responsive"\n            alt="Image error">\n        </ion-col>\n    </ion-row>\n    \n        <ion-row>\n          <ion-col>\n            <p class="marginTB0 myLabelBold myFontSize22">{{ExhibitorCompanyName}}</p>\n            <p class="marginTB0 myFontSize18">{{ExhibitorAddressLine1}}</p>\n            <p class="marginTB0 myFontSize18">{{ExhibitorDisplayCityState}}</p>\n            <p class="marginTB0 myFontSize18">{{ExhibitorBoothNumber}}</p>\n        </ion-col>\n        </ion-row>\n    </ion-grid>\n\n\n\n\n\n    <ion-card>\n        <ion-card-header style="background:#283593;color:#fff">\n            Contact\n        </ion-card-header>\n\n        <ion-list>\n            <ion-item *ngIf=visPrimaryContact>\n                <ion-icon color="secondary" name="person" item-start></ion-icon>\n                {{ExhibitorPrimaryOnsiteContactName}}\n            </ion-item>\n\n            <button ion-item>\n                <ion-icon color="secondary" name="mail" item-start></ion-icon>\n                {{ExhibitorPrimaryOnsiteContactEmailDisplay}}\n            </button>\n\n            <button ion-item>\n                <ion-icon color="secondary" name="call" item-start></ion-icon>\n                {{ExhibitorPrimaryOnsiteContactPhone}}\n            </button>\n        </ion-list>\n    </ion-card>\n\n    <ion-card>\n        <ion-card-header style="background:#283593;color:#fff">\n            Description\n        </ion-card-header>\n        <ion-card-content>\n            <div [innerHTML]="exDetails" class="myMarginTopBottom">\n                {{ExhibitorCompanyDescription}}\n            </div>\n        </ion-card-content>\n    </ion-card>\n\n    <ion-card *ngIf="visSocialMediaHeader">\n        <ion-card-header style="background:#283593;color:#fff">\n            Social Media\n        </ion-card-header>\n        <ion-card-content padding>\n            <button ion-button color="secondary" outline *ngIf="visSocialMediaFacebookVisible" (click)="navToWebsite(ExhibitorSocialMediaFacebook)">\n                <ion-icon name="logo-facebook" style="font-size:2em;"></ion-icon>\n            </button>\n            <button ion-button color="secondary" outline *ngIf="visSocialMediaTwitterVisible" (click)="navToWebsite(ExhibitorSocialMediaTwitter)">\n                <ion-icon name="logo-twitter" style="font-size:2em;"></ion-icon>\n            </button>\n            <button ion-button color="secondary" outline *ngIf="visSocialMediaLinkedInVisible" (click)="navToWebsite(ExhibitorSocialMediaLinkedIn)">\n                <ion-icon name="logo-linkedin" style="font-size:2em;"></ion-icon>\n            </button>\n            <button ion-button color="secondary" outline *ngIf="visSocialMediaYouTubeVisible" (click)="navToWebsite(ExhibitorSocialMediaYouTube)">\n                <ion-icon name="logo-youtube" style="font-size:2em;"></ion-icon>\n            </button>\n            <button ion-button color="secondary" outline *ngIf="visSocialMediaRSSVisible" (click)="navToWebsite(ExhibitorSocialMediaRSS)">\n                <ion-icon name="logo-rss" style="font-size:2em;"></ion-icon>\n            </button>\n            <button ion-button color="secondary" outline *ngIf="visSocialMediaGooglePlusVisible" (click)="navToWebsite(ExhibitorSocialMediaGooglePlus)">\n                <ion-icon name="logo-googleplus" style="font-size:2em;"></ion-icon>\n            </button>\n        </ion-card-content>\n    </ion-card>\n\n    <ion-card>\n        <ion-card-header style="background:#283593; color:#fff">\n                Locator\n            </ion-card-header>\n        <ion-card-content>\n        <div id="map2" style="width:100%; height:300px;"></div>\n        <!-- <div class="map-container">\n            <div id="mapId" style="width: 100%; height: 100%">\n            </div>\n        </div> -->\n        </ion-card-content>\n    </ion-card>\n\n	\n		\n</ion-content>\n'/*ion-inline-end:"/Users/petervroom/aacd19/src/pages/exhibitordetails/exhibitordetails.html"*/,
         changeDetection: __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectionStrategy"].OnPush
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["u" /* NavController */],
         __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["v" /* NavParams */],
-        __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["u" /* NavController */],
-        __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"],
         __WEBPACK_IMPORTED_MODULE_2__ionic_storage__["b" /* Storage */],
-        __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["q" /* LoadingController */],
-        __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["b" /* AlertController */],
         __WEBPACK_IMPORTED_MODULE_4__providers_database_database__["a" /* Database */],
+        __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectorRef"],
+        __WEBPACK_IMPORTED_MODULE_1_ionic_angular__["q" /* LoadingController */],
         __WEBPACK_IMPORTED_MODULE_5__providers_localstorage_localstorage__["a" /* Localstorage */]])
-], EvaluationWorkshop);
+], ExhibitorDetailsPage);
 
-//# sourceMappingURL=evaluationworkshop.js.map
+//# sourceMappingURL=exhibitordetails.js.map
 
 /***/ })
 

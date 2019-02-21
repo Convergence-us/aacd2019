@@ -26172,7 +26172,7 @@ body.internalPage {
 }
 
 .blue {
-  background: #4A148C !important;
+  background: #2196f3 !important;
   color: #fff;
   margin-right: 10px;
   border-radius: 0;
@@ -27212,7 +27212,7 @@ page-activityfeeddetails button[ion-fab] ion-label {
   top: -8px;
   right: 40px;
   color: #fff;
-  background-color: #4a148c;
+  background-color: #2196f3;
   line-height: 24px;
   padding: 4px 8px;
   border-radius: 4px;
@@ -27225,7 +27225,7 @@ page-activityfeeddetails button[ion-fab] button {
   top: -12px;
   right: 40px;
   color: #fff;
-  background-color: #4a148c;
+  background-color: #2196f3;
   line-height: 32px;
   padding: 4px 8px;
   border-radius: 4px;
@@ -27238,7 +27238,7 @@ page-activityfeeddetails button[ion-fab] .fabdivbutton {
   top: 0px;
   right: 45px;
   color: #fff;
-  background-color: #4a148c;
+  background-color: #2196f3;
   line-height: 32px;
   padding: 4px 8px;
   border-radius: 4px;
@@ -28250,7 +28250,7 @@ page-myagenda button[ion-fab] ion-label {
   top: -12px;
   right: 40px;
   color: #fff;
-  background-color: #4a148c;
+  background-color: #2196f3;
   line-height: 32px;
   padding: 4px 8px;
   border-radius: 4px;
@@ -28263,7 +28263,7 @@ page-myagenda button[ion-fab] button {
   top: -12px;
   right: 40px;
   color: #fff;
-  background-color: #4a148c;
+  background-color: #2196f3;
   line-height: 32px;
   padding: 4px 8px;
   border-radius: 4px;
@@ -29458,11 +29458,11 @@ page-notes .myLabelBold {
 }
 
 page-searchresults .gridbg {
-  background: #510e88;
+  background: #2196f3;
 }
 
 page-searchresults .rowSearch {
-  background: #510e88;
+  background:#2196f3;
   height: 40px !important;
   color: #fff;
   font-size: 16px;

@@ -1,6 +1,6 @@
 webpackJsonp([17],{
 
-/***/ 945:
+/***/ 947:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8,7 +8,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "ActivityFeedCommentPageModule", function() { return ActivityFeedCommentPageModule; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__activityfeedcomment__ = __webpack_require__(967);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__activityfeedcomment__ = __webpack_require__(969);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -38,7 +38,7 @@ ActivityFeedCommentPageModule = __decorate([
 
 /***/ }),
 
-/***/ 967:
+/***/ 969:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -98,7 +98,7 @@ let ActivityFeedCommentPage = class ActivityFeedCommentPage {
 };
 ActivityFeedCommentPage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
-        selector: 'page-activityfeedcomment',template:/*ion-inline-start:"/Users/petervroom/aacd19/src/pages/activityfeedcomment/activityfeedcomment.html"*/'<ion-header>\n\n	<ion-navbar color="primary">\n		<ion-title>Add a Comment</ion-title>\n	</ion-navbar>\n\n</ion-header>\n\n\n<ion-content>\n\n		<ion-textarea \n			(input)=\'CommentEntry = $event.target.value\' \n			name="CommentEntry" \n			[value]="CommentEntry" \n			placeholder="Enter a comment..."\n			style="height:150px;"></ion-textarea>\n\n		<ion-grid>\n			<ion-row>\n				<ion-col col-6 >\n					<button ion-button color="danger" (click)="closeModal(\'Save\')">\n						Save\n					</button>\n				</ion-col>\n				<ion-col col-6 >\n					<button ion-button color="danger" (click)="closeModal(\'Cancel\')">\n						Cancel\n					</button>\n				</ion-col>\n			</ion-row>\n		</ion-grid>\n\n</ion-content>\n'/*ion-inline-end:"/Users/petervroom/aacd19/src/pages/activityfeedcomment/activityfeedcomment.html"*/,
+        selector: 'page-activityfeedcomment',template:/*ion-inline-start:"/Users/petervroom/aacd19/src/pages/activityfeedcomment/activityfeedcomment.html"*/'<ion-header>\n\n	<ion-navbar color="primary">\n		<ion-title>Add a Comment</ion-title>\n	</ion-navbar>\n\n</ion-header>\n\n\n<ion-content>\n\n\n		<ion-grid>\n			<ion-row>\n				<ion-col col-6 >\n					<button ion-button color="danger" (click)="closeModal(\'Save\')">\n						Save\n					</button>\n				</ion-col>\n				<ion-col col-6 >\n					<button ion-button color="danger" (click)="closeModal(\'Cancel\')">\n						Cancel\n					</button>\n				</ion-col>\n			</ion-row>\n		</ion-grid>\n\n\n\n		<ion-textarea \n		(input)=\'CommentEntry = $event.target.value\' \n		name="CommentEntry" \n		[value]="CommentEntry" \n		placeholder="Enter a comment..."\n		style="height:150px;"></ion-textarea>\n\n\n\n</ion-content>\n\n\n<!--\n\n<ion-footer>\n<ion-toolbar>\n	<ion-textarea \n		(input)=\'CommentEntry = $event.target.value\' \n		name="CommentEntry" \n		[value]="CommentEntry" \n		placeholder="Enter a comment..."\n		style="height:150px;"></ion-textarea>\n</ion-toolbar>\n</ion-footer>\n\n-->'/*ion-inline-end:"/Users/petervroom/aacd19/src/pages/activityfeedcomment/activityfeedcomment.html"*/,
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["v" /* NavParams */],
         __WEBPACK_IMPORTED_MODULE_2__ionic_storage__["b" /* Storage */],

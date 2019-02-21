@@ -387,15 +387,6 @@ module.exports = [
     ]
   },
   {
-    "id": "cordova-plugin-ionic.common",
-    "file": "plugins/cordova-plugin-ionic/www/common.js",
-    "pluginId": "cordova-plugin-ionic",
-    "clobbers": [
-      "IonicCordova"
-    ],
-    "runs": true
-  },
-  {
     "id": "cordova-plugin-native-spinner.SpinnerDialog",
     "file": "plugins/cordova-plugin-native-spinner/www/SpinnerDialog.js",
     "pluginId": "cordova-plugin-native-spinner",
@@ -409,14 +400,6 @@ module.exports = [
     "pluginId": "cordova-plugin-safariviewcontroller",
     "clobbers": [
       "SafariViewController"
-    ]
-  },
-  {
-    "id": "cordova-plugin-statusbar.statusbar",
-    "file": "plugins/cordova-plugin-statusbar/www/statusbar.js",
-    "pluginId": "cordova-plugin-statusbar",
-    "clobbers": [
-      "window.StatusBar"
     ]
   },
   {
@@ -472,6 +455,68 @@ module.exports = [
     "clobbers": [
       "OneSignal"
     ]
+  },
+  {
+    "id": "cordova-plugin-statusbar.statusbar",
+    "file": "plugins/cordova-plugin-statusbar/www/statusbar.js",
+    "pluginId": "cordova-plugin-statusbar",
+    "clobbers": [
+      "window.StatusBar"
+    ]
+  },
+  {
+    "id": "cordova-plugin-ionic-webview.IonicWebView",
+    "file": "plugins/cordova-plugin-ionic-webview/src/www/util.js",
+    "pluginId": "cordova-plugin-ionic-webview",
+    "clobbers": [
+      "Ionic.WebView"
+    ]
+  },
+  {
+    "id": "cordova-plugin-ionic-keyboard.keyboard",
+    "file": "plugins/cordova-plugin-ionic-keyboard/www/android/keyboard.js",
+    "pluginId": "cordova-plugin-ionic-keyboard",
+    "clobbers": [
+      "window.Keyboard"
+    ]
+  },
+  {
+    "id": "cordova-plugin-advanced-http.lodash",
+    "file": "plugins/cordova-plugin-advanced-http/www/lodash.js",
+    "pluginId": "cordova-plugin-advanced-http"
+  },
+  {
+    "id": "cordova-plugin-advanced-http.tough-cookie",
+    "file": "plugins/cordova-plugin-advanced-http/www/umd-tough-cookie.js",
+    "pluginId": "cordova-plugin-advanced-http"
+  },
+  {
+    "id": "cordova-plugin-advanced-http.messages",
+    "file": "plugins/cordova-plugin-advanced-http/www/messages.js",
+    "pluginId": "cordova-plugin-advanced-http"
+  },
+  {
+    "id": "cordova-plugin-advanced-http.local-storage-store",
+    "file": "plugins/cordova-plugin-advanced-http/www/local-storage-store.js",
+    "pluginId": "cordova-plugin-advanced-http"
+  },
+  {
+    "id": "cordova-plugin-advanced-http.cookie-handler",
+    "file": "plugins/cordova-plugin-advanced-http/www/cookie-handler.js",
+    "pluginId": "cordova-plugin-advanced-http"
+  },
+  {
+    "id": "cordova-plugin-advanced-http.helpers",
+    "file": "plugins/cordova-plugin-advanced-http/www/helpers.js",
+    "pluginId": "cordova-plugin-advanced-http"
+  },
+  {
+    "id": "cordova-plugin-advanced-http.http",
+    "file": "plugins/cordova-plugin-advanced-http/www/advanced-http.js",
+    "pluginId": "cordova-plugin-advanced-http",
+    "clobbers": [
+      "cordova.plugin.http"
+    ]
   }
 ];
 module.exports.metadata = 
@@ -484,7 +529,6 @@ module.exports.metadata =
   "cordova-plugin-compat": "1.1.0",
   "cordova-plugin-calendar": "4.6.0",
   "cordova-plugin-camera": "2.4.0",
-  "cordova-plugin-console": "1.0.5",
   "cordova-plugin-contacts": "3.0.1",
   "cordova-plugin-device": "1.1.4",
   "cordova-plugin-email": "1.2.6",
@@ -494,17 +538,19 @@ module.exports.metadata =
   "cordova-plugin-geolocation": "2.4.2",
   "cordova-plugin-inappbrowser": "1.7.1",
   "cordova-plugin-splashscreen": "5.0.2",
-  "cordova-plugin-ionic": "3.1.3",
   "cordova-plugin-native-spinner": "1.1.3",
   "cordova-plugin-safariviewcontroller": "1.4.7",
-  "cordova-plugin-statusbar": "2.2.1",
   "cordova-plugin-whitelist": "1.3.1",
   "cordova-plugin-x-toast": "2.6.0",
   "cordova-sms-plugin": "0.1.11",
   "cordova-sqlite-ext": "2.2.0",
   "phonegap-plugin-barcodescanner": "6.0.6",
   "de.appplant.cordova.plugin.printer": "0.7.1",
-  "onesignal-cordova-plugin": "2.3.3"
+  "onesignal-cordova-plugin": "2.3.3",
+  "cordova-plugin-statusbar": "2.4.2",
+  "cordova-plugin-ionic-webview": "2.3.3",
+  "cordova-plugin-ionic-keyboard": "2.1.3",
+  "cordova-plugin-advanced-http": "2.0.4"
 };
 // BOTTOM OF METADATA
 });
