@@ -6988,7 +6988,7 @@ var map = {
 		17
 	],
 	"../pages/activityfeeddetails/activityfeeddetails.module": [
-		960,
+		959,
 		16
 	],
 	"../pages/activityfeedleaderboard/activityfeedleaderboard.module": [
@@ -6996,7 +6996,7 @@ var map = {
 		0
 	],
 	"../pages/activityfeedposting/activityfeedposting.module": [
-		959,
+		960,
 		15
 	],
 	"../pages/attendeesprofile/attendeesprofile.module": [
@@ -7032,11 +7032,11 @@ var map = {
 		7
 	],
 	"../pages/notesdetails/notesdetails.module": [
-		952,
+		951,
 		21
 	],
 	"../pages/notifications/notifications.module": [
-		951,
+		952,
 		20
 	],
 	"../pages/profile/profile.module": [
@@ -7048,15 +7048,15 @@ var map = {
 		6
 	],
 	"../pages/profilepasswordchange/profilepasswordchange.module": [
-		954,
+		956,
 		5
 	],
 	"../pages/profilesocialmediaentry/profilesocialmediaentry.module": [
-		955,
+		954,
 		4
 	],
 	"../pages/searchbytopic/searchbytopic.module": [
-		956,
+		955,
 		3
 	],
 	"../pages/searchresults/searchresults.module": [
@@ -7399,7 +7399,7 @@ let MorePage = class MorePage {
 };
 MorePage = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
-        selector: 'page-more',template:/*ion-inline-start:"/Users/petervroom/aacd19/src/pages/more/more.html"*/'<ion-header>\n  <ion-navbar color="primary">\n    <button ion-button menuToggle>\n      <ion-icon name="menu"></ion-icon>\n    </button>\n    <ion-title>More</ion-title>\n  </ion-navbar>\n</ion-header>\n\n\n\n\n\n<ion-content>\n\n	<ion-list>\n	\n		<button ion-item (click)="NavToPage(\'NotesPage\')">Notes\n			<ion-icon color="secondary" item-start name="create"></ion-icon>\n		</button>\n\n		<button ion-item (click)="NavToPage(\'EventSurvey\')">Event Survey\n			<ion-icon color="secondary" item-start name="checkbox"></ion-icon>\n		</button>\n\n		<button ion-item (click)="NavToPage(\'MyAgenda\')">MyAgenda\n			<ion-icon color="secondary" item-start name="list-box"></ion-icon>\n		</button>\n\n		<img src="assets/img/gbasBig.jpeg" onclick="window.open(\'https://na01.safelinks.protection.outlook.com/?url=https%3A%2F%2Faacd.ejoinme.org%2FMyEvents%2FGiveBackaSmileSilentAuction2018%2Ftabid%2F886099%2FDefault.aspx&data=02%7C01%7Clisab%40aacd.com%7C3affa1cb6109443e9e2808d5a16dd04d%7C867291cda2d943f284571ed60b355ed5%7C0%7C0%7C636592415380677523&sdata=gvaFvM0Ce2X9QYhrsE1PcRiiQroR1MLaMRzdpVpNi9A%3D&reserved=0\', \'_system\', \'location=yes\'); return false;">\n\n		<button ion-item (click)="NavToPage(\'MyAgendaFull\')">Agenda All\n			<ion-icon color="secondary" item-start name="list-box"></ion-icon>\n		</button>\n\n		<button ion-item (click)="NavToPage(\'HelpPage\')">Help\n			<ion-icon color="secondary" item-start name="list-box"></ion-icon>\n		</button>\n\n		<button ion-item (click)="NavToPage(\'DatabasePage\')">Database Stats\n			<ion-icon color="secondary" item-start name="stats"></ion-icon>\n		</button>\n\n		<!--\n		<button ion-item (click)="NavToPage(\'EvalTest1Page\')">Evaluation Test 1\n			<ion-icon item-start name="checkbox"></ion-icon>\n		</button>\n\n		<button ion-item (click)="NavToPage(\'EvalTest2Page\')">Evaluation Test 2\n			<ion-icon item-start name="checkbox"></ion-icon>\n		</button>\n\n		<button ion-item (click)="NavToPage(\'EvalTest3Page\')">Evaluation Test 3\n			<ion-icon item-start name="checkbox"></ion-icon>\n		</button>\n\n		<button ion-item (click)="NavToPage(\'EvalTest4Page\')">Evaluation Test 4\n			<ion-icon item-start name="checkbox"></ion-icon>\n		</button>\n		-->\n		\n	</ion-list>\n\n</ion-content>\n\n<ion-footer no-border style="background:#eee">\n	<ion-grid style="padding:20px; margin:0">\n		<ion-row>\n			<ion-col style="padding:0">\n				<p>Deploy Version: 1.02</p>\n				<p style="margin-top: -13px;">Device Type: {{DeviceType}}</p>\n			</ion-col>\n			<ion-col style="padding:0">\n				<p>Registration ID: {{RegistrationID}}</p>\n				<p style="margin-top: -13px;">Last Sync: {{LSync}}</p>\n			</ion-col>\n			<ion-col style="padding:0">\n				<p>Push ID: {{PushID}}</p>\n				<p style="margin-top: -13px;">&nbsp;</p>\n			</ion-col>\n		</ion-row>\n	</ion-grid>\n</ion-footer>\n'/*ion-inline-end:"/Users/petervroom/aacd19/src/pages/more/more.html"*/,
+        selector: 'page-more',template:/*ion-inline-start:"/Users/petervroom/aacd19/src/pages/more/more.html"*/'<ion-header>\n  <ion-navbar color="primary">\n    <button ion-button menuToggle>\n      <ion-icon name="menu"></ion-icon>\n    </button>\n    <ion-title>More</ion-title>\n  </ion-navbar>\n</ion-header>\n\n\n\n\n\n<ion-content>\n\n	<ion-list>\n	\n		<button ion-item (click)="NavToPage(\'NotesPage\')">Notes\n			<ion-icon color="secondary" item-start name="create"></ion-icon>\n		</button>\n\n		<button ion-item (click)="NavToPage(\'EventSurvey\')">Event Survey\n			<ion-icon color="secondary" item-start name="checkbox"></ion-icon>\n		</button>\n\n		<button ion-item (click)="NavToPage(\'MyAgenda\')">MyAgenda\n			<ion-icon color="secondary" item-start name="list-box"></ion-icon>\n		</button>\n\n		<img src="assets/img/gbasBig.jpeg" onclick="window.open(\'https://na01.safelinks.protection.outlook.com/?url=https%3A%2F%2Faacd.ejoinme.org%2FMyEvents%2FGiveBackaSmileSilentAuction2018%2Ftabid%2F886099%2FDefault.aspx&data=02%7C01%7Clisab%40aacd.com%7C3affa1cb6109443e9e2808d5a16dd04d%7C867291cda2d943f284571ed60b355ed5%7C0%7C0%7C636592415380677523&sdata=gvaFvM0Ce2X9QYhrsE1PcRiiQroR1MLaMRzdpVpNi9A%3D&reserved=0\', \'_system\', \'location=yes\'); return false;">\n\n		<button ion-item (click)="NavToPage(\'MyAgendaFull\')">Agenda All\n			<ion-icon color="secondary" item-start name="list-box"></ion-icon>\n		</button>\n\n		<button ion-item (click)="NavToPage(\'HelpPage\')">Help\n			<ion-icon color="secondary" item-start name="list-box"></ion-icon>\n		</button>\n\n		<button ion-item (click)="NavToPage(\'DatabasePage\')">Database Stats\n			<ion-icon color="secondary" item-start name="stats"></ion-icon>\n		</button>\n\n		<!--\n		<button ion-item (click)="NavToPage(\'EvalTest1Page\')">Evaluation Test 1\n			<ion-icon item-start name="checkbox"></ion-icon>\n		</button>\n\n		<button ion-item (click)="NavToPage(\'EvalTest2Page\')">Evaluation Test 2\n			<ion-icon item-start name="checkbox"></ion-icon>\n		</button>\n\n		<button ion-item (click)="NavToPage(\'EvalTest3Page\')">Evaluation Test 3\n			<ion-icon item-start name="checkbox"></ion-icon>\n		</button>\n\n		<button ion-item (click)="NavToPage(\'EvalTest4Page\')">Evaluation Test 4\n			<ion-icon item-start name="checkbox"></ion-icon>\n		</button>\n		-->\n		\n	</ion-list>\n\n</ion-content>\n\n<ion-footer no-border style="background:#eee">\n	<ion-grid style="padding:20px; margin:0">\n		<ion-row>\n			<ion-col style="padding:0">\n				<p>Deploy Version: 1.06</p>\n				<p style="margin-top: -13px;">Device Type: {{DeviceType}}</p>\n			</ion-col>\n			<ion-col style="padding:0">\n				<p>Registration ID: {{RegistrationID}}</p>\n				<p style="margin-top: -13px;">Last Sync: {{LSync}}</p>\n			</ion-col>\n			<ion-col style="padding:0">\n				<p>Push ID: {{PushID}}</p>\n				<p style="margin-top: -13px;">&nbsp;</p>\n			</ion-col>\n		</ion-row>\n	</ion-grid>\n</ion-footer>\n'/*ion-inline-end:"/Users/petervroom/aacd19/src/pages/more/more.html"*/,
         changeDetection: __WEBPACK_IMPORTED_MODULE_0__angular_core__["ChangeDetectionStrategy"].OnPush
     }),
     __metadata("design:paramtypes", [__WEBPACK_IMPORTED_MODULE_1_ionic_angular__["u" /* NavController */],
@@ -9285,16 +9285,16 @@ AppModule = __decorate([
                     { loadChildren: '../pages/cetracking/cetracking.module#CetrackingPageModule', name: 'CetrackingPage', segment: 'cetracking', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/conversations/conversations.module#ConversationsPageModule', name: 'ConversationsPage', segment: 'conversations', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/evaluationlecture/evaluationlecture.module#EvaluationLectureModule', name: 'EvaluationLecture', segment: 'evaluationlecture', priority: 'low', defaultHistory: [] },
-                    { loadChildren: '../pages/notifications/notifications.module#NotificationsPageModule', name: 'NotificationsPage', segment: 'notifications', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/notesdetails/notesdetails.module#NotesDetailsPageModule', name: 'NotesDetailsPage', segment: 'notesdetails', priority: 'low', defaultHistory: [] },
+                    { loadChildren: '../pages/notifications/notifications.module#NotificationsPageModule', name: 'NotificationsPage', segment: 'notifications', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/profileimage/profileimage.module#ProfileImagePageModule', name: 'ProfileImagePage', segment: 'profileimage', priority: 'low', defaultHistory: [] },
-                    { loadChildren: '../pages/profilepasswordchange/profilepasswordchange.module#ProfilePasswordChangePageModule', name: 'ProfilePasswordChangePage', segment: 'profilepasswordchange', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/profilesocialmediaentry/profilesocialmediaentry.module#ProfileSocialMediaEntryPageModule', name: 'ProfileSocialMediaEntryPage', segment: 'profilesocialmediaentry', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/searchbytopic/searchbytopic.module#SearchByTopicPageModule', name: 'SearchByTopicPage', segment: 'searchbytopic', priority: 'low', defaultHistory: [] },
+                    { loadChildren: '../pages/profilepasswordchange/profilepasswordchange.module#ProfilePasswordChangePageModule', name: 'ProfilePasswordChangePage', segment: 'profilepasswordchange', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/slider/slider.module#SliderPageModule', name: 'SliderPage', segment: 'slider', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/speakerdetails/speakerdetails.module#SpeakerDetailsPageModule', name: 'SpeakerDetailsPage', segment: 'speakerdetails', priority: 'low', defaultHistory: [] },
-                    { loadChildren: '../pages/activityfeedposting/activityfeedposting.module#ActivityFeedPostingPageModule', name: 'ActivityFeedPostingPage', segment: 'activityfeedposting', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/activityfeeddetails/activityfeeddetails.module#ActivityFeedDetailsPageModule', name: 'ActivityFeedDetailsPage', segment: 'activityfeeddetails', priority: 'low', defaultHistory: [] },
+                    { loadChildren: '../pages/activityfeedposting/activityfeedposting.module#ActivityFeedPostingPageModule', name: 'ActivityFeedPostingPage', segment: 'activityfeedposting', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/attendeesprofile/attendeesprofile.module#AttendeesProfilePageModule', name: 'AttendeesProfilePage', segment: 'attendeesprofile', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/evaluationworkshop/evaluationworkshop.module#EvaluationWorkshopModule', name: 'EvaluationWorkshop', segment: 'evaluationworkshop', priority: 'low', defaultHistory: [] },
                     { loadChildren: '../pages/exhibitordetails/exhibitordetails.module#ExhibitorDetailsPageModule', name: 'ExhibitorDetailsPage', segment: 'exhibitordetails', priority: 'low', defaultHistory: [] },
