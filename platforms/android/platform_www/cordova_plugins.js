@@ -517,13 +517,53 @@ module.exports = [
     "clobbers": [
       "cordova.plugin.http"
     ]
+  },
+  {
+    "id": "cordova-plugin-ionic.common",
+    "file": "plugins/cordova-plugin-ionic/dist/common.js",
+    "pluginId": "cordova-plugin-ionic",
+    "clobbers": [
+      "IonicCordova"
+    ]
+  },
+  {
+    "id": "cordova-plugin-ionic.guards",
+    "file": "plugins/cordova-plugin-ionic/dist/guards.js",
+    "pluginId": "cordova-plugin-ionic",
+    "runs": true
+  },
+  {
+    "id": "de.appplant.cordova.plugin.local-notification.LocalNotification",
+    "file": "plugins/de.appplant.cordova.plugin.local-notification/www/local-notification.js",
+    "pluginId": "de.appplant.cordova.plugin.local-notification",
+    "clobbers": [
+      "cordova.plugins.notification.local",
+      "plugin.notification.local"
+    ]
+  },
+  {
+    "id": "de.appplant.cordova.plugin.local-notification.LocalNotification.Core",
+    "file": "plugins/de.appplant.cordova.plugin.local-notification/www/local-notification-core.js",
+    "pluginId": "de.appplant.cordova.plugin.local-notification",
+    "clobbers": [
+      "cordova.plugins.notification.local.core",
+      "plugin.notification.local.core"
+    ]
+  },
+  {
+    "id": "de.appplant.cordova.plugin.local-notification.LocalNotification.Util",
+    "file": "plugins/de.appplant.cordova.plugin.local-notification/www/local-notification-util.js",
+    "pluginId": "de.appplant.cordova.plugin.local-notification",
+    "merges": [
+      "cordova.plugins.notification.local.core",
+      "plugin.notification.local.core"
+    ]
   }
 ];
 module.exports.metadata = 
 // TOP OF METADATA
 {
   "cordova-plugin-actionsheet": "2.3.3",
-  "cordova-plugin-app-event": "1.2.0",
   "cordova-plugin-appversion": "1.0.0",
   "cordova-plugin-app-update": "1.3.9",
   "cordova-plugin-compat": "1.1.0",
@@ -550,7 +590,10 @@ module.exports.metadata =
   "cordova-plugin-statusbar": "2.4.2",
   "cordova-plugin-ionic-webview": "2.3.3",
   "cordova-plugin-ionic-keyboard": "2.1.3",
-  "cordova-plugin-advanced-http": "2.0.4"
+  "cordova-plugin-advanced-http": "2.0.4",
+  "cordova-plugin-ionic": "5.3.0",
+  "cordova-plugin-app-event": "1.2.1",
+  "de.appplant.cordova.plugin.local-notification": "0.8.5"
 };
 // BOTTOM OF METADATA
 });
