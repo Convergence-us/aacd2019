@@ -8,8 +8,8 @@
   "dependencies": {
     "@angular/animations": "^5.2.9",
     "@angular/common": "^5.2.11",
-    "@angular/compiler": "^7.2.3",
-    "@angular/compiler-cli": "^7.2.6",
+    "@angular/compiler": "^7.2.0",
+    "@angular/compiler-cli": "^7.2.0",
     "@angular/core": "^5.2.11",
     "@angular/forms": "^5.2.11",
     "@angular/http": "^5.2.11",
@@ -29,10 +29,8 @@
     "@ionic-native/sqlite": "^4.20.0",
     "@ionic-native/status-bar": "^4.20.0",
     "@ionic/angular": "^0.1.6",
-    "@ionic/pro": "^1.1.0",
     "@ionic/storage": "^2.2.0",
     "@types/leaflet.markercluster": "^1.0.3",
-    "angular-progress-bar": "^1.0.9",
     "chart.js": "^2.7.3",
     "cordova": "^8.1.2",
     "cordova-android": "7.1.4",
@@ -80,13 +78,13 @@
     "promise-polyfill": "7.1.1",
     "rxjs": "^5.5.12",
     "sw-toolbox": "3.6.0",
-    "tsickle": "^0.28.0",
+    "tsickle": "^0.34.0",
     "tslint": "^5.11.0",
     "zone.js": "^0.8.29"
   },
   "devDependencies": {
     "@ionic/app-scripts": "^3.2.2",
-    "typescript": "^3.3.1"
+    "typescript": "^3.2.1"
   },
   "scripts": {
     "build": "ionic-app-scripts build",

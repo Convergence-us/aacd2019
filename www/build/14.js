@@ -1,6 +1,6 @@
 webpackJsonp([14],{
 
-/***/ 961:
+/***/ 960:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -8,7 +8,7 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "AttendeesProfilePageModule", function() { return AttendeesProfilePageModule; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__(0);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_ionic_angular__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__attendeesprofile__ = __webpack_require__(981);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2__attendeesprofile__ = __webpack_require__(980);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_ionic_image_loader__ = __webpack_require__(61);
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
@@ -38,7 +38,7 @@ AttendeesProfilePageModule = __decorate([
 
 /***/ }),
 
-/***/ 981:
+/***/ 980:
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
