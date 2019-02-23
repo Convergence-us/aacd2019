@@ -4,5 +4,5 @@ platform :ios, '9.0'
 
 target 'AACD 2019' do
 	project 'AACD 2019.xcodeproj'
-	pod 'OneSignal', '2.8.2'
+
 end

@@ -74,7 +74,7 @@ public class AndroidProtocolHandler {
   }
 
   public InputStream openContentUrl(Uri uri)  throws IOException {
-    String realPath = uri.toString().replace(uri.getScheme() + "://" + uri.getHost() + ":" + uri.getPort() + WebViewLocalServer.contentStart, "content:/");
+    String realPath = uri.toString().replace(uri.getScheme() + "://" + uri.getHost() + WebViewLocalServer.contentStart, "content:/");
     InputStream stream = null;
     try {
       stream = context.getContentResolver().openInputStream(Uri.parse(realPath));

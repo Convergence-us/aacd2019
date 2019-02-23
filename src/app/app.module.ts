@@ -32,7 +32,7 @@ import { RelativeTime } from '../pipes/relative-time';
 // Services
 import { PostService } from '../services/post-service';
 import { UserService } from '../services/user-service';
-import { NotificationService } from '../services/notification-service';
+//import { NotificationService } from '../services/notification-service';
 import { ChatService } from '../services/chat-service';
 
 // Pages
