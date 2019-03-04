@@ -66,8 +66,9 @@
 		<label class="item item-select" id="searchByTopic-select1">
 			<ion-label style="color:#fff">Select Team Member</ion-label>
 			<ion-select [(ngModel)]="selectedLogin" (ionChange)="SetTeamMember($event)" style="color:#fff">
-				 <ion-option *ngFor="let teammember of teammembers" [value]="teammember">{{teammember.DisplayName}}</ion-option>
+				
 			</ion-select>
+			<ion-option *ngFor="let teammember of teammembers" [value]="teammember">{{teammember.DisplayName}}</ion-option>
 		</label>
 
 <!--
