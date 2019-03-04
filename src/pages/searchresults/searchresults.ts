@@ -91,7 +91,7 @@ export class SearchResultsPage {
 		
         // Set default labels for headers
         this.visHeaderLW = "+ Lectures [0]";
-        this.visHeaderPart = "+ Participation [0]";
+        this.visHeaderPart = "+ Workshops [0]";
         this.visHeaderOE = "+ Other Events [0]";
         this.visHeaderSpkr = "+ Speakers [0]";
         this.visHeaderExh = "+ Exhibitors [0]";
@@ -203,9 +203,9 @@ export class SearchResultsPage {
 				this.localstorage.setLocalValue('PartCount', PartCount);
 
 				if (this.PartShow == false) {
-					this.visHeaderPart = "+ Participation [" + PartCount + "]";
+					this.visHeaderPart = "+ Workshops [" + PartCount + "]";
 				} else {
-					this.visHeaderPart = "- Participation [" + PartCount + "]";
+					this.visHeaderPart = "- Workshops [" + PartCount + "]";
 				}
 
 				if (data['length'] > 0) {
@@ -569,9 +569,9 @@ export class SearchResultsPage {
             this.visHeaderLW = "- Lectures [" + LWCount + "]";
         }
         if (this.PartShow === false) {
-            this.visHeaderPart = "+ Participation [" + PartCount + "]";
+            this.visHeaderPart = "+ Workshops [" + PartCount + "]";
         } else {
-            this.visHeaderPart = "- Participation [" + PartCount + "]";
+            this.visHeaderPart = "- Workshops [" + PartCount + "]";
         }
         if (this.OtherShow === false) {
             this.visHeaderOE = "+ Other Events [" + OECount + "]";

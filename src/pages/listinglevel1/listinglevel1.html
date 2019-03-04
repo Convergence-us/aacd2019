@@ -68,7 +68,7 @@
 		<ion-item *ngFor="let session of ProgramListing" (tap)="EventDetails(session.EventID)" id="course-list-item19">
 			<ion-icon color="secondary" item-right name="arrow-dropright"></ion-icon>
 			<h2>{{session.DisplayEventName}}</h2>
-			<p>{{session.DisplayEventTimeDateLocation}}</p>
+			<h3>{{session.DisplayEventTimeDateLocation}}</h3>
 			<p>{{session.SpeakerDisplayName}}</p>
 			<p>{{session.DisplaySubjectCodeCECredits}}</p>
 			<p [ngClass]="session.SessionStatusStyle">{{session.SessionStatus}}</p>

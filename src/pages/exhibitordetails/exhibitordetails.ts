@@ -256,7 +256,7 @@ export class ExhibitorDetailsPage {
                         crs: L.CRS.Simple,
                         minZoom: -2,
                         maxZoom: 2,
-                        zoomControl: false
+                        zoomControl: true
                     });
 
                     var bounds = L.latLngBounds([0, 0], [2000, 1000]);    // Normally 1000, 1000; stretched to 2000,1000 for AACD 2017
@@ -275,7 +275,7 @@ export class ExhibitorDetailsPage {
                         crs: L.CRS.Simple,
                         minZoom: -2,
                         maxZoom: 2,
-                        zoomControl: false
+                        zoomControl: true
                     });
 
                     var bounds = L.latLngBounds([0, 0], [1500, 2000]);    // Normally 1000, 1000; stretched to 2000,1000 for AACD 2017

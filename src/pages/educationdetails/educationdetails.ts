@@ -53,9 +53,18 @@ export class EducationDetailsPage {
 	public SubEventsDisplay = false;
 	public RecordingShow = true;
 	public HandoutShow = true;
-	public OtherInformationDisplay = true;
 	public MeetingLocationDisplay = true;
 
+	// Other Information block control
+	public OtherInformationDisplay = true;
+	public DisplayRow1 = true;
+	public DisplayRow2 = true;
+	public DisplayRow3 = true;
+	public DisplaySubject = true;
+	public DisplayCECredits = true;
+	public DisplayType = true;
+	public DisplayCECreditsType = true;
+	
 	public SpeakerList: any[] = [];
 
 	// Other Information
@@ -255,7 +264,39 @@ export class EducationDetailsPage {
 				this.vCECreditsType = data[0].ce_credits_type;
 				this.vSessionType = data[0].type;
 				this.vSessionLevel = data[0].level;
-			
+
+				// Individual fields
+				//if (data[0].subject.length == 0 || data[0].subject == '' || data[0].subject == null) {
+				//	this.DisplaySubject = false;
+				//}
+				if (data[0].cs_credits.length == 0 || data[0].cs_credits == '' || data[0].cs_credits == null) {
+					this.DisplayCECredits = false;
+				}
+				if (data[0].type.length == 0 || data[0].type == '' || data[0].type == null) {
+					this.DisplayType = false;
+				}
+				if (data[0].ce_credits_type.length == 0 || data[0].ce_credits_type == '' || data[0].ce_credits_type == null) {
+					this.DisplayCECreditsType = false;
+				}
+
+				// Entire rows
+				if ((data[0].subject.length == 0 || data[0].subject == '' || data[0].subject == null) && (data[0].cs_credits.length == 0 || data[0].cs_credits == '' || data[0].cs_credits == null)) {
+					this.DisplayRow1 = false;
+				}
+				if ((data[0].type.length == 0 || data[0].type == '' || data[0].type == null) && (data[0].ce_credits_type.length == 0 || data[0].ce_credits_type == '' || data[0].ce_credits_type == null)) {
+					this.DisplayRow2 = false;
+				}
+				if (data[0].level.length == 0 || data[0].level == '' || data[0].level == null) {
+					this.DisplayRow3 = false;
+				}
+				
+				
+				// Entire block
+				if (this.DisplayRow1 == false && this.DisplayRow2 == false && this.DisplayRow3 == false) {
+					this.OtherInformationDisplay = false;
+				}
+				
+				
 				// Status checks
 				var SessionStatus = "";
 				var StatusStyle = "SessionStatusNormal";

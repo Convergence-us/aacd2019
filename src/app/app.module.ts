@@ -8,13 +8,12 @@ import { HttpModule } from '@angular/http';
 import { HttpClientModule } from '@angular/common/http';
 import { HTTP } from '@ionic-native/http';
 import { StatusBar } from '@ionic-native/status-bar';
-import { SplashScreen } from '@ionic-native/splash-screen';
 import { SQLite } from '@ionic-native/sqlite';
 import { MyApp } from './app.component';
 import { OneSignal } from '@ionic-native/onesignal';
-//import { GoogleMaps } from '@ionic-native/google-maps';
 import { IonicImageViewerModule } from 'ionic-img-viewer';
 import { Camera } from '@ionic-native/camera';
+import { SplashScreen } from '@ionic-native/splash-screen';
 import { IonTextAvatar } from 'ionic-text-avatar';
 import { IonicImageLoader } from 'ionic-image-loader';
 import { ChartsModule } from 'ng2-charts';
@@ -96,7 +95,7 @@ import { ConversationPage } from '../pages/conversation/conversation';
 	RelativeTime,
 	IonTextAvatar,
     ProfilePage,
-    //ProgressBarComponent,
+   //ProgressBarComponent,
 	ActivityPage
   ],
 
@@ -148,11 +147,11 @@ import { ConversationPage } from '../pages/conversation/conversation';
   providers: [
 	Camera,
     StatusBar,
-	OneSignal,
+    OneSignal,
+    SplashScreen,
 	HTTP,
     Keyboard,
 	Localstorage,
-	SplashScreen,
 		{provide: ErrorHandler, useClass: IonicErrorHandler},
 	//[{ provide: ErrorHandler, useClass: MyErrorHandler }],
 	Database,

@@ -9,9 +9,9 @@
 
 </ion-header>
 
-<ion-content class="page-speakers" padding>
+<ion-content class="page-speakers">
 
-	<div class="myLabelBold" style="margin-top:10px!important">
+	<div style="margin-top:10px!important; margin-left:10px">
 		<h2>{{EventName}}</h2>
 		<p>{{EventSubName}}</p>
 		<p>{{DisplayEventTimeDateLocation}}</p>
@@ -201,31 +201,31 @@
 		  
 		<ion-card-content>
 			<div class="myMarginTopBottom">
-				<ion-row>
+				<ion-row *ngIf=DisplayRow1>
 					<ion-col col-6>
 						<ion-item>
-							<ion-label><b>Subject</b><br/>{{vSubjectCode}}</ion-label>
+							<ion-label *ngIf=DisplaySubject><b>Subject</b><br/>{{vSubjectCode}}</ion-label>
 						</ion-item>
 					</ion-col>
 					<ion-col col-6>
 						<ion-item>
-							<ion-label><b>CE Credits</b><br/>{{vCECredits}}</ion-label>
-						</ion-item>
-					</ion-col>
-				</ion-row>
-				<ion-row>
-					<ion-col col-6>
-						<ion-item>
-							<ion-label><b>Type</b><br/>{{vSessionType}}</ion-label>
-						</ion-item>
-					</ion-col>
-					<ion-col col-6>
-						<ion-item>
-							<ion-label><b>CE Credits Type</b><br/>{{vCECreditsType}}</ion-label>
+							<ion-label *ngIf=DisplayCECredits><b>CE Credits</b><br/>{{vCECredits}}</ion-label>
 						</ion-item>
 					</ion-col>
 				</ion-row>
-				<ion-row>
+				<ion-row *ngIf=DisplayRow2>
+					<ion-col col-6>
+						<ion-item>
+							<ion-label *ngIf=DisplayType><b>Type</b><br/>{{vSessionType}}</ion-label>
+						</ion-item>
+					</ion-col>
+					<ion-col col-6>
+						<ion-item>
+							<ion-label *ngIf=DisplayCECreditsType><b>CE Credits Type</b><br/>{{vCECreditsType}}</ion-label>
+						</ion-item>
+					</ion-col>
+				</ion-row>
+				<ion-row *ngIf=DisplayRow3>
 					<ion-col col-6>
 						<ion-item>
 							<ion-label><b>Level</b><br/>{{vSessionLevel}}</ion-label>

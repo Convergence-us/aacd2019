@@ -64,12 +64,17 @@
 		</div>
 		<br/><br/>
 		<label class="item item-select" id="searchByTopic-select1">
-			<ion-label style="color:#fff">Team Member</ion-label>
+			<ion-label style="color:#fff">Select Team Member</ion-label>
 			<ion-select [(ngModel)]="selectedLogin" (ionChange)="SetTeamMember($event)" style="color:#fff">
 				 <ion-option *ngFor="let teammember of teammembers" [value]="teammember">{{teammember.DisplayName}}</ion-option>
 			</ion-select>
 		</label>
+
+<!--
 		<button ion-button full *ngIf="LoginSelectButton" (click)="SelectLogin()">Select Team Member</button>
+	-->
+	
+	
 	</div>
 
 	<div *ngIf="displayMultipleLogins">

@@ -21,7 +21,7 @@ import { ProgramPage } from '../pages/program/program';
 import { MapPage } from '../pages/map/map';
 import { LoginPage } from '../pages/login/login';
 import { ExhibitorsPage } from '../pages/exhibitors/exhibitors';
-//import { CetrackingPage } from '../pages/cetracking/cetracking';
+import { CetrackingPage } from '../pages/cetracking/cetracking';
 import { NotesPage } from '../pages/notes/notes';
 import { MyAgenda } from '../pages/myagenda/myagenda';
 import { MyAgendaFull } from '../pages/myagendafull/myagendafull';
@@ -34,7 +34,6 @@ import { ProfilePage } from '../pages/profile/profile';
 import { NotificationsPage } from '../pages/notifications/notifications';
 import { NetworkingPage } from '../pages/networking/networking';
 import { AttendeeBookmarksPage } from '../pages/attendeebookmarks/attendeebookmarks';
-import { ContactsPage } from '../pages/contacts/contacts';
 import { AttendeesPage } from '../pages/attendees/attendees';
 import { ConversationsPage } from '../pages/conversations/conversations';
 import { SocialPage } from '../pages/social/social';
@@ -72,8 +71,8 @@ export class MyApp {
 		public loadingCtrl: LoadingController,
 		public storage: Storage,
 		private keyboard: Keyboard,
-		public splashScreen: SplashScreen,
 		public alertCtrl: AlertController, 
+		private splashScreen: SplashScreen,
 		private oneSignal: OneSignal,
 		//private IonicPro: Pro,
 		public events: Events,
@@ -89,28 +88,30 @@ export class MyApp {
 		//this.enableIonicPro();
 
 //show and hide Ionic Keyboard
-		this.keyboard.show();
-		this.keyboard.hide();
+		//this.keyboard.show();
+		//this.keyboard.hide();
 
 		
 		// used for an example of ngFor and navigation
 		this.pages = [
+		
 		  { title: 'Home', icon: 'home', component: HomePage, naventry: 'Home' },
+		  { title: 'My Agenda', icon: 'calendar', component: MyAgenda, naventry: 'MyAgenda' },
 		  { title: 'Program', icon: 'list', component: ProgramPage, naventry: 'Program' },
 		  { title: 'Speakers', icon: 'mic', component: SpeakersPage, naventry: 'Speakers' },
-		  { title: 'My Agenda', icon: 'calendar', component: MyAgenda, naventry: 'MyAgenda' },
+
+		  { title: 'Exhibitors', icon: 'people', component: ExhibitorsPage, naventry: 'Exhibitors' },
+		  { title: 'CE Tracking', icon: 'school', component: 'CetrackingPage', naventry: 'CETracking' },
 		  { title: 'Networking', icon: 'contacts', component: NetworkingPage, naventry: 'Networking' },
 		  //{ title: 'My Agenda Full', icon: 'calendar', component: MyAgendaFull, naventry: 'MyAgendaFull' },
-		  { title: 'Exhibitors', icon: 'people', component: ExhibitorsPage, naventry: 'Exhibitors' },
-		  { title: 'CE Tracker', icon: 'school', component: 'CetrackingPage', naventry: 'CETracking' },
 		  { title: 'Maps', icon: 'map', component: MapPage, naventry: 'Map' },
-		  //{ title: 'Floor Plan', icon: 'map', component: FloorplanMappingPage, naventry: 'FloorplanMapping' },
-		  { title: 'San Diego', icon: 'plane', component: ConferenceCityPage, naventry: 'SanDiego' },
-		  { title: 'Social Media', icon: 'text', component: SocialPage, naventry: 'SocialMedia' },
+		  { title: 'San Diego', icon: 'people', component: ConferenceCityPage, naventry: 'SanDiego' },
+		  { title: 'AACD Social Media', icon: 'text', component: SocialPage, naventry: 'SocialMedia' },
 		  { title: 'Help', icon: 'help', component: HelpPage, naventry: 'Help' },
 		  { title: 'Notes', icon: 'create', component: NotesPage, naventry: 'Notes' },
 		  { title: 'Event Survey', icon: 'bookmarks', component: EvaluationConference, naventry: 'EventSurvey' },
 		  { title: 'Sign In / Out', icon: 'log-in', component: LoginPage, naventry: 'Login' }
+		  		  //{ title: 'Floor Plan', icon: 'map', component: FloorplanMappingPage, naventry: 'FloorplanMapping' },
 
 		];
 
@@ -120,7 +121,7 @@ export class MyApp {
 		// Listen for login/logout events and 
 		// refresh side menu dashboard
 		this.events.subscribe('user:Status', (LoginType) => {
-			console.log('AppComponents: User has ', LoginType);
+			console.log('AppComponents: User has ', LoginType)
 			this.LoadSideMenuDashboard();
 		});
 
@@ -332,7 +333,11 @@ export class MyApp {
 				console.log('AppComponents: Running in a browser');
 			}
 			
-			this.splashScreen.hide();
+		//	this.splashScreen.hide();
+
+		this.splashScreen.show();
+
+        this.splashScreen.hide();
 						
 		});
 	}

@@ -207,7 +207,7 @@ export class MyAgendaPersonal {
 				LastUpdateDate3 = '2018-09-01T00:00:01Z';
 			}
 			var LastUpdateDate2 = new Date(LastUpdateDate3).toUTCString();
-			var LastUpdateDate = dateFormat(LastUpdateDate2, "UTC:yyyy-mm-dd'T'HH:MM:ss'Z'");
+			var LastUpdateDate = dateFormat(LastUpdateDate2, "UTC:yyyy-mm-dd'T'HH:mm:ss'Z'");
 
 			var flags = "ps|0|" + personalID + "|" + StartTime + "|" + EndTime + "|" + this.agendaItempersonalEventLocation + "|" + this.agendaItempersonalEventName + "|" + this.agendaItempersonalDate + "|0|" + LastUpdateDate + "|" + this.agendaItempersonalEventDescription;
 			console.log('Save personal flags: ' + flags);

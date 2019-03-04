@@ -54,8 +54,12 @@ export class ListingLevel1 {
 				public events: Events,
 				private alertCtrl: AlertController, 
 				private localstorage: Localstorage) {
-					
-				this.ProgramTitle = this.navParams.get('listingType');
+				
+				if (this.navParams.get('listingType') == 'Participation') {
+					this.ProgramTitle = "Workshops";
+				} else {
+					this.ProgramTitle = this.navParams.get('listingType');
+				}
 				
 	}
 
