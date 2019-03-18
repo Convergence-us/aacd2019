@@ -99,9 +99,14 @@ export class MyApp {
 		  { title: 'My Agenda', icon: 'calendar', component: MyAgenda, naventry: 'MyAgenda' },
 		  { title: 'Program', icon: 'list', component: ProgramPage, naventry: 'Program' },
 		  { title: 'Speakers', icon: 'mic', component: SpeakersPage, naventry: 'Speakers' },
+<<<<<<< .mine
 
+||||||| .r743
+		  { title: 'My Agenda', icon: 'calendar', component: MyAgenda, naventry: 'MyAgenda' },
+=======
 		  { title: 'Exhibitors', icon: 'people', component: ExhibitorsPage, naventry: 'Exhibitors' },
 		  { title: 'CE Tracking', icon: 'school', component: 'CetrackingPage', naventry: 'CETracking' },
+>>>>>>> .r748
 		  { title: 'Networking', icon: 'contacts', component: NetworkingPage, naventry: 'Networking' },
 		  //{ title: 'My Agenda Full', icon: 'calendar', component: MyAgendaFull, naventry: 'MyAgendaFull' },
 		  { title: 'Maps', icon: 'map', component: MapPage, naventry: 'Map' },
