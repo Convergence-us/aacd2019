@@ -101,17 +101,17 @@ export class MyApp {
 		  { title: 'Speakers', icon: 'mic', component: SpeakersPage, naventry: 'Speakers' },
 		  { title: 'My Agenda', icon: 'calendar', component: MyAgenda, naventry: 'MyAgenda' },
 		  { title: 'Exhibitors', icon: 'people', component: ExhibitorsPage, naventry: 'Exhibitors' },
-		  { title: 'CE Tracking', icon: 'school', component: 'CetrackingPage', naventry: 'CETracking' },
+		  { title: 'CE Tracking', icon: 'school', component: CetrackingPage, naventry: 'CETracking' },
 		  { title: 'Networking', icon: 'contacts', component: NetworkingPage, naventry: 'Networking' },
 		  //{ title: 'My Agenda Full', icon: 'calendar', component: MyAgendaFull, naventry: 'MyAgendaFull' },
 		  { title: 'Maps', icon: 'map', component: MapPage, naventry: 'Map' },
-		  { title: 'San Diego', icon: 'navigate', component: ConferenceCityPage, naventry: 'SanDiego' },
+		  { title: 'San Diego', icon: 'airplane', component: ConferenceCityPage, naventry: 'SanDiego' },
 		  { title: 'AACD Social Media', icon: 'text', component: SocialPage, naventry: 'SocialMedia' },
 		  { title: 'Help', icon: 'help', component: HelpPage, naventry: 'Help' },
 		  { title: 'Notes', icon: 'create', component: NotesPage, naventry: 'Notes' },
 		  { title: 'Event Survey', icon: 'bookmarks', component: EvaluationConference, naventry: 'EventSurvey' },
 		  { title: 'Sign In / Out', icon: 'log-in', component: LoginPage, naventry: 'Login' }
-		//{ title: 'Floor Plan', icon: 'map', component: FloorplanMappingPage, naventry: 'FloorplanMapping' },
+		  		  //{ title: 'Floor Plan', icon: 'map', component: FloorplanMappingPage, naventry: 'FloorplanMapping' },
 
 		];
 
