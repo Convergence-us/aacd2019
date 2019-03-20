@@ -8,6 +8,7 @@ import { Database } from "../../providers/database/database";
 import { Localstorage } from '../../providers/localstorage/localstorage';
 import { Synchronization } from "../../providers/synchronization/synchronization";
 import { Observable } from 'rxjs/Rx';
+import { StatusBar } from '@ionic-native/status-bar';
 import { SQLite, SQLiteObject } from '@ionic-native/sqlite';
 import { ImageLoaderConfig } from 'ionic-image-loader';
 
@@ -81,6 +82,7 @@ export class HomePage {
 				private readonly toastCtrl: ToastController, 
 				private storage: Storage,
 				private databaseprovider: Database,
+				private statusBar: StatusBar,
 				private syncprovider: Synchronization,
 				private cd: ChangeDetectorRef,
 				public pltfrm: Platform,

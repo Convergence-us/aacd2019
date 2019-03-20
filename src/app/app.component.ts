@@ -97,7 +97,7 @@ export class MyApp {
 		
 		  { title: 'Home', icon: 'home', component: HomePage, naventry: 'Home' },
 		  { title: 'My Agenda', icon: 'calendar', component: MyAgenda, naventry: 'MyAgenda' },
-		  { title: 'Program', icon: 'list', component: ProgramPage, naventry: 'Program' },
+		  { title: 'Program', icon: 'document', component: ProgramPage, naventry: 'Program' },
 		  { title: 'Speakers', icon: 'mic', component: SpeakersPage, naventry: 'Speakers' },
 		  { title: 'My Agenda', icon: 'calendar', component: MyAgenda, naventry: 'MyAgenda' },
 		  { title: 'Exhibitors', icon: 'people', component: ExhibitorsPage, naventry: 'Exhibitors' },
@@ -107,7 +107,7 @@ export class MyApp {
 		  { title: 'Maps', icon: 'map', component: MapPage, naventry: 'Map' },
 		  { title: 'San Diego', icon: 'navigate', component: ConferenceCityPage, naventry: 'SanDiego' },
 		  { title: 'AACD Social Media', icon: 'text', component: SocialPage, naventry: 'SocialMedia' },
-		  { title: 'Help', icon: 'help', component: HelpPage, naventry: 'Help' },
+		  { title: 'Help', icon: 'help-circle', component: HelpPage, naventry: 'Help' },
 		  { title: 'Notes', icon: 'create', component: NotesPage, naventry: 'Notes' },
 		  { title: 'Event Survey', icon: 'bookmarks', component: EvaluationConference, naventry: 'EventSurvey' },
 		  { title: 'Sign In / Out', icon: 'log-in', component: LoginPage, naventry: 'Login' }
@@ -127,10 +127,6 @@ export class MyApp {
 
 
 	}
-
-
-
-
 
 
 	LoadSideMenuDashboard() {
@@ -299,14 +295,18 @@ export class MyApp {
 		this.pltfrm.ready().then(() => {
 			// Okay, so the platform is ready and our plugins are available.
 			// Here you can do any higher level native things you might need.
+
+     //Set status bar appearance
+	 this.statusBar.overlaysWebView(false);
+	 this.statusBar.backgroundColorByHexString('#283593');
+	 this.statusBar.styleLightContent();
+      
 			
 			// Temporary hard coding when not logged in
 			this.localstorage.setLocalValue("AgendaDays", "4");
 			this.localstorage.setLocalValue("AgendaDates", "2019-04-24|2019-04-25|2019-04-26|2019-04-27|");
 			this.localstorage.setLocalValue("AgendaDayButtonLabels", "4/24|4/25|4/26|4/27|");
 			
-			this.statusBar.styleDefault();
-			this.statusBar.backgroundColorByHexString('#283593');
 			this.LoadSideMenuDashboard();
 			
 			console.log('AppComponents: initializeApp accessed');

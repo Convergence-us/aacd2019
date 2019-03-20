@@ -77,3 +77,14 @@ $colors: (
 
 @import "roboto";
 @import "noto-sans";
+
+
+//Make status bar text white
+$toolbar-md-title-text-color: white;
+$toolbar-ios-title-text-color: white;
+
+
+//Select Dropdown Component
+
+$select-ios-icon-color: #fff!important;
+$select-md-icon-color: #fff!important;
