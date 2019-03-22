@@ -109,7 +109,6 @@ export class MyApp {
 		  { title: 'AACD Social Media', icon: 'text', component: SocialPage, naventry: 'SocialMedia' },
 		  { title: 'Help', icon: 'help-circle', component: HelpPage, naventry: 'Help' },
 		  { title: 'Notes', icon: 'create', component: NotesPage, naventry: 'Notes' },
-		  { title: 'Bookmarks', icon: 'bookmark', component: AttendeeBookmarksPage, naventry: 'Bookmarks' },
 		  { title: 'Event Survey', icon: 'bookmarks', component: EvaluationConference, naventry: 'EventSurvey' },
 		  { title: 'Sign In / Out', icon: 'log-in', component: LoginPage, naventry: 'Login' }
 		//{ title: 'Floor Plan', icon: 'map', component: FloorplanMappingPage, naventry: 'FloorplanMapping' },
@@ -181,7 +180,7 @@ export class MyApp {
 							eventIcon = "time";
 							visEventName = data[i].EventName;
 						} else {
-							eventIcon = "document";
+							eventIcon = "list";
 							visEventName = data[i].EventName;
 						}
 

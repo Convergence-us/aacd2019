@@ -374,7 +374,7 @@ export class HomePage {
 							eventIcon = "time";
 							visEventName = data[i].EventName;
 						} else {
-							eventIcon = "document";
+							eventIcon = "list";
 							visEventName = data[i].EventName;
 						}
 

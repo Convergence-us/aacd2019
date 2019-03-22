@@ -46,7 +46,7 @@
 			<ion-item (click)="Survey(session.EventID,session.EvaluationType)" *ngFor="let session of CEListing" id="cescans-list-item19">
 				<ion-icon item-left name="{{session.sessionScanStatusIcon}}"></ion-icon>
 				<ion-icon item-right name="arrow-dropright"></ion-icon>
-				<h2 text-wrap>{{session.DisplayEventName}}</h2>
+				<h2>{{session.DisplayEventName}}</h2>
 			</ion-item>
 		</ion-list>
 
