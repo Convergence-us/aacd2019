@@ -1992,7 +1992,10 @@ export class Database {
 
 		console.log("getSpeakerData: flags passed: " + flags);
 		var SQLquery = "";
-				
+		var SQLquery2 = "";
+		var SQLquery3 = "";
+		var SQLquery4 = "";
+		
 		if (this.DevicePlatform == "iOS" || this.DevicePlatform == "Android") {
 
 			var flagValues = flags.split("|");		// Split concatenated values
@@ -2008,19 +2011,82 @@ export class Database {
 				SQLquery = "SELECT DISTINCT s.speakerID, s.LastName, s.FirstName, s.Credentials, s.Bio, s.Courses, s.imageFilename ";
 				SQLquery = SQLquery + "FROM courses_speakers s ";
 				if (listingType == "sr") {		// If searching, then add where clause criteria
+				
 					// Split search terms by space to create WHERE clause
 					var whereClause = 'WHERE (';
+					var whereClause2 = 'WHERE (';
+					var whereClause3 = 'WHERE (';
+					var whereClause4 = 'WHERE (';
 					var searchTerms = QueryParam.split(" ");
 					
 					for (var i = 0; i < searchTerms.length; i++){
 						whereClause = whereClause + 's.SearchField LIKE "%' + searchTerms[i] + '%" AND ';
+						whereClause2 = whereClause2 + 'c2.SearchField LIKE "%' + searchTerms[i] + '%" AND ';
+						whereClause3 = whereClause3 + 'c3.SearchField LIKE "%' + searchTerms[i] + '%" AND ';
+						whereClause4 = whereClause4 + 'c4.SearchField LIKE "%' + searchTerms[i] + '%" AND ';
 					}
 					// Remove last AND from where clause
 					whereClause = whereClause.substring(0, whereClause.length-5);        
 					whereClause = whereClause + ') ';
+
+					whereClause2 = whereClause2.substring(0, whereClause2.length-5);        
+					whereClause2 = whereClause2 + ') AND (';
+
+					whereClause3 = whereClause3.substring(0, whereClause3.length-5);        
+					whereClause3 = whereClause3 + ') AND (';
+
+					whereClause4 = whereClause4.substring(0, whereClause4.length-5);        
+					whereClause4 = whereClause4 + ') AND (';
+
 					SQLquery = SQLquery + whereClause ;
+					
+					
+					whereClause2 = whereClause2 + 'c2.course_id LIKE "A%" ';
+					whereClause2 = whereClause2 + 'OR c2.course_id LIKE "L%")) ';
+					
+					whereClause3 = whereClause3 + 'c3.course_id LIKE "W%")) ';
+					
+					whereClause4 = whereClause4 + "c4.ce_credits_type = '' ";
+					whereClause4 = whereClause4 + "AND c4.session_id NOT IN ('S-53928','S-53929','SE-143825','SE-143839','SE-156024','SE-168473','SE-226783','SE-226780','SE-226781'))) ";
+
+					// Set up base SQL string
+					SQLquery2 = "SELECT DISTINCT s2.speakerID, s2.LastName, s2.FirstName, s2.Credentials, s2.Bio, s2.Courses, s2.imageFilename ";
+					SQLquery2 = SQLquery2 + "FROM courses_speakers s2 ";
+					SQLquery2 = SQLquery2 + "INNER JOIN courses_speakers_links csl2 ON csl2.speakerID = s2.speakerID ";
+					SQLquery2 = SQLquery2 + "WHERE csl2.session_id IN (";
+					SQLquery2 = SQLquery2 + "SELECT DISTINCT c2.session_id ";
+					SQLquery2 = SQLquery2 + "FROM courses c2 ";
+					SQLquery2 = SQLquery2 + whereClause2;
+					
+					SQLquery3 = "SELECT DISTINCT s3.speakerID, s3.LastName, s3.FirstName, s3.Credentials, s3.Bio, s3.Courses, s3.imageFilename ";
+					SQLquery3 = SQLquery3 + "FROM courses_speakers s3 ";
+					SQLquery3 = SQLquery3 + "INNER JOIN courses_speakers_links csl3 ON csl3.speakerID = s3.speakerID ";
+					SQLquery3 = SQLquery3 + "WHERE csl3.session_id IN (";
+					SQLquery3 = SQLquery3 + "SELECT DISTINCT c3.session_id ";
+					SQLquery3 = SQLquery3 + "FROM courses c3 ";
+					SQLquery3 = SQLquery3 + whereClause3;
+					
+					SQLquery4 = "SELECT DISTINCT s4.speakerID, s4.LastName, s4.FirstName, s4.Credentials, s4.Bio, s4.Courses, s4.imageFilename ";
+					SQLquery4 = SQLquery4 + "FROM courses_speakers s4 ";
+					SQLquery4 = SQLquery4 + "INNER JOIN courses_speakers_links csl4 ON csl4.speakerID = s4.speakerID ";
+					SQLquery4 = SQLquery4 + "WHERE csl4.session_id IN (";
+					SQLquery4 = SQLquery4 + "SELECT DISTINCT c4.session_id ";
+					SQLquery4 = SQLquery4 + "FROM courses c4 ";
+					SQLquery4 = SQLquery4 + whereClause4;
+				
+					// UNION concatenate the queries together
+					SQLquery = SQLquery + " UNION ";
+					SQLquery = SQLquery + SQLquery2;
+					SQLquery = SQLquery + " UNION ";
+					SQLquery = SQLquery + SQLquery3;
+					SQLquery = SQLquery + " UNION ";
+					SQLquery = SQLquery + SQLquery4;
+					SQLquery = SQLquery + " ";
+					
 				}
-				SQLquery = SQLquery + "ORDER BY s.LastName, s.FirstName";
+				
+				// Order by clause
+				SQLquery = SQLquery + "ORDER BY LastName, FirstName";
 
 			}
 
@@ -3744,4 +3810,94 @@ export class Database {
 			
 	}
 	
+	// -----------------------------------
+	// 
+	// Help Database Functions
+	// 
+	// -----------------------------------
+	public sendHelpData(flags, AttendeeID) {
+
+		console.log("sendHelpData: flags passed: " + flags);
+		var SQLquery = "";
+		var DevicePlatform = this.localstorage.getLocalValue('DevicePlatform');
+		
+		if (DevicePlatform == "iOS" || DevicePlatform == "Android") {
+			
+			console.log('sendHelpData: Send data to SQLite');
+			var flagValues = flags.split("|");		// Split concatenated values
+			var listingType = flagValues[0];		// Listing Type
+			var SenderName = flagValues[1];			// Sender's Name
+			var SenderEmail = flagValues[2];    	// Sender's Email
+			var SenderPhone = flagValues[3];    	// Sender's Phone
+			var SenderComments = flagValues[4];		// Sender's Comments
+
+			SQLquery = "INSERT INTO help_contact_form (SenderName, SenderEmail, SenderPhone, SenderComments) ";
+			SQLquery = SQLquery + "VALUES ('" + SenderName + "', ";
+			SQLquery = SQLquery + "'" + SenderEmail + "', ";
+			SQLquery = SQLquery + "'" + SenderPhone + "', ";
+			SQLquery = SQLquery + "'" + SenderComments + "' ";
+			SQLquery = SQLquery + ") ";
+
+			console.log("sendHelpData Members Query: " + SQLquery);
+
+			// Perform query against local SQLite database
+			return new Promise(resolve => {
+				
+				this.sqlite.create({name: 'cvPlanner.db', location: 'default', createFromLocation: 1}).then((db: SQLiteObject) => {
+
+					console.log('Database: Opened DB for sendHelpData query');
+					
+					this.db = db;
+					let DatabaseResponse = [];
+					
+					console.log('Database: Set sendHelpData query db variable');
+					
+					this.db.executeSql(SQLquery, <any>{}).then((data) => {
+						if (data.rowsAffected == "1") {
+							DatabaseResponse.push({
+								hcfStatus: "Success"
+							});
+						} else {
+							DatabaseResponse.push({
+								hcfStatus: "Fail"
+							});
+						}
+						resolve(DatabaseResponse);
+					})
+					.catch(e => console.log('Database: sendHelpData query error: ' + JSON.stringify(e)))
+				});
+				console.log('Database: sendHelpData query complete');
+
+			});
+
+			
+		} else {
+			
+			console.log('sendHelpData: Push data to MySQL');
+
+			// Perform query against server-based MySQL database
+			var url = APIURLReference + "action=hlpquery&flags=" + flags + "&AttendeeID=" + AttendeeID;
+			console.log(url);
+			
+			return new Promise(resolve => {
+				this.httpCall.get(url).subscribe(
+					response => {
+						console.log("Database: sendHelpData data: " + JSON.stringify(response.json()));
+						resolve(response.json());
+					},
+					err => {
+						if (err.status == "412") {
+							console.log("App and API versions don't match.");
+							var emptyJSONArray = {};
+							resolve(emptyJSONArray);
+						} else {
+							console.log(err.status);
+							console.log("API Error: ", err);
+						}
+					}
+				);
+			});
+		}	
+    }
+
 }

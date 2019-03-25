@@ -16,57 +16,45 @@
 	
 			<img src="assets/img/orlando.png" (click)="navToWebsite()"><img>
 
-				<ion-list>
+			<ion-list>
 				<ion-item tappable style="background:linear-gradient(to bottom right, #283593 0%, #283593 100%); color:#fff" 
-			
-				(click)="NavigateToAuthenticatedPage('MyAgenda')">
+					(click)="NavigateToAuthenticatedPage('MyAgenda')">
 					Upcoming Agenda Items
-				<ion-icon name="calendar" item-left></ion-icon>
+					<ion-icon name="calendar" item-left></ion-icon>
 				</ion-item>
 
 
 				<ion-item tappable style="color:#444" (click)="EventDetails(upcomingAgenda.visEventID)" 
-				*ngFor="let upcomingAgenda of upcomingAgendaItems" id="upcomingAgenda-list-item19">
-				<ion-icon item-start color="secondary" name="{{upcomingAgenda.eventTypeIcon}}"></ion-icon>
-				<p style="color: #444; font-weight:bold">
-				{{upcomingAgenda.EventName}}</p>		
-				<p style="color:#444">
-				{{upcomingAgenda.visEventTimeframe}}
-				</p>
-				<p>{{upcomingAgenda.EventLocation}}</p>
+					*ngFor="let upcomingAgenda of upcomingAgendaItems" id="upcomingAgenda-list-item19">
+					<ion-icon item-start color="secondary" name="{{upcomingAgenda.eventTypeIcon}}"></ion-icon>
+					<p style="color: #444; font-weight:bold">
+					{{upcomingAgenda.EventName}}</p>		
+					<p style="color:#444">
+					{{upcomingAgenda.visEventTimeframe}}
+					</p>
+					<p>{{upcomingAgenda.EventLocation}}</p>
 				</ion-item>
 			
-
-            
 				<ion-item style="background:linear-gradient(to bottom right, #283593 0%, #283593 100%); color:#fff" (click)="NavigateToAuthenticatedPage('CETracking')">
 					CE Credits Completed
 					<ion-icon name="school" item-left></ion-icon>
 				</ion-item>
 				<ion-item tappable style="border-color: rgba(0, 0, 0, 0);background-color: rgba(0, 0, 0, 0);
-				color: rgb(116, 33, 33);" (click)="NavigateToAuthenticatedPage('CETracking')" id="cetrackervalue-list" >
+					color: rgb(116, 33, 33);" (click)="NavigateToAuthenticatedPage('CETracking')" id="cetrackervalue-list" >
 	
-									<p style="color: #444; font-size:1.2em">
-										{{creditsTypeL}}L / {{creditsTypeP}}P
-									</p>
+					<p style="color: #444; font-size:1.2em">
+						{{creditsTypeL}}L / {{creditsTypeP}}P
+					</p>
 				</ion-item>
 
 
-			<ion-item tappable style="background:rgb(245, 245, 245); color:#444" 
-			menuClose ion-item *ngFor="let p of pages" [class.activeHighlight]="checkActive(p)" (click)="openPage(p)">
-			<ion-icon color="secondary" name="{{p.icon}}" item-left></ion-icon>
-			{{p.title}}
-	
-			</ion-item>
+				<ion-item tappable style="background:rgb(245, 245, 245); color:#444" 
+					menuClose ion-item *ngFor="let p of pages" [class.activeHighlight]="checkActive(p)" (click)="openPage(p)">
+					<ion-icon color="secondary" name="{{p.icon}}" item-left></ion-icon>
+					{{p.title}}
+				</ion-item>
 			
-
-
-	
-			<ion-item onclick="window.open('https://www.charityauctionstoday.com/auctions/give-back-a-smile-silent-auction-2019-5583', '_system', 'location=yes'); return false;">
-				GBAS Silent Auction
-				<ion-icon name="happy" item-left></ion-icon>
-			</ion-item>
-	  
-		</ion-list>
+			</ion-list>
 
 		</ion-content>
 		

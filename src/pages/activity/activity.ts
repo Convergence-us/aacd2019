@@ -60,7 +60,7 @@ export class ActivityPage {
 		var ActivityFeedIDCCount = this.localstorage.getLocalValue('ActivityFeedIDCCount');
 		var ActivityFeedArrayString = this.localstorage.getLocalValue('ActivityFeedObject');
 		
-		this.LoadData();
+		//this.LoadData();
 
 	}
 
@@ -72,11 +72,11 @@ export class ActivityPage {
 				
 	}
 
-	//ngOnInit() {
+	ngOnInit() {
 		
-	//	this.LoadData();
+		this.LoadData();
 		
-	//}
+	}
 	
 	LoadData() {
 
@@ -184,11 +184,11 @@ export class ActivityPage {
 
 				// Scroll back to last viewed entry when 
 				// coming back from a posting
-				if (parseInt(ActivityFeedID) > 0 ) {
-					setTimeout(() => {
-						this.scrollTo("afID" + ActivityFeedID);
-					}, );
-				}
+				//if (parseInt(ActivityFeedID) > 0 ) {
+				//	setTimeout(() => {
+				//		this.scrollTo("afID" + ActivityFeedID);
+				//	}, );
+				//}
 		
 			} else {
 				

@@ -102,6 +102,7 @@ export class MyApp {
 		  { title: 'My Agenda', icon: 'calendar', component: MyAgenda, naventry: 'MyAgenda' },
 		  { title: 'Exhibitors', icon: 'people', component: ExhibitorsPage, naventry: 'Exhibitors' },
 		  { title: 'CE Tracking', icon: 'school', component: 'CetrackingPage', naventry: 'CETracking' },
+		  { title: 'GBAS Silent Auction', icon: 'happy', component: 'GBASAuction', naventry: 'GBASAuction' },
 		  { title: 'Networking', icon: 'contacts', component: NetworkingPage, naventry: 'Networking' },
 		  //{ title: 'My Agenda Full', icon: 'calendar', component: MyAgendaFull, naventry: 'MyAgendaFull' },
 		  { title: 'Maps', icon: 'map', component: MapPage, naventry: 'Map' },
@@ -492,6 +493,9 @@ export class MyApp {
 				case "Notes":
 					this.navCtrl.push(NotesPage, {}, {animate: true, direction: 'forward'});
 					break;
+				case "GBASAuction":
+					window.open('https://www.charityauctionstoday.com/auctions/give-back-a-smile-silent-auction-2019-5583', '_system');
+					break;
 				default:
 					this.navCtrl.setRoot(page.component);
 					this.activePage = page;
@@ -533,6 +537,9 @@ export class MyApp {
 				case "Bookmarks":
 					this.localstorage.setLocalValue('LoginWarning', '1');
 					this.navCtrl.push(LoginPage, {}, {animate: true, direction: 'forward'});
+					break;
+				case "GBASAuction":
+					window.open('https://www.charityauctionstoday.com/auctions/give-back-a-smile-silent-auction-2019-5583', '_system');
 					break;
 				default:
 					this.navCtrl.setRoot(page.component);

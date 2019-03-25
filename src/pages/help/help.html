@@ -15,7 +15,7 @@
 
 
 <ion-content>
-
+<!--
       <ion-item>
         <ion-label floating>Name</ion-label>
         <ion-input type="text"></ion-input>
@@ -36,13 +36,118 @@
     <ion-input type="text"></ion-input>
       </ion-item>
 
-      <div text-center>
+      <div text-center style="margin-top:15px">
         <button ion-button style="background:#2196f3" (click)="sendEmail()">
           Request Assistance
         </button>
       </div>
+
+
+-->
+
       
- 
+        <ion-card>
+          <ion-card-header style="background:#283593;color:#fff">
+            Contact AACD
+          </ion-card-header>
+          <ion-card-content>
+      
+            <ion-grid>
+              <ion-row>
+                <ion-col>
+                    <img style="width:100%; margin:auto" src="assets/img/header1.png">
+                </ion-col>
+              </ion-row>
+      
+              <ion-row>	
+                <ion-col>
+                  <button ion-button full icon-start  color="secondary" class="btnHelp" (click)="navToEmail('lisab@aacd.com')">
+                    <ion-icon  name="mail"></ion-icon>
+                    <label>Email</label>
+                  </button>
+                </ion-col>
+      
+                <ion-col>
+                  <button ion-button full icon-start  color="secondary" class="btnHelp" onclick="window.open('http://aacd.com/', '_system', 'location=yes'); return false;">
+                    <ion-icon name="globe"></ion-icon>
+                    <label>Website</label>
+                  </button>
+            
+                </ion-col>
+              
+                <ion-col>
+                  <button ion-button full icon-start  color="secondary" class="btnHelp" (click)="callPhone3('703-635-7801')">
+                    <ion-icon name="call"></ion-icon>
+                    <label>Call</label>
+                  </button>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+                    
+          </ion-card-content>
+        </ion-card>										
+      
+      
+        <ion-card>
+          <ion-card-header style="background:#283593;color:#fff">
+            Help Request
+          </ion-card-header>
+      
+          <ion-card-content>			
+            <ion-item>
+              <ion-label floating>Name</ion-label>
+              <ion-input	type="text" 
+                    (input)='hcfSenderName = $event.target.value' 
+                    name="hcfSenderName" 
+                    [value]="hcfSenderName" 
+                    id="hcfSenderName"></ion-input>
+            </ion-item>
+      
+            <ion-item>
+              <ion-label floating>Email</ion-label>
+              <ion-input	type="text" 
+                    (input)='hcfSenderEmail = $event.target.value' 
+                    name="hcfSenderEmail" 
+                    [value]="hcfSenderEmail" 
+                    id="hcfSenderEmail"></ion-input>
+            </ion-item>
+      
+            <ion-item>
+              <ion-label floating>Phone</ion-label>
+              <ion-input	type="text" 
+                    (input)='hcfSenderPhone = $event.target.value' 
+                    name="hcfSenderPhone" 
+                    [value]="hcfSenderPhone" 
+                    id="hcfSenderPhone"></ion-input>
+            </ion-item>
+      
+            <ion-item>
+              <ion-label floating>Comments</ion-label>
+              <ion-input	type="text" 
+                    (input)='hcfSenderComments = $event.target.value' 
+                    name="hcfSenderComments" 
+                    [value]="hcfSenderComments" 
+                    id="hcfSenderComments"></ion-input>
+            </ion-item>
+      
+            <div text-center style="margin-top:15px">
+              <button ion-button style="background:#2196f3" (click)="sendEmail()">
+                Request Assistance
+              </button>
+            </div>
+          </ion-card-content>	
+        </ion-card>
+      
+      
+
+
+
+
+
+
+
+      
+ <!--
 
       <ion-item [navPush]="morePage">
     <ion-icon color="secondary" name="calendar" item-left></ion-icon>
@@ -111,6 +216,9 @@
       </ion-item>
     
   
+      -->
+
+      </ion-content>
     
     
 
