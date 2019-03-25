@@ -19,7 +19,7 @@
 				<!--<img-loader [src]="activityFeedItem.ActivityFeedCommentAvatar" useImg [spinner]=false [fallbackAsPlaceholder]=true></img-loader>-->
 				<img src="{{activityFeedItem.ActivityFeedCommentAvatar}}" onerror="this.src='assets/img/personIcon.png'">
 			</ion-avatar>
-			<div (click)="ActivityFeedDetails(activityFeedItem, activityFeedItem.afID)">
+			<div (click)="AttendeeDetails(activityFeedItem.AttendeeID)">
 			<h2>{{activityFeedItem.ActivityFeedCommentBy}}</h2>
 			<p>{{activityFeedItem.ActivityFeedCommentPosted}}</p>
 			</div>

@@ -1682,7 +1682,7 @@ export class Database {
 				case "Receptions":
 					SQLquery = SQLquery + "WHERE ce_credits_type = '' AND ActiveYN = 'Y' ";
 					SQLquery = SQLquery + "AND session_start_time LIKE '" + selectedDate + "%' ";
-					SQLquery = SQLquery + "AND session_id NOT IN ('S-53928','S-53929','SE-203709','SE-226783','SE-226780','SE-226781') ";
+					SQLquery = SQLquery + "AND session_id NOT IN ('S-53928','S-53929','SE-203709','SE-226783','SE-226780','SE-226781','SE-226799') ";
 					break;
 				case "Exams":
 					SQLquery = SQLquery + "WHERE ce_credits_type = '' AND ActiveYN = 'Y' ";
@@ -2339,7 +2339,7 @@ export class Database {
 				SQLquery = "SELECT DISTINCT itID, EventID, mtgID, Time_Start AS EventStartTime, Time_End AS EventEndTime, Location AS EventLocation, Description AS EventDescription, SUBJECT AS EventName, Date_Start AS EventDate, '0' AS Attendees, '0' AS Waitlist, '100' AS RoomCapacity ";
 				SQLquery = SQLquery + "FROM itinerary WHERE Date_Start = '" + selectedDay + "' AND AttendeeID = '" + AttendeeID + "' ";
 				SQLquery = SQLquery + "AND EventID = '0' ";
-				SQLquery = SQLquery + "AND UpdateType != 'Delete' ";
+				SQLquery = SQLquery + "AND UpdateType NOT LIKE 'Delete%' ";
 				SQLquery = SQLquery + "UNION ";
 				SQLquery = SQLquery + "SELECT DISTINCT '0' AS itID, EventID, mtgID, TIME(session_start_time) AS EventStartTime, TIME(session_end_time) AS EventEndTime, Location AS EventLocation,  ";
 				SQLquery = SQLquery + "c.Description AS EventDescription, c.session_title AS EventName, DATE(session_start_time) AS EventDate, ";
@@ -2354,7 +2354,7 @@ export class Database {
 				SQLquery = SQLquery + "INNER JOIN courses c ON i.EventID = c.session_id  ";
 				SQLquery = SQLquery + "WHERE Date_Start = '" + selectedDay + "' AND AttendeeID = '" + AttendeeID + "' ";
 				SQLquery = SQLquery + "AND EventID != '0' ";
-				SQLquery = SQLquery + "AND i.UpdateType != 'Delete' ";
+				SQLquery = SQLquery + "AND i.UpdateType NOT LIKE 'Delete%' ";
 				SQLquery = SQLquery + "ORDER BY EventStartTime, EventID ";
 
 			}
@@ -2366,13 +2366,13 @@ export class Database {
 				SQLquery = "SELECT DISTINCT itID, EventID, mtgID, Time_Start AS EventStartTime, Time_End AS EventEndTime, Location AS EventLocation, Description AS EventDescription, SUBJECT AS EventName, Date_Start AS EventDate, '0' AS Attendees, '0' AS Waitlist, '100' AS RoomCapacity, LastUpdated ";
 				SQLquery = SQLquery + "FROM itinerary WHERE Date_Start >= date('now') AND AttendeeID = '" + AttendeeID + "' ";
 				SQLquery = SQLquery + "AND EventID = '0' ";
-				SQLquery = SQLquery + "AND UpdateType != 'Delete' ";
+				SQLquery = SQLquery + "AND UpdateType NOT LIKE 'Delete%' ";
 				SQLquery = SQLquery + "UNION ";
 				SQLquery = SQLquery + "SELECT DISTINCT '0' AS itID, EventID, mtgID, Time_Start AS EventStartTime, Time_End AS EventEndTime, Location AS EventLocation, Description AS EventDescription, SUBJECT AS EventName, Date_Start AS EventDate, '0' AS Attendees, LastUpdated, ";
 				SQLquery = SQLquery + "(SELECT ac.waitlist FROM attendee_courses ac WHERE ac.ct_ID=i.AttendeeID AND ac.session_id=i.EventID) AS Waitlist, '100' AS RoomCapacity ";
 				SQLquery = SQLquery + "FROM itinerary i WHERE Date_Start >= date('now') AND AttendeeID = '" + AttendeeID + "' ";
 				SQLquery = SQLquery + "AND EventID != '0' ";
-				SQLquery = SQLquery + "AND UpdateType != 'Delete' ";
+				SQLquery = SQLquery + "AND UpdateType NOT LIKE 'Delete%' ";
 				SQLquery = SQLquery + "ORDER BY EventDate, EventStartTime, Waitlist, LastUpdated ";
 				SQLquery = SQLquery + "LIMIT 10 ";
 
@@ -2423,8 +2423,12 @@ export class Database {
 
 			if (listingType == "pd") {	// Delete Personal agenda item
 			
-				SQLquery = "SELECT * FROM itinerary WHERE AttendeeID = '" + AttendeeID + "' AND mtgID = " + EventID;
-
+				//SQLquery = "SELECT * FROM itinerary WHERE AttendeeID = '" + AttendeeID + "' AND mtgID = " + EventID;
+				SQLquery = "UPDATE itinerary ";
+				SQLquery = SQLquery + "SET UpdateType = 'Delete' ";
+				SQLquery = SQLquery + "WHERE mtgID = '" + EventID + "' ";
+				SQLquery = SQLquery + "AND AttendeeID = '" + AttendeeID + "'";
+				
 			}
 
 			if (listingType == "ps") {	// Save (new/update) Personal agenda item
@@ -2433,7 +2437,7 @@ export class Database {
 
 			}
 			
-			//console.log("Database: Agenda Query: " + SQLquery);
+			console.log("Database: Agenda Query: " + SQLquery);
 
 			// Perform query against local SQLite database
 			return new Promise(resolve => {
@@ -2547,6 +2551,8 @@ export class Database {
 								SQLquery2 = SQLquery2 + "AND AttendeeID = '" + AttendeeID + "'";
 								SQLquery2 = SQLquery2 + "AND AttendeeID = '" + AttendeeID + "'";
 
+								console.log('Personal Agenda Add (Update) SQL: ' + SQLquery2);
+
 								this.db.executeSql(SQLquery2, <any>{}).then((data2) => {
 									//console.log('Database: Agenda query2: ' + JSON.stringify(data2));
 									console.log('Database: Agenda query rows2: ' + data2.rows.length);
@@ -2565,20 +2571,22 @@ export class Database {
 								})
 								.catch(e => console.log('Database: Agenda query2 error: ' + JSON.stringify(e)))
 							} else {
-								SQLquery2 = "INSERT INTO itinerary (AttendeeID, atID, mtgID, EventID, Time_Start, Time_End, Location, Subject, Date_Start, Date_End, LastUpdated, UpdateType) ";
+								SQLquery2 = "INSERT INTO itinerary (AttendeeID, atID, mtgID, EventID, Time_Start, Time_End, Location, Description, Subject, Date_Start, Date_End, LastUpdated, UpdateType) ";
 								SQLquery2 = SQLquery2 + "VALUES ('" + AttendeeID + "', ";
 								SQLquery2 = SQLquery2 + "'" + AttendeeID + "', ";
-								SQLquery2 = SQLquery2 + "'0', ";
 								SQLquery2 = SQLquery2 + "'" + EventID + "', ";
+								SQLquery2 = SQLquery2 + "'0', ";
 								SQLquery2 = SQLquery2 + "'" + EventStartTime + "', ";
 								SQLquery2 = SQLquery2 + "'" + EventEndTime + "', ";
 								SQLquery2 = SQLquery2 + "'" + EventLocation + "', ";
+								SQLquery2 = SQLquery2 + "'" + EventDescription + "', ";
 								SQLquery2 = SQLquery2 + "'" + EventName + "', ";
 								SQLquery2 = SQLquery2 + "'" + EventDate + "', ";
 								SQLquery2 = SQLquery2 + "'" + EventDate + "', ";
 								SQLquery2 = SQLquery2 + "'" + LastUpdated + "', ";
 								SQLquery2 = SQLquery2 + "'Insert')";
 
+								console.log('Personal Agenda Add (Insert) SQL: ' + SQLquery2);
 								this.db.executeSql(SQLquery2, <any>{}).then((data2) => {
 									//console.log('Database: Agenda query2: ' + JSON.stringify(data2));
 									console.log('Database: Agenda query rows2: ' + data2.rows.length);

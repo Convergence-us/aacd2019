@@ -21,8 +21,10 @@
 			<ion-avatar item-start (click)="AttendeeDetails(ActivityFeedAttendeeID)">
 				<img src="{{ActivityFeedCommentAvatar}}" onerror="this.src='assets/img/personIcon.png'">
 			</ion-avatar>
+			<div (click)="AttendeeDetails(ActivityFeedAttendeeID)">
 			<h2>{{ActivityFeedCommentBy}}</h2>
 			<p>{{ActivityFeedCommentPosted}}</p>
+			</div>
 		</ion-item>
 
 		<!-- Posting picture attachment -->
@@ -178,16 +180,16 @@
 						<div>{{ActivityFeedCommentsCounter}} Comments</div>
 					</button>
 				</ion-col>
+
 				<ion-col center text-center>
-					<ion-note>
+						<button ion-button color="secondary" icon-left clear small>
+						<ion-icon name=""></ion-icon>
+					<div>
 						{{ActivityFeedCommentPostedDuration}}
-					</ion-note>
+					</div>
+				</button>
 				</ion-col>
 			</ion-row>
-	
-
-
-
 
 	</ion-toolbar>
 </ion-footer>

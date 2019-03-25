@@ -490,7 +490,7 @@ export class HomePage {
 				
 				var LastDirectChatCheck = this.localstorage.getLocalValue('LastDirectChatCheck');
 				if (LastDirectChatCheck == '' || LastDirectChatCheck === null) {
-					LastDirectChatCheck = '2019-01-01T00:00:01Z';
+					LastDirectChatCheck = '2019-03-24T00:00:01Z';
 				}
 
 				if (AutoSync == '' || AutoSync == null) {
@@ -529,7 +529,7 @@ export class HomePage {
 				
 				// Reset AutoSync and then disbale this section of code by setting 
 				// the localstorage value to 1
-				this.localstorage.setLocalValue('LastSync', '2019-01-01T00:00:01Z');		
+				this.localstorage.setLocalValue('LastSync', '2019-03-24T00:00:01Z');		
 				this.localstorage.setLocalValue('AutoSyncReset', '1');		
 			
 			}
@@ -613,7 +613,7 @@ export class HomePage {
 			// Previously successful sync time
 			var LastDirectChatCheck = this.localstorage.getLocalValue('LastDirectChatCheck');
 			if (LastDirectChatCheck == '' || LastDirectChatCheck === null) {
-				LastDirectChatCheck = '2019-01-01T00:00:01Z';
+				LastDirectChatCheck = '2019-03-24T00:00:01Z';
 			}
 			
 			// Current sync time in UTC
@@ -676,7 +676,7 @@ export class HomePage {
 			// Previously successful sync time
 			var LastSync3 = this.localstorage.getLocalValue('LastSync');
 			if (LastSync3 == '' || LastSync3 === null) {
-				LastSync3 = '2019-01-01T00:00:01Z';
+				LastSync3 = '2019-03-24T00:00:01Z';
 			}
 			var LastSync2 = new Date(LastSync3).toUTCString();
 			var LastSync = dateFormat(LastSync2, "UTC:yyyy-mm-dd'T'HH:MM:ss'Z'");
@@ -723,7 +723,7 @@ export class HomePage {
 		// Previously successful sync time
 		var LastSync3 = this.localstorage.getLocalValue('LastSync');
 		if (LastSync3 == '' || LastSync3 === null) {
-			LastSync3 = '2019-01-01T00:00:01Z';
+			LastSync3 = '2019-03-24T00:00:01Z';
 		}
 		var LastSync2 = new Date(LastSync3).toUTCString();
 		var LastSync = dateFormat(LastSync2, "UTC:yyyy-mm-dd'T'HH:MM:ss'Z'");

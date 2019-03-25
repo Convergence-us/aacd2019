@@ -1177,7 +1177,7 @@ export class MyAgenda {
 
 						this[idEventStatus] = visSessionStatus;
 						this[idEventStatusStyle] = visStatusStyle;
-						this[idEventID] = "'" + data[i1].EventID + '|' + data[i1].itID + "'";
+						this[idEventID] = "'" + data[i1].EventID + '|' + data[i1].mtgID + "'";
 						this[idEventShow] = true;
 						
 						// Calculate course duration and use an appropriate card
@@ -1267,7 +1267,7 @@ export class MyAgenda {
 
 						this[idEventStatus] = visSessionStatus;
 						this[idEventStatusStyle] = visStatusStyle;
-						this[idEventID] = "'" + data[i1].EventID + '|' + data[i1].itID + "'";
+						this[idEventID] = "'" + data[i1].EventID + '|' + data[i1].mtgID + "'";
 
 						// Calculate course duration and use an appropriate card
 						var CalcstartDate = +new Date(0, 0, 0, Starthour, Startminutes);
@@ -1355,7 +1355,7 @@ export class MyAgenda {
 						}
 						this[idEventStatus] = visSessionStatus;
 						this[idEventStatusStyle] = visStatusStyle;
-						this[idEventID] = "'" + data[i1].EventID + '|' + data[i1].itID + "'";
+						this[idEventID] = "'" + data[i1].EventID + '|' + data[i1].mtgID + "'";
 						this[idEventShow] = true;
 						
 
@@ -1513,8 +1513,8 @@ export class MyAgenda {
 
         var storeEventID = IDSplit[0].replace("'","");
         var storePersonalEventID = IDSplit[1].replace("'", "");
-		console.log("storeEventID: " + storeEventID);
-		console.log("storePersonalEventID: " + storePersonalEventID);
+		console.log("MyAgenda: storeEventID: " + storeEventID);
+		console.log("MyAgenda: storePersonalEventID: " + storePersonalEventID);
 
         if (storeEventID == "0" && storePersonalEventID == "0") {
             // Do nothing

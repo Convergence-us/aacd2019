@@ -161,12 +161,12 @@ export class ActivityFeedDetailsPage {
 		}
 
 		// Load initial data set here
-		let loading = this.loadingCtrl.create({
-			spinner: 'crescent',
-			content: 'Please wait...'
-		});
+		//let loading = this.loadingCtrl.create({
+		//	spinner: 'crescent',
+		//	content: 'Please wait...'
+		//});
 
-		loading.present();
+		//loading.present();
 
 		// Blank and show loading info
 		this.cd.markForCheck();
@@ -286,11 +286,11 @@ export class ActivityFeedDetailsPage {
 		
 			this.cd.markForCheck();
 
-			loading.dismiss();
+			//loading.dismiss();
 
 		}).catch(function () {
 			console.log("Activity Feed Promise Rejected");
-			loading.dismiss();
+			//loading.dismiss();
 		});
 
 	}

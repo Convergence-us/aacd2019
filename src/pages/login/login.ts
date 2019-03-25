@@ -1228,7 +1228,7 @@ export class LoginPage {
 			// Previously successful sync time
 			var LastSync3 = this.localstorage.getLocalValue('LastSync');
 			if (LastSync3 == '' || LastSync3 === null) {
-				LastSync3 = '2019-01-01T00:00:01Z';
+				LastSync3 = '2019-03-24T00:00:01Z';
 			}
 			var LastSync2 = new Date(LastSync3).toUTCString();
 			var LastSync = dateFormat(LastSync2, "UTC:yyyy-mm-dd'T'HH:MM:ss'Z'");
