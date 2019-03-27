@@ -102,12 +102,12 @@ export class ProfilePage {
 				
 				// Set color indications for social media icons
 				if(data[0].showTwitter == "Y") {
-					this.statusTwitter = "green";
+					this.statusTwitter = "white";
 				} else {
-					this.statusTwitter = "gray";
+					this.statusTwitter = "white";
 				}
 				if(data[0].showFacebook == "Y") {
-					this.statusFacebook = "green";
+					this.statusFacebook = "white";
 				} else {
 					this.statusFacebook = "gray";
 				}
