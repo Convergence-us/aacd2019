@@ -1,0 +1,51 @@
+<ion-header>
+	<ion-navbar color="primary">
+		<button menuToggle>
+			<ion-icon name="menu"></ion-icon>
+		</button>
+		<ion-title>Attendees</ion-title>
+	</ion-navbar>
+</ion-header>
+
+<ion-content class="attendees-page">
+
+	<ion-grid style="padding:0; margin:0">
+		<ion-row>
+			<ion-col col-9>	
+				<ion-item class="item-input">
+					<ion-icon color="secondary" name="search" item-left></ion-icon>
+					<ion-input name="srchBarEntry" id="srchBarEntry" 
+					type="text" placeholder="Search" [(ngModel)]="EntryTerms"></ion-input>
+				</ion-item>
+			</ion-col>
+			<ion-col col-3>
+				<button ion-button full style="padding:0; margin:0; background:#2196f3" (tap)="GetSearchResults()">Submit</button>
+			</ion-col>
+		</ion-row>
+	</ion-grid>
+
+	<!-- Attendee Listing -->
+	<ion-grid>
+		<ion-row>
+			<ion-col>	
+				<ion-list>
+					<ion-item tappable (click)="AttendeeDetails(attendee.AttendeeID)" *ngFor="let attendee of AttendeeListing" id="Attendee-list19">
+						<div style="float: left; padding-right: 10px;">
+							<ion-avatar item-start>
+								<img *ngIf=attendee.ShowHideAttendeeIcon [src]="attendee.AttendeeAvatar" src="assets/img/personIcon.png" onerror="this.src='assets/img/personIcon.png'">
+							</ion-avatar>
+						</div>
+						<ion-icon item-right name="{{attendee.navigationArrow}}"></ion-icon>
+							<h2 style="padding-top: 7px;">{{attendee.AttendeeName}}</h2>
+							<h3>{{attendee.AttendeeTitle}}</h3>
+							<h3 style="margin-left:20px" >{{attendee.AttendeeOrganization}}</h3>
+					</ion-item>
+				</ion-list>
+			</ion-col>
+
+		</ion-row>
+
+	</ion-grid>
+
+</ion-content>
+
