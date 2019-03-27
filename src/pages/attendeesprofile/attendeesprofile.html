@@ -64,26 +64,30 @@
 							</button>
 						</ion-col>
 					</ion-row>
+
+<!--
 		<ion-col col-11>
 			<p style="color:#fff;text-align:center">Tap an icon to view that social media profile</p>
 		</ion-col>
+-->
+
         <ion-row>
             <ion-col col-1>
             </ion-col>
             <ion-col col-2 *ngIf=showTwitter>
-                <ion-icon color="white" name="logo-twitter" (tap)="viewSocialMedia(smURLTwitter)"></ion-icon>
+                <ion-icon style="color:#fff" name="logo-twitter" (tap)="viewSocialMedia(smURLTwitter)"></ion-icon>
             </ion-col>
             <ion-col col-2 *ngIf=showFacebook>
-                <ion-icon color="white" name="logo-facebook" (tap)="viewSocialMedia(smURLFacebook)"></ion-icon>
+                <ion-icon style="color:#fff" name="logo-facebook" (tap)="viewSocialMedia(smURLFacebook)"></ion-icon>
             </ion-col>
             <ion-col col-2 *ngIf=showLinkedIn>
-                <ion-icon color="white" name="logo-linkedin" (tap)="viewSocialMedia(smURLLinkedIn)"></ion-icon>
+                <ion-icon style="color:#fff" name="logo-linkedin" (tap)="viewSocialMedia(smURLLinkedIn)"></ion-icon>
             </ion-col>
             <ion-col col-2 *ngIf=showInstagram>
-                <ion-icon color="white" name="logo-instagram" (tap)="viewSocialMedia(smURLInstagram)"></ion-icon>
+                <ion-icon style="color:#fff" name="logo-instagram" (tap)="viewSocialMedia(smURLInstagram)"></ion-icon>
             </ion-col>
             <ion-col col-2 *ngIf=showPinterest>
-                <ion-icon color="white" name="logo-pinterest" (tap)="viewSocialMedia(smURLPinterest)"></ion-icon>
+                <ion-icon style="color:#fff" name="logo-pinterest" (tap)="viewSocialMedia(smURLPinterest)"></ion-icon>
             </ion-col>
         </ion-row>
       </ion-grid>
