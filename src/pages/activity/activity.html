@@ -62,14 +62,19 @@
 					<div>{{activityFeedItem.ActivityFeedCommentsCounter}} Comments</div>
 				</button>
 			</ion-col>
+
+
 			<ion-col center text-center (click)="ActivityFeedDetails(activityFeedItem, activityFeedItem.afID)">
-				<ion-note style="color:#000">
+				<button ion-button color="secondary" icon-left clear small>
+						<div>
 					{{activityFeedItem.ActivityFeedCommentPostedDuration}}
-				</ion-note>
+				</div>
+			</button>
 			</ion-col>
 		</ion-row>
 
 	</ion-card>
+
 	
 	<!-- Floating button menu for adding new comment -->
     <ion-fab bottom right #fab>
