@@ -1,0 +1,259 @@
+<ion-header>
+
+  <ion-navbar color="primary">
+    <button ion-button menuToggle>
+      <ion-icon color="secondary" name="menu"></ion-icon>
+    </button>
+    <ion-title>Education Details</ion-title>
+  </ion-navbar>
+
+</ion-header>
+
+<ion-content class="page-speakers">
+
+	<div style="margin-top:10px!important; margin-left:10px">
+		<h2>{{EventName}}</h2>
+		<p>{{EventSubName}}</p>
+		<p>{{DisplayEventTimeDateLocation}}</p>
+		<p>{{SpeakerDisplayName}}</p>
+		<p>{{EventTypeName}}</p>
+		<p [ngClass]="SessionStatusStyle">{{SessionStatus}}</p>
+	</div>
+	<div class="button-bar" style="margin:10px!important">
+
+		<button ion-button outline color="secondary" *ngIf="btnAgendaManagement" (click)="AgendaManagement()" [style.background-color]="AgendaButtonColor" [style.color]="AgendaButtonTextColor">
+			<div>
+				<ion-icon color="secondary" name="calendar"></ion-icon>
+				<label>{{visAgendaAddRemoveButton}}</label>
+			</div>
+		</button>
+		
+		<button ion-button outline color=secondary  *ngIf="btnNotes" (click)="navToNotes(EventID)">
+			<div>
+				<ion-icon name="create"></ion-icon>
+				<label></label>
+			</div>
+		</button>
+<!--Print function not wanted by AACD
+		<button ion-button outline color=secondary *ngIf="btnPrint" (click)="printWindow()">
+			<div>
+				<ion-icon name="print"></ion-icon>
+				<label></label>
+			</div>
+		</button>
+-->
+	</div>
+
+	<ion-card *ngIf="SpeakerHostShow">
+
+		<ion-card-header class="cardHeader">
+			Speaker Host / Emcee
+		</ion-card-header>
+		  
+		<ion-card-content>
+			<div class="myMarginTopBottom">
+				{{SpeakerHostEmcee}}
+			</div>
+		</ion-card-content>
+		  
+	</ion-card>
+
+	<ion-card *ngIf="CorporateSupporterShow">
+
+		<ion-card-header class="cardHeader">
+			Corporate Supporter
+		</ion-card-header>
+		  
+		<ion-card-content>
+			<div class="myMarginTopBottom">
+				{{EventCorporateSupporter}}
+			</div>
+		</ion-card-content>
+		  
+	</ion-card>
+
+	<ion-card *ngIf="AuthorsDisplay">
+
+		<ion-card-header class="cardHeader">
+			Speakers
+		</ion-card-header>
+
+		<ion-card-content>
+
+			<ion-list id="author-list3">
+				<ion-item (click)="SpeakerDetails(speaker.SpeakerID)" *ngFor="let speaker of SpeakerList" id="speakersessions-list-item19">
+				
+					<ion-avatar item-start>
+						<img src="{{speaker.speakerAvatar}}" onerror="this.src='assets/img/personIcon.png'">
+					</ion-avatar>
+					<!--<ion-icon item-right  name=bookmarks></ion-icon>-->
+					<ion-icon item-right name="{{speaker.navigationArrow}}"></ion-icon>
+					<h2>{{speaker.DisplayNameLastFirst}}</h2>
+					{{speaker.DisplayCredentials}}
+				</ion-item>
+			</ion-list>
+		</ion-card-content>
+
+	</ion-card>
+	
+	<ion-card *ngIf="AbstractDisplay">
+
+		<ion-card-header class="cardHeader">
+			<div style="color:#fff">
+				Abstract
+			</div>
+		</ion-card-header>
+
+		<ion-card-content>
+
+			<div [innerHTML]="sessionAbstract" class="myMarginTopBottom">
+				{{EventDetails}}
+			</div>
+		</ion-card-content>
+
+	</ion-card>
+
+	<ion-card *ngIf="DescriptionDisplay">
+
+		<ion-card-header class="cardHeader">
+			<div style="color:#fff">
+				Description
+			</div>
+		</ion-card-header>
+
+		<ion-card-content>
+
+			<div [innerHTML]="sessionAbstract" class="myMarginTopBottom">
+				{{EventDetails}}
+			</div>
+		</ion-card-content>
+
+	</ion-card>
+
+	<ion-card *ngIf="SubEventsDisplay">
+
+		<ion-card-header class="cardHeader">
+			<div style="color:#fff">
+				SubEvents
+			</div>
+		</ion-card-header>
+
+		<ion-card-content>
+
+			<ion-list id="session-list3">
+				<ion-item (click)="EventDetails(session.EventID)" *ngFor="let session of sessions" id="speakersessions-list-item20">
+					<div style="float: left; padding-right: 10px;">
+						<ion-icon name="{{session.eventTypeIcon}}"></ion-icon>
+					</div>
+					<div>
+						<p class="myLabelBold">
+							{{session.DisplayEventName}}
+						</p>
+						<p>
+							{{session.DisplayEventTimeDateLocation}}
+						</p>
+					</div>
+					<div style="float: right">
+						<ion-icon name="{{session.navigationArrow}}"></ion-icon>
+					</div>
+				</ion-item>
+			</ion-list>
+		</ion-card-content>
+
+	</ion-card>
+
+	<ion-card *ngIf="RecordingShow">
+
+		<ion-card-header class="cardHeader">
+			Session Recording
+		</ion-card-header>
+		  
+		<ion-card-content>
+			<ion-icon item-left name="mic" style="padding-right: 10px;"></ion-icon>
+			This session is being recorded.
+		</ion-card-content>
+		  
+	</ion-card>
+
+	<ion-card *ngIf="HandoutShow">
+
+		<ion-card-header class="cardHeader">
+			<div style="color:#fff">
+				Handout
+			</div>
+		</ion-card-header>
+
+		<ion-card-content>
+
+			<div class="list" (click)="openPDF(HandoutURL)">
+				<ion-icon item-left name="cloud-download" style="padding-right: 10px;"></ion-icon>
+				{{HandoutFn}}
+			</div>
+		</ion-card-content>
+
+	</ion-card>
+
+	<ion-card *ngIf="OtherInformationDisplay">
+
+		<ion-card-header class="cardHeader">
+			Other Information
+		</ion-card-header>
+		  
+		<ion-card-content>
+			<div class="myMarginTopBottom">
+				<ion-row *ngIf=DisplayRow1>
+					<ion-col col-6>
+						<ion-item>
+							<ion-label *ngIf=DisplaySubject><b>Subject</b><br/>{{vSubjectCode}}</ion-label>
+						</ion-item>
+					</ion-col>
+					<ion-col col-6>
+						<ion-item>
+							<ion-label *ngIf=DisplayCECredits><b>CE Credits</b><br/>{{vCECredits}}</ion-label>
+						</ion-item>
+					</ion-col>
+				</ion-row>
+				<ion-row *ngIf=DisplayRow2>
+					<ion-col col-6>
+						<ion-item>
+							<ion-label *ngIf=DisplayType><b>Type</b><br/>{{vSessionType}}</ion-label>
+						</ion-item>
+					</ion-col>
+					<ion-col col-6>
+						<ion-item>
+							<ion-label *ngIf=DisplayCECreditsType><b>CE Credits Type</b><br/>{{vCECreditsType}}</ion-label>
+						</ion-item>
+					</ion-col>
+				</ion-row>
+				<ion-row *ngIf=DisplayRow3>
+					<ion-col col-6>
+						<ion-item>
+							<ion-label><b>Level</b><br/>{{vSessionLevel}}</ion-label>
+						</ion-item>
+					</ion-col>
+					<ion-col col-6>
+					</ion-col>
+				</ion-row>
+			</div>
+		</ion-card-content>
+		  
+	</ion-card>
+	
+	<ion-card *ngIf="MeetingLocationDisplay">
+
+		<ion-card-header class="cardHeader">
+			<div style="color:#fff">
+				Locator
+			</div>
+		</ion-card-header>
+
+		<ion-card-content>
+
+			<div class="myMarginTopBottom">
+				<div id="map1" style="width:100%; height:400px;"></div>
+			</div>
+		</ion-card-content>
+</ion-card>
+	
+
+</ion-content>

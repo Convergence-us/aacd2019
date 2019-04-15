@@ -1,0 +1,39 @@
+page-login {
+
+.spinColor  {
+color:#000
+}
+
+
+
+.full-width-select {
+    max-width: 100%!important;
+    min-width: 70%!important;
+    background:transparent;
+    color:#fff!important;
+  }
+
+  .select-icon-inner {
+
+    top: 50%;
+    border-top: 10px solid!important;
+    border-right: 10px solid transparent!important;
+    border-left: 10px solid transparent!important;
+    left: -4px!important;
+    pointer-events: none;
+
+  }
+
+
+  .item-radio-checked.item ion-label {
+    color: rgb(233, 92, 10) !important; //your color here for selected option
+}
+
+
+
+
+
+
+
+
+}

@@ -1,0 +1,224 @@
+<!--
+  Generated template for the Help page.
+
+  See http://ionicframework.com/docs/components/#navigation for more info on
+  Ionic pages and navigation.
+-->
+<ion-header>
+  <ion-navbar color="primary">
+    <button ion-button menuToggle>
+      <ion-icon name="menu"></ion-icon>
+    </button>
+    <ion-title>Help</ion-title>
+  </ion-navbar>
+</ion-header>
+
+
+<ion-content>
+<!--
+      <ion-item>
+        <ion-label floating>Name</ion-label>
+        <ion-input type="text"></ion-input>
+      </ion-item>
+    
+      <ion-item>
+        <ion-label floating>Email</ion-label>
+        <ion-input type="password"></ion-input>
+      </ion-item>
+    
+      <ion-item>
+      <ion-label floating>Phone</ion-label>
+      <ion-input type="text"></ion-input>
+      </ion-item>
+ 
+      <ion-item>
+    <ion-label floating>Comments</ion-label>
+    <ion-input type="text"></ion-input>
+      </ion-item>
+
+      <div text-center style="margin-top:15px">
+        <button ion-button style="background:#2196f3" (click)="sendEmail()">
+          Request Assistance
+        </button>
+      </div>
+
+
+-->
+
+      
+        <ion-card>
+          <ion-card-header style="background:#283593;color:#fff">
+            Contact AACD
+          </ion-card-header>
+          <ion-card-content>
+      
+            <ion-grid>
+              <ion-row>
+                <ion-col>
+                    <img style="width:100%; margin:auto" src="assets/img/header1.png">
+                </ion-col>
+              </ion-row>
+      
+              <ion-row>	
+                <ion-col>
+                  <button ion-button full icon-start  color="secondary" class="btnHelp" (click)="navToEmail('lisab@aacd.com')">
+                    <ion-icon  name="mail"></ion-icon>
+                    <label>Email</label>
+                  </button>
+                </ion-col>
+      
+                <ion-col>
+                  <button ion-button full icon-start  color="secondary" class="btnHelp" onclick="window.open('http://aacd.com/', '_system', 'location=yes'); return false;">
+                    <ion-icon name="globe"></ion-icon>
+                    <label>Website</label>
+                  </button>
+            
+                </ion-col>
+              
+                <ion-col>
+                  <button ion-button full icon-start  color="secondary" class="btnHelp" (click)="callPhone3('703-635-7801')">
+                    <ion-icon name="call"></ion-icon>
+                    <label>Call</label>
+                  </button>
+                </ion-col>
+              </ion-row>
+            </ion-grid>
+                    
+          </ion-card-content>
+        </ion-card>										
+      
+      
+        <ion-card>
+          <ion-card-header style="background:#283593;color:#fff">
+            Help Request
+          </ion-card-header>
+      
+          <ion-card-content>			
+            <ion-item>
+              <ion-label floating>Name</ion-label>
+              <ion-input	type="text" 
+                    (input)='hcfSenderName = $event.target.value' 
+                    name="hcfSenderName" 
+                    [value]="hcfSenderName" 
+                    id="hcfSenderName"></ion-input>
+            </ion-item>
+      
+            <ion-item>
+              <ion-label floating>Email</ion-label>
+              <ion-input	type="text" 
+                    (input)='hcfSenderEmail = $event.target.value' 
+                    name="hcfSenderEmail" 
+                    [value]="hcfSenderEmail" 
+                    id="hcfSenderEmail"></ion-input>
+            </ion-item>
+      
+            <ion-item>
+              <ion-label floating>Phone</ion-label>
+              <ion-input	type="text" 
+                    (input)='hcfSenderPhone = $event.target.value' 
+                    name="hcfSenderPhone" 
+                    [value]="hcfSenderPhone" 
+                    id="hcfSenderPhone"></ion-input>
+            </ion-item>
+      
+            <ion-item>
+              <ion-label floating>Comments</ion-label>
+              <ion-input	type="text" 
+                    (input)='hcfSenderComments = $event.target.value' 
+                    name="hcfSenderComments" 
+                    [value]="hcfSenderComments" 
+                    id="hcfSenderComments"></ion-input>
+            </ion-item>
+      
+            <div text-center style="margin-top:15px">
+              <button ion-button style="background:#2196f3" (click)="sendEmail()">
+                Request Assistance
+              </button>
+            </div>
+          </ion-card-content>	
+        </ion-card>
+      
+      
+
+
+
+
+
+
+
+      
+ <!--
+
+      <ion-item [navPush]="morePage">
+    <ion-icon color="secondary" name="calendar" item-left></ion-icon>
+    <h4>Add Session/Event</h4>
+    <p>Include item on your MyAgenda page</p>
+      </ion-item>
+    
+      <ion-item [navPush]="morePage">
+    <ion-icon color="secondary" name="mic" item-left></ion-icon>
+    <h4>Speaker/Session Evaluation</h4>
+    <p>Provide your rating of the session</p>
+      </ion-item>
+    
+      <ion-item [navPush]="morePage">
+    <ion-icon color="secondary" name="mail" item-left></ion-icon>
+    <h4>Send Email</h4>
+    <p>Use to follow up with the session speaker(s)</p>
+      </ion-item>
+    
+      <ion-item [navPush]="notesPage">
+    <ion-icon color="secondary" name="create" item-left></ion-icon>
+    <h4>Session Notes</h4>
+    <p>Let's you take notes associated with that session</p>
+      </ion-item>
+    
+      <ion-item [navPush]="morePage">
+    <ion-icon color="secondary" name="more" item-left></ion-icon>
+    <h4>More Menu Options</h4>
+    <p>Look here for additional app functions</p>
+      </ion-item>
+    
+      <ion-item [navPush]="morePage">
+    <ion-icon color="secondary" name="calendar" item-left></ion-icon>
+    <h4>Browse to Website</h4>
+    <p>Link to exhibitors website</p>
+      </ion-item>
+    
+      <ion-item [navPush]="personalPage">
+    <ion-icon color="secondary" name="person-add" item-left></ion-icon>
+    <h4>Add Personal Schedule Item</h4>
+    <p>Allows the inclusion of personal schedule items</p>
+      </ion-item>
+    
+      <ion-item [navPush]="morePage">
+    <ion-icon color="secondary" name="eye" item-left></ion-icon>
+    <h4>View All</h4>
+    <p>See your entire schedule at a glance</p>
+      </ion-item>
+    
+      <ion-item [navPush]="morePage">
+    <ion-icon color="secondary" name="list-box" item-left></ion-icon>
+    <h4>Session</h4>
+    <p>Get additional session information details</p>
+      </ion-item>
+    
+      <ion-item [navPush]="exhibitorPage">
+    <ion-icon color="secondary" name="pin" item-left></ion-icon>
+    <h4>Exhibit Hall Booth Locator</h4>
+    <p>Map pin showing exhibitor booth location</p>
+      </ion-item>
+    
+      <ion-item [navPush]="morePage">
+    <ion-icon color="secondary" name="document" item-left></ion-icon>
+    <h4>Handout/View PDF</h4>
+    <p>View or print a PDF handout</p>
+      </ion-item>
+    
+  
+      -->
+
+      </ion-content>
+    
+    
+
