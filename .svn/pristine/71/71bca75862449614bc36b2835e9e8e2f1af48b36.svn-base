@@ -31,33 +31,33 @@
 
 			<ion-col style="padding:0" *ngIf=DayButton1Show>
 				<button ion-button full style="margin:0"[ngClass]="dayButton1" (click)="DayUpdate('1')">
-						<ion-icon name="calendar"></ion-icon>
+						<ion-icon color="secondary" name="calendar"></ion-icon>
 						<label style="padding-left:3px">{{DayButton1Label}}</label>
 				</button>
 			</ion-col>
 			<ion-col style="padding:0" *ngIf=DayButton2Show>
 				<button ion-button full style="margin:0"[ngClass]="dayButton2" (click)="DayUpdate('2')">
-						<ion-icon name="calendar"></ion-icon>
+						<ion-icon color="secondary" name="calendar"></ion-icon>
 						<label style="padding-left:3px">{{DayButton2Label}}</label>
 				</button>
 			</ion-col>
 			
 			<ion-col style="padding:0" *ngIf=DayButton3Show>
 				<button ion-button full style="margin:0"[ngClass]="dayButton3" style="padding:0; margin:0" (click)="DayUpdate('3')">
-						<ion-icon name="calendar"></ion-icon>
+						<ion-icon color="secondary" name="calendar"></ion-icon>
 						<label style="padding-left:3px">{{DayButton3Label}}</label>
 				</button>
 			</ion-col>
 
 			<ion-col style="padding:0" *ngIf=DayButton4Show>
 				<button ion-button full style="margin:0"[ngClass]="dayButton4" style="padding:0; margin:0" (click)="DayUpdate('4')">
-						<ion-icon name="calendar"></ion-icon>
+						<ion-icon color="secondary" name="calendar"></ion-icon>
 						<label style="padding-left:3px">{{DayButton4Label}}</label>
 				</button>
 			</ion-col>
 			<ion-col style="padding:0" *ngIf=DayButton5Show>
 				<button ion-button full style="margin:0"[ngClass]="dayButton5" style="padding:0; margin:0" (click)="DayUpdate('5')">
-						<ion-icon name="calendar"></ion-icon>
+						<ion-icon color="secondary" name="calendar"></ion-icon>
 						<label style="padding-left:3px">{{DayButton5Label}}</label>
 				</button>
 			</ion-col>
