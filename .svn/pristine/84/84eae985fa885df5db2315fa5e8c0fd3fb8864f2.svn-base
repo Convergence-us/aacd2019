@@ -4,7 +4,7 @@
 		<button ion-button menuToggle>
 			<ion-icon name="menu"></ion-icon>
 		</button>
-		<ion-title>Exhibitors1</ion-title>
+		<ion-title>Exhibitors</ion-title>
 	</ion-navbar>
 
 </ion-header>
@@ -30,11 +30,22 @@
 			</ion-row>
 		</ion-grid>
 
-		<!-- Exhibitor listing-->
+		<!-- Exhibitor listing -->
 		<ion-list>
-			<ion-item class="avBig" (tap)="ExhibitorDetails(exhibitor.ExhibitorID)" *ngFor="let exhibitor of ExhibitorListing" id="exhibitors-list-item19">
+			<ion-item (tap)="ExhibitorDetails(exhibitor.ExhibitorID)" *ngFor="let exhibitor of ExhibitorListing" id="exhibitors-list-item19">
+			
+			<!--
 				<ion-icon color="secondary" item-left name="{{exhibitor.exhibitorIcon}}"></ion-icon>
 				<ion-icon color="secondary" item-right name="{{exhibitor.navigationArrow}}"></ion-icon>
+-->
+
+
+				<div style="float: left; padding-right: 10px;">
+		<!--	<ion-icon name="{{exhibitor.exhibitorIcon}}"></ion-icon> -->
+						<ion-avatar item-start>
+							<img src="{{exhibitor.exhibitorAvatar}}" onerror="this.src='assets/img/personIcon.png'">
+						</ion-avatar>
+					</div>
 				<h2>{{exhibitor.CompanyName}}</h2>
 				<p>{{exhibitor.DisplayCityState}}</p>
 				<p>{{exhibitor.BoothNumber}}</p>
@@ -43,3 +54,4 @@
 	</ion-list>
 
 </ion-content>
+

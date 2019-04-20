@@ -78,7 +78,15 @@ export class ExhibitorsPage {
 						DisplayLocation = data[i].City + ", " + data[i].State;
 					}
 
+
+
+
 					var imageAvatar = "https://aacdmobile.convergence-us.com/AdminGateway/2019/images/ExhibitorLogos/" + data[i].imageFilename;
+
+
+
+
+	
 
 					// If Exhibitor is not in same grouping, create new divider bar
                     if (data[i].CompanyName.charAt(0) != ExhibitorDividerCharacter) {
@@ -89,7 +97,6 @@ export class ExhibitorsPage {
 							CompanyName: data[i].CompanyName.charAt(0),
 							DisplayCityState: "",
 							BoothNumber: "",
-							exhibitorAvatar: "assets/img/SpeakerDivider.png",
 							exhibitorIcon: "nothing",
 							exhibitorClass: "wineDivider",
 							navigationArrow: "nothing"
@@ -136,7 +143,7 @@ export class ExhibitorsPage {
 					DisplayCityState: "",
 					BoothNumber: "",
 					exhibitorIcon: "",
-					exhibitorAvatar: "assets/img/SpeakerDivider.png",
+					exhibitorAvatar: "assets/img/personIcon.png",
 					exhibitorClass: "myLabelBold",
 					navigationArrow: ""
 				});

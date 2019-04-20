@@ -2131,7 +2131,7 @@ export class Database {
 			if (listingType == "li" || listingType == "sr") {	// List of exhibitors
 		
 				// Validate query
-				SQLquery = "SELECT DISTINCT e.ExhibitorID, e.CompanyName, e.AddressLine1, e.AddressLine2, e.City, e.State, e.ZipPostalCode, e.Country, ";
+				SQLquery = "SELECT DISTINCT e.ExhibitorID, e.CompanyName, e.AddressLine1, e.AddressLine2, e.City, e.State, e.ZipPostalCode, e.Country, e.imageFilename ";
 				SQLquery = SQLquery + "e.Website, e.PrimaryOnsiteContactName, e.PrimaryOnsiteContactEmail, e.PrimaryOnsiteContactPhone, ";
 				SQLquery = SQLquery + "e.BoothNumber, bm.BoothX, bm.BoothY, e.imageFilename, "; 
 				SQLquery = SQLquery + "e.ProductsServices, e.CompanyDescription, ";

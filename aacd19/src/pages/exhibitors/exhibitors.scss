@@ -12,10 +12,16 @@ page-exhibitors {
 
 
 
-  
+      .avBig {
+        margin: auto;
+        width: 15vw;
+        height: 15vw;
+        border-radius: 50%; // half for rounding */
+        object-fit: cover; /* Scale the image - Center and crop image*/
+        object-position: center; /* Center the image within the element - Center and crop image*/
 
 
-
+      }
 
 
 }

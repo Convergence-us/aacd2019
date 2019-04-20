@@ -32,9 +32,21 @@
 
 		<!-- Exhibitor listing -->
 		<ion-list>
-			<ion-item (tap)="ExhibitorDetails(exhibitor.ExhibitorID)" *ngFor="let exhibitor of ExhibitorListing" id="exhibitors-list-item19">
+			<ion-item (tap)="ExhibitorDetails(exhibitor.ExhibitorID)" style="float: left; padding-right: 10px;"
+			*ngFor="let exhibitor of ExhibitorListing" id="exhibitors-list-item19">
+			
+			<!--
 				<ion-icon color="secondary" item-left name="{{exhibitor.exhibitorIcon}}"></ion-icon>
 				<ion-icon color="secondary" item-right name="{{exhibitor.navigationArrow}}"></ion-icon>
+-->
+
+
+			
+		<!--	<ion-icon name="{{exhibitor.exhibitorIcon}}"></ion-icon> -->
+						<ion-thumbnail item-start>
+							<img src="{{exhibitor.exhibitorAvatar}}" onerror="this.src='assets/img/personIcon.png'">
+						</ion-thumbnail>
+				
 				<h2>{{exhibitor.CompanyName}}</h2>
 				<p>{{exhibitor.DisplayCityState}}</p>
 				<p>{{exhibitor.BoothNumber}}</p>
@@ -43,3 +55,4 @@
 	</ion-list>
 
 </ion-content>
+
