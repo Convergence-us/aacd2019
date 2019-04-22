@@ -109,13 +109,13 @@ export class EducationDetailsPage {
 		}
 
 		// Load initial data set here
-		//let loading = this.loadingCtrl.create({
-		//	spinner: 'crescent',
-		//	content: 'Please wait...'
-		//});
+		let loading = this.loadingCtrl.create({
+			spinner: 'crescent',
+			content: 'Please wait...'
+		});
 
-		//loading.present();
-		//console.log('Education Details: Spinner activated');
+		loading.present();
+		console.log('Education Details: Spinner activated');
 
 		// Blank and show loading info
 		this.cd.markForCheck();
@@ -460,8 +460,8 @@ export class EducationDetailsPage {
 					
 					this.cd.markForCheck();
 
-					//loading.dismiss();
-					//console.log('Educational Details: Dismiss spinner');
+					loading.dismiss();
+					console.log('Educational Details: Dismiss spinner');
 					
                 } else {
 					console.log('Loading speakers');
@@ -522,8 +522,8 @@ export class EducationDetailsPage {
 
 						this.cd.markForCheck();
 
-						//loading.dismiss();
-						//console.log('Educational Details: Dismiss spinner');
+						loading.dismiss();
+						console.log('Educational Details: Dismiss spinner');
 						
 					}).catch(function () {
 						console.log("Speaker Promise Rejected");

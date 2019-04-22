@@ -100,8 +100,6 @@ export class EducationDetailsPage {
 	//ngOnInit() {
 	ionViewWillEnter() {
 
-		console.log('Education Details: Start of screen load');
-
 		var AttendeeID = this.localstorage.getLocalValue('AttendeeID');
 		
 		if (AttendeeID == '' || AttendeeID == null) {
@@ -109,23 +107,20 @@ export class EducationDetailsPage {
 		}
 
 		// Load initial data set here
-		//let loading = this.loadingCtrl.create({
-		//	spinner: 'crescent',
-		//	content: 'Please wait...'
-		//});
+		let loading = this.loadingCtrl.create({
+			spinner: 'crescent',
+			content: 'Please wait...'
+		});
 
-		//loading.present();
-		//console.log('Education Details: Spinner activated');
+		loading.present();
 
 		// Blank and show loading info
 		this.cd.markForCheck();
-		console.log('Education Details: Screen refreshed');
 		
 		// Temporary use variables
 		var flags = "dt|0|Alpha|" + this.navParams.get('EventID');
 		this.EventID = this.navParams.get('EventID');
 		this.localstorage.setLocalValue('EventID', this.navParams.get('EventID'));
-		console.log('Education Details: database variables determined');
 		
         // ---------------------
         // Get Education Details
@@ -140,20 +135,20 @@ export class EducationDetailsPage {
         var UpdatedEventDescription2;
 		var HandoutPDFName = "";
 
-		console.log('Education Details: Database flags: ' + flags);
+		console.log('Education Details, flags: ' + flags);
 		
         // Get course detail record
 		this.databaseprovider.getLectureData(flags, AttendeeID).then(data => {
 			
-			console.log("Education Detials: getLectureData: " + JSON.stringify(data));
+			console.log("getLectureData: " + JSON.stringify(data));
 
 			if (data['length']>0) {
 
-				console.log("Educational Details: Begin parsing");
+				console.log("Educational Details, begin parsing");
                 PrimarySpeakerName = "";
 				
                 // Display start time
-				console.log("Educational Details: Display start time");
+				console.log("Educational Details, Display start time");
                 dbEventDateTime = data[0].session_start_time.substring(0, 19);
                 dbEventDateTime = dbEventDateTime.replace(/-/g, '/');
                 dbEventDateTime = dbEventDateTime.replace(/T/g, ' ');
@@ -161,14 +156,14 @@ export class EducationDetailsPage {
                 DisplayDateTime = dateFormat(SQLDate, "mm/dd h:MMtt");
 
                 // Display end time
-				console.log("Educational Details: Display end time");
+				console.log("Educational Details, Display end time");
                 dbEventDateTime = data[0].session_end_time.substring(0, 19);
                 dbEventDateTime = dbEventDateTime.replace(/-/g, '/');
                 dbEventDateTime = dbEventDateTime.replace(/T/g, ' ');
                 SQLDate = new Date(dbEventDateTime);
                 DisplayDateTime = DisplayDateTime + " to " + dateFormat(SQLDate, "h:MMtt");
 
-				console.log("Educational Details: Set primary speaker");
+				console.log("Educational Details, Set primary speaker");
                 if (data[0].primary_speaker == "") {
                     //PrimarySpeakerName = "No Assigned Primary Presenter";
                     PrimarySpeakerName = "";
@@ -176,18 +171,18 @@ export class EducationDetailsPage {
                     PrimarySpeakerName = data[0].primary_speaker;
                 }
 
-				console.log("Educational Details: Set session title");
+				console.log("Educational Details, Set session title");
                 this.EventName = data[0].session_title;
                 //this.EventSubName = data[0].EventSubName;
 
-				console.log("Educational Details: Add room name");
+				console.log("Educational Details, Add room name");
                 if (data[0].RoomName.length == 0) {
                     this.DisplayEventTimeDateLocation = DisplayDateTime;
                 } else {
                     this.DisplayEventTimeDateLocation = DisplayDateTime + " in " + data[0].RoomName;
                 }
 				
-				console.log("Educational Details: Set speaker name");
+				console.log("Educational Details, Set speaker name");
                 this.SpeakerDisplayName = PrimarySpeakerName;
                 //this.EventTypeName = data[0].EventTypeName;
 				
@@ -198,14 +193,12 @@ export class EducationDetailsPage {
                 } else {
                     this.SpeakerHostEmcee = data[0].speaker_host_emcee;
                 }
-				console.log("Educational Details: Set Host name");
 
                 if ((data[0].corporate_supporter === undefined) || (data[0].corporate_supporter === "") || (data[0].corporate_supporter === null)) {
                     this.CorporateSupporterShow = false;
                 } else {
                     this.EventCorporateSupporter = data[0].corporate_supporter;
                 }
-				console.log("Educational Details: Display corporate supporter");
 
                 UpdatedEventDescription2 = data[0].description;
                 UpdatedEventDescription2 = UpdatedEventDescription2.replace(/\\/g, '');
@@ -219,7 +212,6 @@ export class EducationDetailsPage {
                 UpdatedEventDescription = UpdatedEventDescription.replace("DISCLAIMER:","<br/><br/><b>DISCLAIMER:</b>");
                 UpdatedEventDescription = UpdatedEventDescription.replace("Learning Objectives:","<br/><br/><b>Learning Objectives:</b>");
                 this.sessionAbstract = UpdatedEventDescription;
-				console.log("Educational Details: Update description formatting");
 
 				console.log("Abstract: " + UpdatedEventDescription);
 				
@@ -233,7 +225,6 @@ export class EducationDetailsPage {
                 this.HandoutURL = "https://aacdmobile.convergence-us.com/AdminGateway/2019/attachments/" + HandoutPDFName;
                 this.HandoutFn = HandoutPDFName;
 				console.log('ts: ' + this.HandoutURL);
-				console.log("Educational Details: Determine handout");
 				
                 courseID = data[0].course_id;
 
@@ -246,7 +237,6 @@ export class EducationDetailsPage {
                 this.localstorage.setLocalValue("EventLocation", data[0].RoomName);
                 this.localstorage.setLocalValue("EventName", data[0].session_title);
                 this.localstorage.setLocalValue("EventDate", data[0].session_start_time.substring(0,10));
-				console.log("Educational Details: Set local values for agenda management");
 
                 if (data[0].ce_credits_type == "") {
                     this.AbstractDisplay = false;
@@ -263,20 +253,20 @@ export class EducationDetailsPage {
                     this.RecordingShow = false;
                 }
 
-				console.log('Educational Details: HandoutFilename: ' + HandoutPDFName);
+				console.log('HandoutFilename: ' + HandoutPDFName);
                 if (data[0].HandoutFilename === "" || data[0].HandoutFilename === null) {
                     this.HandoutShow = false;
                 }
 
- 				console.log('Educational Details: Agenda Management');
-                if (data[0].OnAgenda != null) {
+ 				console.log('Agenda Management');
+               if (data[0].OnAgenda != null) {
                     this.visAgendaAddRemoveButton = "Remove";
                 } else {
                     this.visAgendaAddRemoveButton = "Add";
                 }
 
 				// Other Information grid
-				console.log('Educational Details: Other Information');
+				console.log('Other Information');
 				this.vSubjectCode = data[0].subject;
 				this.vCECredits = data[0].cs_credits;
 				this.vCECreditsType = data[0].ce_credits_type;
@@ -284,46 +274,46 @@ export class EducationDetailsPage {
 				this.vSessionLevel = data[0].CourseLevel;
 
 				// Individual fields
-				console.log('Educational Details: Other Information: Subject');
+				console.log('Other Information: Subject');
 				//if (data[0].subject.length == 0 || data[0].subject == '' || data[0].subject == null) {
 				//	this.DisplaySubject = false;
 				//}
-				console.log('Educational Details: Other Information: Subject');
+				console.log('Other Information: Subject');
 				if (data[0].cs_credits.length == 0 || data[0].cs_credits == '' || data[0].cs_credits == null) {
 					this.DisplayCECredits = false;
 				}
-				console.log('Educational Details: Other Information: CourseType');
+				console.log('Other Information: CourseType');
 				if (data[0].CourseType.length == 0 || data[0].CourseType == '' || data[0].CourseType == null) {
 					this.DisplayType = false;
 				}
-				console.log('Educational Details: Other Information: ce_credits_type');
+				console.log('Other Information: ce_credits_type');
 				if (data[0].ce_credits_type.length == 0 || data[0].ce_credits_type == '' || data[0].ce_credits_type == null) {
 					this.DisplayCECreditsType = false;
 				}
 
 				// Entire rows
-				console.log('Educational Details: Other Information: DisplayRow1');
+				console.log('Other Information: DisplayRow1');
 				if ((data[0].subject.length == 0 || data[0].subject == '' || data[0].subject == null) && (data[0].cs_credits.length == 0 || data[0].cs_credits == '' || data[0].cs_credits == null)) {
 					this.DisplayRow1 = false;
 				}
-				console.log('Educational Details: Other Information: DisplayRow2');
+				console.log('Other Information: DisplayRow2');
 				if ((data[0].CourseType.length == 0 || data[0].CourseType == '' || data[0].CourseType == null) && (data[0].ce_credits_type.length == 0 || data[0].ce_credits_type == '' || data[0].ce_credits_type == null)) {
 					this.DisplayRow2 = false;
 				}
-				console.log('Educational Details: Other Information: CourseLevel');
+				console.log('Other Information: CourseLevel');
 				if (data[0].CourseLevel.length == 0 || data[0].CourseLevel == '' || data[0].CourseLevel == null) {
 					this.DisplayRow3 = false;
 				}
 				
 				// Entire block
-				console.log('Educational Details: Other Information: Entire Section');
+				console.log('Other Information: Entire Section');
 				if (this.DisplayRow1 == false && this.DisplayRow2 == false && this.DisplayRow3 == false) {
 					this.OtherInformationDisplay = false;
 				}
 				
 				
 				// Status checks
-				console.log('Educational Details: Status checks');
+				console.log('Status checks');
 				var SessionStatus = "";
 				var StatusStyle = "SessionStatusNormal";
 				
@@ -332,7 +322,6 @@ export class EducationDetailsPage {
 					SessionStatus = "Course at Capacity";
 					StatusStyle = "SessionStatusRed";
 				}
-				console.log('Educational Details: Determine room capacity');
 				
 				// Waitlist check
 				if (data[0].Waitlist == "1") {
@@ -344,7 +333,6 @@ export class EducationDetailsPage {
 						StatusStyle = "SessionStatusRed";
 					}
 				}
-				console.log('Educational Details: Determine waitlisting');
 
 				console.log(SessionStatus);
 				
@@ -356,7 +344,7 @@ export class EducationDetailsPage {
                 // Session room mapping
 				// --------------------
 								
-				console.log('Educational Details: Meeting room mapping');
+				console.log('Meeting room mapping');
 				var RoomX = data[0].RoomX;
 				var RoomY = data[0].RoomY;
 				console.log('Variables set');
@@ -376,7 +364,7 @@ export class EducationDetailsPage {
 				//RoomX = 10;
 				//RoomY = 10;
 				
-				console.log('Educational Details: Meeting room mapping: Determine map type');
+				console.log('Meeting room mapping: Determine map type');
 				console.log('RoomX: ' + RoomX);
 				console.log('RoomY: ' + RoomY);
 				
@@ -409,7 +397,7 @@ export class EducationDetailsPage {
 					this.MeetingLocationDisplay = true;
 					
                     // Simple coordinate system mapping
-					console.log('Educational Details: Meeting room mapping: Simple coordinate system mapping');
+					console.log('Meeting room mapping: Simple coordinate system mapping');
                     this.myMap = L.map(this.mapContainer.nativeElement, {
                         crs: L.CRS.Simple,
                         minZoom: -2,
@@ -417,57 +405,53 @@ export class EducationDetailsPage {
 				        zoomControl: true
                     });
 
-					console.log('Educational Details: Meeting room mapping: Set bounds');
+					console.log('Meeting room mapping: Set bounds');
 					var bounds = L.latLngBounds([0, 0], [1500, 2000]);
 
-					console.log('Educational Details: Meeting room mapping: Add image');
+					console.log('Meeting room mapping: Add image');
 					var image = L.imageOverlay('assets/img/SessionRooms.png', bounds, {
 						attribution: 'Convergence'
 					}).addTo(this.myMap);
 					
-					console.log('Educational Details: Meeting room mapping: Set Fit and max bounds');
+					console.log('Meeting room mapping: Set Fit and max bounds');
                     this.myMap.fitBounds(bounds);
 					this.myMap.setMaxBounds(bounds);
 
-					console.log('Educational Details: Meeting room mapping: Set pindrop position');
+					console.log('Meeting room mapping: Set pindrop position');
 					var CongressionalOffice = L.latLng([RoomY, RoomX]);
 
-					console.log('Educational Details: Meeting room mapping: Display pindrop');
+					console.log('Meeting room mapping: Display pindrop');
 					L.marker(CongressionalOffice).addTo(this.myMap)
 						.bindPopup(OfficeName)
 						.openPopup();
 
-					console.log('Educational Details: Meeting room mapping: Center map on pindrop');
+					console.log('Meeting room mapping: Center map on pindrop');
 					this.myMap.setView([RoomY, RoomX], 1);
 
                 }
 				
 				this.cd.markForCheck();
-				console.log('Educational Details: Refresh screen');
 
 
 				// ---------------------------
                 // Get Linked Speakers
                 // ---------------------------
 
-				console.log('Educational Details: Linked speakers');
                 this.AuthorsDisplay = false;
                 if (data[0].ce_credits_type == "") {
 					
                     // Keep hidden for non-CE events
-					console.log('Educational Details: Non-CE event');
+					console.log('Non-CE event');
 					this.OtherInformationDisplay = false;
 					
 					this.cd.markForCheck();
 
-					//loading.dismiss();
-					//console.log('Educational Details: Dismiss spinner');
+					loading.dismiss();
 					
                 } else {
 					console.log('Loading speakers');
 					flags = "cd|Alpha|0|0|" + courseID;
 
-					console.log('Educational Details: Call SQLite for speakers');
                     // Get speaker detail record
 					this.databaseprovider.getSpeakerData(flags, AttendeeID).then(data2 => {
 						
@@ -475,7 +459,6 @@ export class EducationDetailsPage {
 
 						if (data2['length'] > 0) {
 
-							console.log('Educational Details: Process speakers');
 							// Process returned records to display
 							this.SpeakerList = [];
 							var DisplayName = "";
@@ -522,8 +505,7 @@ export class EducationDetailsPage {
 
 						this.cd.markForCheck();
 
-						//loading.dismiss();
-						//console.log('Educational Details: Dismiss spinner');
+						loading.dismiss();
 						
 					}).catch(function () {
 						console.log("Speaker Promise Rejected");
@@ -532,7 +514,6 @@ export class EducationDetailsPage {
 				}
 
 			}
-			console.log('Educational Details: Done loading screen');
 		
 		}).catch(function (err) {
 			console.log("Course Promise Rejected");
